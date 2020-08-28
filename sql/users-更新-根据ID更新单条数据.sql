@@ -1,0 +1,1 @@
+UPDATE users SET username='test_update' WHERE id = '4';

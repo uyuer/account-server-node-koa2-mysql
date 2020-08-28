@@ -3,10 +3,12 @@ const controller = require('./../controllers/users');
 
 router.prefix('/users')
 
-router.post('/add', controller.insertData)
+router.post('/add', controller.insertUser)
 
-router.get('/bar', function (ctx, next) {
-  ctx.body = 'this is a users/bar response'
-})
+router.post('/delete', controller.deleteOneUser)
+
+router.get('/findOne', controller.findOneUser)
+
+router.get('/findMultiple', controller.findMultipleUser)
 
 module.exports = router
