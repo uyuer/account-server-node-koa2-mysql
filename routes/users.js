@@ -11,4 +11,6 @@ router.get('/findOne', controller.findOneUser)
 
 router.get('/findMultiple', controller.findMultipleUser)
 
+router.post('/updateOne', controller.updateOneUser)
+
 module.exports = router

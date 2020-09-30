@@ -14,6 +14,7 @@ let query = (sql, values) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
+                console.log('失败')
                 reject(err)
             } else {
                 console.log('连接成功')
