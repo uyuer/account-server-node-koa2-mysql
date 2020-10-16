@@ -67,6 +67,10 @@ function checkRules(rules, params) {
 	return { checkResult, errorMessage };
 }
 
+exports.login=async(ctx)=>{
+
+}
+
 // 新增用户
 // 插入用户只需要几个必选参数, 其他为可选
 exports.insertUser = async (ctx) => {
@@ -228,33 +232,35 @@ exports.deleteOneUser = async (ctx) => {
 };
 // 查找-指定ID查找用户信息
 exports.findOneUser = async (ctx) => {
-	let params = ctx.request.query;
-	console.log(params);
-	let checkResult = await checkParams(["id"], params);
-	if (!checkResult) {
-		return (ctx.response.body = R.set(false, "200", "参数缺失"));
-	}
+	console.log('2')
+	console.log("session:", ctx.session);
+	// let params = ctx.request.query;
+	// console.log(params);
+	// let checkResult = await checkParams(["id"], params);
+	// if (!checkResult) {
+	// 	return (ctx.response.body = R.set(false, "200", "参数缺失"));
+	// }
 
-	let _sql = `select * from users where id="${params.id}";`;
-	try {
-		let result = await query(_sql);
-		if (result) {
-			ctx.response.body = R.set(result[0], "200");
-		} else {
-			ctx.response.body = R.set(null, "200");
-		}
-	} catch (error) {
-		ctx.response.body = R.set(
-			{
-				code: error.code,
-				errno: error.errno,
-				sqlMessage: error.sqlMessage,
-				sql: error.sql,
-			},
-			error.statusCode || error.status,
-			"未知异常"
-		);
-	}
+	// let _sql = `select * from users where id="${params.id}";`;
+	// try {
+	// 	let result = await query(_sql);
+	// 	if (result) {
+	// 		ctx.response.body = R.set(result[0], "200");
+	// 	} else {
+	// 		ctx.response.body = R.set(null, "200");
+	// 	}
+	// } catch (error) {
+	// 	ctx.response.body = R.set(
+	// 		{
+	// 			code: error.code,
+	// 			errno: error.errno,
+	// 			sqlMessage: error.sqlMessage,
+	// 			sql: error.sql,
+	// 		},
+	// 		error.statusCode || error.status,
+	// 		"未知异常"
+	// 	);
+	// }
 };
 
 // 查找-多条件查找用户(暂时不多条件)
