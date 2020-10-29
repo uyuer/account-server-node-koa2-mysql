@@ -1,6 +1,6 @@
 const query = require("./index");
 const R = require("./../lib/responseBeautifier");
-const { checkParams, filterParams, hasAttribute } = require("./../lib/utils");
+const { checkParams, filterParams, hasAttribute, getParams } = require("./../lib/utils");
 
 // 用户表部分字段默认参数
 let defaultValue = {
@@ -68,8 +68,13 @@ function checkRules(rules, params) {
 }
 
 exports.login = async (ctx) => {
-	ctx.response.body = "123";
-	// let body = ctx.request.body || {};
+	let content = ["username", "password"];
+	let body = ctx.request.body || {};
+	let params = getParams(content, body);
+	
+	ctx.response.body = {
+		params: params,
+	};
 	// let hasResult = hasAttribute(["username", "password"], body);
 	// if (!hasResult) {
 	// return (ctx.response.body = R.set(hasResult, "200", "参数缺失"));
@@ -257,38 +262,33 @@ exports.deleteOneUser = async (ctx) => {
 };
 // 查找-指定ID查找用户信息
 exports.findOneUser = async (ctx) => {
-	console.log("2");
-	console.log("session:", ctx.session);
-	ctx.response.body = {
-		code: "0",
-	};
-	// let params = ctx.request.query;
-	// console.log(params);
-	// let checkResult = await checkParams(["id"], params);
-	// if (!checkResult) {
-	// 	return (ctx.response.body = R.set(false, "200", "参数缺失"));
-	// }
+	let params = ctx.request.query;
+	console.log(params);
+	let checkResult = await checkParams(["id"], params);
+	if (!checkResult) {
+		return (ctx.response.body = R.set(false, "200", "参数缺失"));
+	}
 
-	// let _sql = `select * from users where id="${params.id}";`;
-	// try {
-	// 	let result = await query(_sql);
-	// 	if (result) {
-	// 		ctx.response.body = R.set(result[0], "200");
-	// 	} else {
-	// 		ctx.response.body = R.set(null, "200");
-	// 	}
-	// } catch (error) {
-	// 	ctx.response.body = R.set(
-	// 		{
-	// 			code: error.code,
-	// 			errno: error.errno,
-	// 			sqlMessage: error.sqlMessage,
-	// 			sql: error.sql,
-	// 		},
-	// 		error.statusCode || error.status,
-	// 		"未知异常"
-	// 	);
-	// }
+	let _sql = `select * from users where id="${params.id}";`;
+	try {
+		let result = await query(_sql);
+		if (result) {
+			ctx.response.body = R.set(result[0], "200");
+		} else {
+			ctx.response.body = R.set(null, "200");
+		}
+	} catch (error) {
+		ctx.response.body = R.set(
+			{
+				code: error.code,
+				errno: error.errno,
+				sqlMessage: error.sqlMessage,
+				sql: error.sql,
+			},
+			error.statusCode || error.status,
+			"未知异常"
+		);
+	}
 };
 
 // 查找-多条件查找用户(暂时不多条件)

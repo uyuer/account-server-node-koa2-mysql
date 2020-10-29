@@ -1,12 +1,12 @@
 const Koa = require("koa");
 const app = new Koa();
 const views = require("koa-views");
-// const convert = require("koa-convert");
 const json = require("koa-json");
-const onerror = require("koa-onerror");
-const bodyparser = require("koa-bodyparser");
 const logger = require("koa-logger");
+const koaBody = require("koa-body");
 const Koa_Session = require("koa-session"); // 导入koa-session
+const onerror = require("koa-onerror");
+
 
 const index = require("./routes/index");
 const users = require("./routes/users");
@@ -41,9 +41,13 @@ app.keys = session_signed_key;
 // });
 
 // app.use(session);
+
 app.use(
-	bodyparser({
-		enableTypes: ["json", "form", "text"],
+	koaBody({
+		multipart: true,
+		formidable: {
+			uploadDir: __dirname + "/uploads",
+		},
 	})
 );
 app.use(json());
