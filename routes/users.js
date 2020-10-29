@@ -13,4 +13,6 @@ router.get('/findOne', controller.findOneUser)
 
 router.get('/findMultiple', controller.findMultipleUser)
 
+router.get('/login', controller.login)
+
 module.exports = router

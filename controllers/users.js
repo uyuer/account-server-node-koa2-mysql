@@ -68,31 +68,32 @@ function checkRules(rules, params) {
 }
 
 exports.login = async (ctx) => {
-	let body = ctx.request.body || {};
-	let hasResult = hasAttribute(["username", "password"], body);
-	if (!hasResult) {
-		return (ctx.response.body = R.set(hasResult, "200", "参数缺失"));
-	}
-	try {
-		let _sql = "insert into users set ?;";
-		let result = await query(_sql, params);
-		if (result) {
-			ctx.response.body = R.set(true, "200", "新增用户成功");
-		} else {
-			ctx.response.body = R.set(false, "200", "新增用户失败");
-		}
-	} catch (error) {
-		ctx.response.body = R.set(
-			{
-				code: error.code,
-				errno: error.errno,
-				sqlMessage: error.sqlMessage,
-				sql: error.sql,
-			},
-			error.statusCode || error.status,
-			"未知异常"
-		);
-	}
+	ctx.response.body = "123";
+	// let body = ctx.request.body || {};
+	// let hasResult = hasAttribute(["username", "password"], body);
+	// if (!hasResult) {
+	// return (ctx.response.body = R.set(hasResult, "200", "参数缺失"));
+	// }
+	// try {
+	// 	let _sql = "insert into users set ?;";
+	// 	let result = await query(_sql, params);
+	// 	if (result) {
+	// 		ctx.response.body = R.set(true, "200", "新增用户成功");
+	// 	} else {
+	// 		ctx.response.body = R.set(false, "200", "新增用户失败");
+	// 	}
+	// } catch (error) {
+	// 	ctx.response.body = R.set(
+	// 		{
+	// 			code: error.code,
+	// 			errno: error.errno,
+	// 			sqlMessage: error.sqlMessage,
+	// 			sql: error.sql,
+	// 		},
+	// 		error.statusCode || error.status,
+	// 		"未知异常"
+	// 	);
+	// }
 };
 
 // 新增用户
@@ -258,6 +259,9 @@ exports.deleteOneUser = async (ctx) => {
 exports.findOneUser = async (ctx) => {
 	console.log("2");
 	console.log("session:", ctx.session);
+	ctx.response.body = {
+		code: "0",
+	};
 	// let params = ctx.request.query;
 	// console.log(params);
 	// let checkResult = await checkParams(["id"], params);
@@ -289,6 +293,7 @@ exports.findOneUser = async (ctx) => {
 
 // 查找-多条件查找用户(暂时不多条件)
 exports.findMultipleUser = async (ctx) => {
+	console.log("这里", ctx.request.query);
 	let params = ctx.request.query;
 	let { pageNum, pageSize } = params;
 	let checkResult = await checkParams(["pageNum", "pageSize"], params);

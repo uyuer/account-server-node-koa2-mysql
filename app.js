@@ -1,6 +1,7 @@
 const Koa = require("koa");
 const app = new Koa();
 const views = require("koa-views");
+// const convert = require("koa-convert");
 const json = require("koa-json");
 const onerror = require("koa-onerror");
 const bodyparser = require("koa-bodyparser");
@@ -10,6 +11,7 @@ const Koa_Session = require("koa-session"); // 导入koa-session
 const index = require("./routes/index");
 const users = require("./routes/users");
 const R = require("./lib/responseBeautifier");
+const logUtil = require("./lib/log_util");
 
 // session配置
 const session_signed_key = ["some secret hurr"]; // 这个是配合signed属性的签名key
@@ -25,24 +27,25 @@ const session_config = {
 };
 const session = Koa_Session(session_config, app);
 
-onerror(app);
+// onerror(app);
 app.keys = session_signed_key;
 
 // 登录判断
-app.use(async (ctx, next) => {
-	if (ctx.session.logged) {
-		next();
-	} else {
-		return (ctx.response.body = R.set(false, "200", "未登录"));
-	}
-});
+// app.use(async (ctx, next) => {
+// 	console.log('请求')
+// 	// if (ctx.session.logged) {
+// 		await next();
+// 	// } else {
+// 	// 	return (ctx.response.body = R.set(false, "200", "未登录"));
+// 	// }
+// });
 
+// app.use(session);
 app.use(
 	bodyparser({
 		enableTypes: ["json", "form", "text"],
 	})
 );
-app.use(session);
 app.use(json());
 app.use(logger());
 app.use(require("koa-static")(__dirname + "/public"));
@@ -53,10 +56,21 @@ app.use(
 );
 // logger
 app.use(async (ctx, next) => {
+	// 响应开始时间
 	const start = new Date();
-	await next();
-	const ms = new Date() - start;
-	console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+	// 响应间隔时间
+	var ms;
+	try {
+		//开始进入到下一个中间件
+		await next();
+		ms = new Date() - start;
+		// 记录响应日志
+		logUtil.logResponse(ctx, ms);
+	} catch (error) {
+		ms = new Date() - start;
+		// 记录异常日志
+		logUtil.logError(ctx, error, ms);
+	}
 });
 // 初始化
 // routes
