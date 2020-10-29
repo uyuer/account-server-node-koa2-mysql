@@ -14,7 +14,7 @@ var config = require('../config');
 console.log("process.env.NODE_ENV=" + process.env.NODE_ENV);
 
 var fs = require('fs');
-var logConfig = require('../config/log_config');
+var logConfig = require('../config/logConfig');
 
 /**
  * 确定目录是否存在，如果不存在则创建目录
