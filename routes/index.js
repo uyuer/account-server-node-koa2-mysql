@@ -1,7 +1,16 @@
-const router = require('koa-router')()
-const controller = require('./../controllers/initialize');
-console.log(controller)
+const router = require("koa-router")();
+const initialize = require("./initialize");
+const login = require("./login");
+const register = require("./register");
+const users = require("./users");
 
-router.post('/initialize', controller.initialize)
+const { auth } = require("../middlewares/auth");
 
-module.exports = router
+router.prefix("/api");
+
+router.use(initialize.routes());
+router.use("/users", login.routes());
+router.use("/users", auth, register.routes());
+router.use("/", users.routes());
+
+module.exports = router;

@@ -10,8 +10,8 @@ const onerror = require("koa-onerror");
 
 const index = require("./routes/index");
 const users = require("./routes/users");
-const R = require("./lib/responseBeautifier");
 const logUtil = require("./lib/logUtil");
+const response_formatter = require('./middlewares/response_formatter');
 
 // session配置
 const session_signed_key = ["some secret hurr"]; // 这个是配合signed属性的签名key
@@ -30,17 +30,7 @@ const session = koaSession(session_config, app);
 // onerror(app);
 app.keys = session_signed_key;
 
-// 登录判断
-// app.use(async (ctx, next) => {
-// 	console.log('请求')
-// 	// if (ctx.session.logged) {
-// 		await next();
-// 	// } else {
-// 	// 	return (ctx.response.body = R.set(false, "200", "未登录"));
-// 	// }
-// });
-
-// app.use(session);
+app.use(session);
 
 app.use(
 	koaBody({
@@ -76,24 +66,15 @@ app.use(async (ctx, next) => {
 		logUtil.logError(ctx, error, ms);
 	}
 });
-// 初始化
+//添加格式化处理响应结果的中间件，在添加路由之前调用
+//仅对/api开头的url进行格式化处理
+app.use(response_formatter('^/api'));
 // routes
 app.use(index.routes(), index.allowedMethods());
-app.use(users.routes(), users.allowedMethods());
 
 // error-handling
 app.on("error", (error, ctx) => {
-	console.error("server error");
-	ctx.response.body = R.set(
-		{
-			code: error.code,
-			errno: error.errno,
-			sqlMessage: error.sqlMessage,
-			sql: error.sql,
-		},
-		"500",
-		"未知异常"
-	);
+	logger.error('server error', error, ctx);
 });
 
 module.exports = app;
