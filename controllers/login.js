@@ -1,4 +1,7 @@
 const query = require("./index");
+const ApiError = require("../lib/apiError");
+const ApiErrorNames = require("../lib/apiErrorNames");
+
 const { checkParams, filterParams, hasAttribute, getParams } = require("./../lib/utils");
 
 // 用户表部分字段默认参数
@@ -8,7 +11,7 @@ let defaultValue = {
 	status: "1",
 };
 // 用户表数据准入规则
-let rules = {
+let paramsRules = {
 	username: [
 		{ required: true, message: "用户名不可为空" },
 		{ pattern: /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/, message: "用户名由2~20位中文、英文、数字和下划线字符组成" },
@@ -71,11 +74,42 @@ exports.login = async (ctx) => {
 	let body = ctx.request.body || {};
 	let params = getParams(content, body);
 
-	ctx.session.logged = true;
-	ctx.session.username = 'zhangsan';
+	// 判断参数是否缺失
+	let lackKey = "";
+	let isLack = content.every((key) => {
+		if (body.hasOwnProperty(key)) {
+			return true;
+		}
+		lackKey = key;
+		return false;
+	});
+	if(!isLack){
+		throw new ApiError(ApiErrorNames.LACK_PARAMS);
+	}
+
+	// let error = { errors: {}, values: {} };
+	// error = content.map((item) => {
+	// 	error.errors[item] = [];
+	// 	error.values[item] = [];
+	// });
+
+	// let checkList = content.map((item) => {
+	// 	let param = paramsRules[item];
+	// 	return { [item]: param };
+	// });
+	// let rules = getRules(content, paramsRules);
+	// let checkList = [];
+	// // content.map((item) => {
+	// // 	let param = paramsRules[item];
+	// // 	checkList.push({ [item]: param });
+	// // });
+
+	// ctx.session.logged = true;
+	// ctx.session.username = "zhangsan";
 
 	ctx.body = {
 		params: params,
+		// checkList,
 		name: "login",
 	};
 	// let hasResult = hasAttribute(["username", "password"], body);
