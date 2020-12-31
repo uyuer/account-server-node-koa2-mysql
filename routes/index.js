@@ -6,11 +6,11 @@ const users = require("./users");
 
 const { auth } = require("../middlewares/auth");
 
-router.prefix("/api");
+router.prefix("/api"); // 添加api前缀
 
-router.use(initialize.routes());
-router.use("/users", login.routes());
-router.use("/users", auth, register.routes());
-router.use("/", users.routes());
+router.use("/initialize",initialize.routes()); // 接口: /api/initialize
+router.use("/users", login.routes()); // 接口: /api/users
+router.use("/users", auth, register.routes()); // 接口: /api/users
+router.use("/users", auth, users.routes()); // 接口: /api/users
 
 module.exports = router;

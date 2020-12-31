@@ -2,7 +2,7 @@ const query = require("./index");
 const ApiError = require("../lib/apiError");
 const ApiErrorNames = require("../lib/apiErrorNames");
 
-const { checkParams, filterParams, hasAttribute, getParams } = require("./../lib/utils");
+const { filterParams, filterRules, checkParams, hasAttribute } = require("./../lib/utils");
 
 // 用户表部分字段默认参数
 let defaultValue = {
@@ -11,7 +11,7 @@ let defaultValue = {
 	status: "1",
 };
 // 用户表数据准入规则
-let paramsRules = {
+let Rules = {
 	username: [
 		{ required: true, message: "用户名不可为空" },
 		{ pattern: /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/, message: "用户名由2~20位中文、英文、数字和下划线字符组成" },
@@ -35,17 +35,15 @@ let paramsRules = {
 	],
 };
 
-function checkRules(rules, params) {
-	let errorMessage = "";
+function checkRules(params = {}, rules = {}) {
+	let errorMessage = '';
 	let checkResult = Object.keys(params).every((key) => {
 		let value = params[key];
-		console.log(key, value);
 		let rule = rules[key];
 		if (!rule) {
 			return true;
 		}
 		return rule.every((item) => {
-			errorMessage = item.message;
 			// if (item.hasOwnProperty("defaultValue")) {
 			// 	if (!value) {
 			// 		value = item.defaultValue;
@@ -53,87 +51,41 @@ function checkRules(rules, params) {
 			// }
 			if (item.hasOwnProperty("required")) {
 				if (item.required && !value) {
+					errorMessage = item.message;
 					return false;
 				}
 			}
 			if (item.hasOwnProperty("pattern")) {
 				var patt = new RegExp(item.pattern);
 				if (!patt.test(value)) {
+					errorMessage = item.message;
 					return false;
 				}
 			}
-			errorMessage = "";
 			return true;
 		});
 	});
-	return { checkResult, errorMessage };
+	return {
+		checkResult, // 检查结果
+		errorMessage, // 错误提示
+	};
 }
 
 exports.login = async (ctx) => {
-	let content = ["username", "password"];
 	let body = ctx.request.body || {};
-	let params = getParams(content, body);
-
-	// 判断参数是否缺失
-	let lackKey = "";
-	let isLack = content.every((key) => {
-		if (body.hasOwnProperty(key)) {
-			return true;
-		}
-		lackKey = key;
-		return false;
-	});
-	if(!isLack){
-		throw new ApiError(ApiErrorNames.LACK_PARAMS);
+	let content = ["username", "password"];
+	let params = filterParams(content, body); // 获取指定参数
+	let rules = filterRules(content, Rules); // 获取参数对应规则
+	let { checkResult, errorMessage } = checkRules(params, rules); // 校验参数是否合法
+	if (!checkResult) {
+		throw new ApiError(ApiErrorNames.ERROR_PARAMS, errorMessage);
 	}
 
-	// let error = { errors: {}, values: {} };
-	// error = content.map((item) => {
-	// 	error.errors[item] = [];
-	// 	error.values[item] = [];
-	// });
-
-	// let checkList = content.map((item) => {
-	// 	let param = paramsRules[item];
-	// 	return { [item]: param };
-	// });
-	// let rules = getRules(content, paramsRules);
-	// let checkList = [];
-	// // content.map((item) => {
-	// // 	let param = paramsRules[item];
-	// // 	checkList.push({ [item]: param });
-	// // });
-
-	// ctx.session.logged = true;
-	// ctx.session.username = "zhangsan";
-
 	ctx.body = {
-		params: params,
+		params,
+		rules,
+		checkResult,
 		// checkList,
 		name: "login",
 	};
-	// let hasResult = hasAttribute(["username", "password"], body);
-	// if (!hasResult) {
-	// return (ctx.response.body = R.set(hasResult, "200", "参数缺失"));
-	// }
-	// try {
-	// 	let _sql = "insert into users set ?;";
-	// 	let result = await query(_sql, params);
-	// 	if (result) {
-	// 		ctx.response.body = R.set(true, "200", "新增用户成功");
-	// 	} else {
-	// 		ctx.response.body = R.set(false, "200", "新增用户失败");
-	// 	}
-	// } catch (error) {
-	// 	ctx.response.body = R.set(
-	// 		{
-	// 			code: error.code,
-	// 			errno: error.errno,
-	// 			sqlMessage: error.sqlMessage,
-	// 			sql: error.sql,
-	// 		},
-	// 		error.statusCode || error.status,
-	// 		"未知异常"
-	// 	);
-	// }
 };
