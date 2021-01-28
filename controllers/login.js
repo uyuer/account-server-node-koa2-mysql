@@ -13,12 +13,12 @@ let defaultValue = {
 // 用户表数据准入规则
 let Rules = {
 	username: [
-		{ required: true, message: "用户名不可为空" },
-		{ pattern: /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/, message: "用户名由2~20位中文、英文、数字和下划线字符组成" },
+		{ required: true, message: "用户名不可为空", errorType: ApiErrorNames.LACK_PARAMS },
+		{ pattern: /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/, message: "用户名由2~20位中文、英文、数字和下划线字符组成", errorType: ApiErrorNames.ERROR_PARAMS },
 	],
 	password: [
-		{ required: true, message: "密码不可为空" },
-		{ pattern: /^[\w\.\!]{6,18}$/, message: "密码由6~18位A~Za~z0~9_!.的字符组成" },
+		{ required: true, message: "密码不可为空", errorType: ApiErrorNames.LACK_PARAMS },
+		{ pattern: /^[\w\.\!]{6,18}$/, message: "密码由6~18位A~Za~z0~9_!.的字符组成", errorType: ApiErrorNames.ERROR_PARAMS },
 	],
 	male: [
 		{ required: false, message: "" },
@@ -36,7 +36,7 @@ let Rules = {
 };
 
 function checkRules(params = {}, rules = {}) {
-	let errorMessage = '';
+	let errorMessage = '', errorType = '';
 	let checkResult = Object.keys(params).every((key) => {
 		let value = params[key];
 		let rule = rules[key];
@@ -52,6 +52,7 @@ function checkRules(params = {}, rules = {}) {
 			if (item.hasOwnProperty("required")) {
 				if (item.required && !value) {
 					errorMessage = item.message;
+					errorType = item.errorType;
 					return false;
 				}
 			}
@@ -59,6 +60,7 @@ function checkRules(params = {}, rules = {}) {
 				var patt = new RegExp(item.pattern);
 				if (!patt.test(value)) {
 					errorMessage = item.message;
+					errorType = item.errorType;
 					return false;
 				}
 			}
@@ -68,6 +70,7 @@ function checkRules(params = {}, rules = {}) {
 	return {
 		checkResult, // 检查结果
 		errorMessage, // 错误提示
+		errorType, //错误类型
 	};
 }
 
@@ -76,9 +79,9 @@ exports.login = async (ctx) => {
 	let content = ["username", "password"];
 	let params = filterParams(content, body); // 获取指定参数
 	let rules = filterRules(content, Rules); // 获取参数对应规则
-	let { checkResult, errorMessage } = checkRules(params, rules); // 校验参数是否合法
+	let { checkResult, errorMessage, errorType } = checkRules(params, rules); // 校验参数是否合法
 	if (!checkResult) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, errorMessage);
+		throw new ApiError(errorType, errorMessage);
 	}
 
 	ctx.body = {
