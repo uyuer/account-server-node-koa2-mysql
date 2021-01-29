@@ -83,12 +83,34 @@ exports.login = async (ctx) => {
 	if (!checkResult) {
 		throw new ApiError(errorType, errorMessage);
 	}
-
+	let _sql = `select * from users where username='${params.username}' and password='${params.password}'`;
+	console.log(_sql);
+	await query(_sql)
 	ctx.body = {
-		params,
-		rules,
-		checkResult,
-		// checkList,
 		name: "login",
 	};
+	// let result = await query(_sql);
+	// console.log(result,'--');
+	// try {
+	// 	console.log(result);
+	// 	// if (result) {
+	// 	// 	ctx.body = {
+	// 	// 		result
+	// 	// 	};
+	// 	// } else {
+	// 	// 	ctx.body = {
+	// 	// 		result
+	// 	// 	};
+	// 	// }
+	// } catch (error) {
+	// 	throw new ApiError('', error);
+	// }
+
+	// ctx.body = {
+	// 	params,
+	// 	rules,
+	// 	checkResult,
+	// 	// checkList,
+	// 	name: "login",
+	// };
 };
