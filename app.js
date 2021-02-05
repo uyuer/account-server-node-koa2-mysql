@@ -11,7 +11,7 @@ const onerror = require("koa-onerror");
 const index = require("./routes/index");
 const users = require("./routes/users");
 const logUtil = require("./lib/logUtil");
-const response_formatter = require('./middlewares/response_formatter');
+const responseFormatter = require('./lib/responseFormatter');
 
 // session配置
 const session_signed_key = ["some secret hurr"]; // 这个是配合signed属性的签名key
@@ -26,9 +26,9 @@ const session_config = {
 	renew: false /** 是否在Session快过期时刷新Session的有效期。(默认是 false) */,
 };
 const session = koaSession(session_config, app);
-
 // onerror(app);
 app.keys = session_signed_key;
+app.env = 'development'
 
 app.use(session);
 
@@ -67,14 +67,9 @@ app.use(async (ctx, next) => {
 	}
 });
 //添加格式化处理响应结果的中间件，在添加路由之前调用
-//仅对/api开头的url进行格式化处理
-app.use(response_formatter('^/api'));
+//仅对/api开头的url返回内容进行格式化处理
+app.use(responseFormatter('^/api'));
 // routes
 app.use(index.routes(), index.allowedMethods());
-
-// error-handling
-app.on("error", (error, ctx) => {
-	logger.error('server error', error, ctx);
-});
 
 module.exports = app;

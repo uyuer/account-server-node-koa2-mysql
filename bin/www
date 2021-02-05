@@ -7,11 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('demo:server');
 var http = require('http');
-
+app.env = 'dev'
 //引入配置文件
 var config = require('../config');
-
-console.log("process.env.NODE_ENV=" + process.env.NODE_ENV);
 
 var fs = require('fs');
 var logConfig = require('../config/logConfig');

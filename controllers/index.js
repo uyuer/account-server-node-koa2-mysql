@@ -11,8 +11,10 @@ var pool = mysql.createPool({
 });
 
 let query = (sql, values) => {
+    console.log(query)
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
+            console.log(err)
             if (err) {
                 console.log('失败', err)
                 reject(err)

@@ -5,10 +5,10 @@ const config = {
 	database: {
 		HOST: 'localhost', //服务器ip
 		PORT: '3306', //mysql端口号
-		USERNAME: 'accountsAdmin', //mysql用户名
+		USERNAME: 'accounts1Admin', //mysql用户名
 		PASSWORD: 'adgjmptw123', //mysql密码
-		DATABASE: 'accounts', //数据库名称
-		INSECUREAUTH: true,
+		DATABASE: 'accounts1', //数据库名称
+		INSECUREAUTH: false,
 	}
 }
 
