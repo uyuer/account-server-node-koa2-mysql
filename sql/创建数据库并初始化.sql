@@ -16,8 +16,9 @@ CREATE TABLE IF NOT EXISTS accounts1.users  (
 		password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码',
 		male enum('-1','0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '-1' COMMENT '性别(-1:保密,0:女,1:男)',
 		avatar varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '头像(系统随机设定一个默认, 可更换)',
-		email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱',
-		status enum('-1','0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '状态(-1:删除,0:冻结,1正常)',
+		email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱(不可以为空, 由用户自己添加邮箱并激活, 未激活邮箱不能使用邮箱登录)',
+		emailActive tinyint(1) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT '邮箱是否激活(0:未激活,1:激活)',
+		status enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '状态(0:冻结,1正常)',
 		createTime timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
 		updateTime timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
 		PRIMARY KEY (id, username, email) USING BTREE,
@@ -25,6 +26,7 @@ CREATE TABLE IF NOT EXISTS accounts1.users  (
 		UNIQUE INDEX username(username) USING BTREE COMMENT '用户名唯一',
 		UNIQUE INDEX email(email) USING BTREE COMMENT '邮箱唯一'
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
 -- 初始化admin账号
 INSERT INTO accounts1.users (username,password,email) VALUES ('admin','081cec9cad3f244b97cdd9c8c3171827','1064926209@qq.com');
 
