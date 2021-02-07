@@ -2,7 +2,7 @@ const router = require("koa-router")();
 const public = require("./public");
 const users = require("./users");
 
-const { auth } = require("../lib/auth");
+const { auth } = require("../../lib/auth");
 
 router.prefix("/api"); // 添加api前缀
 

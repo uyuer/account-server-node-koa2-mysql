@@ -8,8 +8,7 @@ const koaSession = require("koa-session"); // 导入koa-session
 const onerror = require("koa-onerror");
 
 
-const index = require("./routes/index");
-const users = require("./routes/users");
+const front = require("./front/routes/index");
 const logUtil = require("./lib/logUtil");
 const responseFormatter = require('./lib/responseFormatter');
 
@@ -70,6 +69,6 @@ app.use(async (ctx, next) => {
 //仅对/api开头的url返回内容进行格式化处理
 app.use(responseFormatter('^/api'));
 // routes
-app.use(index.routes(), index.allowedMethods());
+app.use(front.routes(), front.allowedMethods());
 
 module.exports = app;

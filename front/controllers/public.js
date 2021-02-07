@@ -1,8 +1,9 @@
-const { session, schema } = require("../lib/mysqlx");
-const { usersRules, checkRules } = require("../lib/usersRules");
-const ApiError = require("../lib/apiError");
-const ApiErrorNames = require("../lib/apiErrorNames");
-const { filterParams, filterRules } = require("./../lib/utils");
+const { session, schema } = require("../../lib/mysqlx");
+const { usersRules, checkRules, checkField } = require("../../lib/usersRules");
+const ApiError = require("../../lib/apiError");
+const ApiErrorNames = require("../../lib/apiErrorNames");
+const { filterParams, filterRules } = require("../../lib/utils");
+var AES = require("crypto-js/aes");
 
 const formatFetch = (s) => {
 	let values = s.fetchOne();
@@ -22,9 +23,7 @@ exports.register = async (ctx) => {
 	console.log(`请求->用户->注册: register.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let body = ctx.request.body || {};
 	let content = ['username', 'password', 'repassword', 'email'];
-	let params = filterParams(content, body); // 获取指定参数
-	let rules = filterRules(content, usersRules); // 获取参数对应规则
-	let { checkResult, errorMessage, errorType } = checkRules(params, rules); // 校验参数是否合法
+	let { checkResult, errorMessage, errorType } = checkField(content, body); // 校验参数是否合法
 	if (!checkResult) {
 		throw new ApiError(errorType, errorMessage);
 	}
@@ -58,6 +57,7 @@ exports.register = async (ctx) => {
 };
 
 exports.login = async (ctx) => {
+	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let body = ctx.request.body || {};
 	let content = ['username', 'password'];
