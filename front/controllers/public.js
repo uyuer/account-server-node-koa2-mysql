@@ -2,38 +2,24 @@ const { session, schema } = require("../../lib/mysqlx");
 const { usersRules, checkRules, checkField } = require("../../lib/usersRules");
 const ApiError = require("../../lib/apiError");
 const ApiErrorNames = require("../../lib/apiErrorNames");
-const { filterParams, filterRules } = require("../../lib/utils");
-var AES = require("crypto-js/aes");
-
-const formatFetch = (s) => {
-	let values = s.fetchOne();
-	if (!values) {
-		return undefined;
-	}
-	let columns = s.getColumns();
-	let data = columns.reduce((total, currentValue, index, arr) => {
-		let key = currentValue.getColumnName();
-		total[key] = values[index];
-		return total;
-	}, {})
-	return data;
-}
+const { filterParams, filterRules, formatFetch } = require("../../lib/utils");
+// var AES = require("crypto-js/aes");
 
 exports.register = async (ctx) => {
 	console.log(`请求->用户->注册: register.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let body = ctx.request.body || {};
-	let content = ['username', 'password', 'repassword', 'email'];
-	let { checkResult, errorMessage, errorType } = checkField(content, body); // 校验参数是否合法
+	let fields = ['username', 'password', 'repassword', 'email'];
+	let { checkResult, errorMessage, errorType } = checkField(fields, body); // 校验参数是否合法
 	if (!checkResult) {
 		throw new ApiError(errorType, errorMessage);
 	}
-
-	let { username, password, repassword, email } = params;
-	let keys = ['username', 'password', 'email'];
-	let values = [username, password, email]
-	let ins = await schema;
-	let table = ins.getTable('users');
 	try {
+		let { username, password, repassword, email } = params;
+		let keys = ['username', 'password', 'email'];
+		let values = [username, password, email]
+
+		let ins = await schema;
+		let table = ins.getTable('users');
 		// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
 		// 检查用户名是否被使用
 		let usernameBeUsed = await table.select('id').where(`username=:u`).bind('u', username).execute().then(s => formatFetch(s));
@@ -60,21 +46,21 @@ exports.login = async (ctx) => {
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let body = ctx.request.body || {};
-	let content = ['username', 'password'];
-	let params = filterParams(content, body); // 获取指定参数
+	let fields = ['username', 'password'];
+	let params = filterParams(fields, body); // 获取指定参数
 	let { username, password } = params;
 	let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
 	let isEmail = patt.test(username); // 判断是否是邮箱
-	// console.log(isEmail, isEmail ? ['email', 'password'] : content)
-	let rules = filterRules(isEmail ? ['email', 'password'] : content, usersRules); // 获取参数对应规则; 如果是邮箱则获取邮箱对应规则
+	// console.log(isEmail, isEmail ? ['email', 'password'] : fields)
+	let rules = filterRules(isEmail ? ['email', 'password'] : fields, usersRules); // 获取参数对应规则; 如果是邮箱则获取邮箱对应规则
 	let { checkResult, errorMessage, errorType } = checkRules(params, rules); // 校验参数是否合法
 	if (!checkResult) {
 		throw new ApiError(errorType, errorMessage);
 	}
 	// 校验用户两次输入密码是否一致
-	let ins = await schema;
-	let table = ins.getTable('users');
 	try {
+		let ins = await schema;
+		let table = ins.getTable('users');
 		let info = await table.select('id', 'status').where(`${isEmail ? 'email' : 'username'}=:u`).bind('u', username).execute().then(s => formatFetch(s))
 		if (!info) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户不存在');
@@ -125,9 +111,9 @@ exports.loginOut = async (ctx) => {
 // exports.login = async (ctx) => {
 // 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 // 	let body = ctx.request.body || {};
-// 	let content = ['username', 'password'];
-// 	let params = filterParams(content, body); // 获取指定参数
-// 	let rules = filterRules(content, usersRules); // 获取参数对应规则
+// 	let fields = ['username', 'password'];
+// 	let params = filterParams(fields, body); // 获取指定参数
+// 	let rules = filterRules(fields, usersRules); // 获取参数对应规则
 // 	// let { checkResult, errorMessage, errorType } = checkRules(params, rules); // 校验参数是否合法
 // 	// if (!checkResult) {
 // 	// 	throw new ApiError(errorType, errorMessage);

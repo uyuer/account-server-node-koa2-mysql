@@ -7,41 +7,21 @@
 var app = require('../app');
 var debug = require('debug')('demo:server');
 var http = require('http');
-app.env = 'dev'
-//引入配置文件
-var config = require('../config');
 
 var fs = require('fs');
-var logConfig = require('../config/logConfig');
+var path = require("path");
 
-/**
- * 确定目录是否存在，如果不存在则创建目录
- */
-var confirmPath = function (pathStr) {
+//引入配置文件
+var config = require('../config');
+const { initLogs } = require('../config/logConfig');
+const { initUploads } = require('../config/uploadsConfig');
 
-  if (!fs.existsSync(pathStr)) {
-    fs.mkdirSync(pathStr);
-    console.log('createPath: ' + pathStr);
-  }
-}
+const { confirmPath } = require('./../lib/utils');
 
-/**
- * 初始化log相关目录
- */
-var initLogPath = function () {
-  //创建log的根目录'logs'
-  if (logConfig.baseLogPath) {
-    confirmPath(logConfig.baseLogPath)
-    //根据不同的logType创建不同的文件目录
-    for (var i = 0, len = logConfig.appenders.length; i < len; i++) {
-      if (logConfig.appenders[i].path) {
-        confirmPath(logConfig.baseLogPath + logConfig.appenders[i].path);
-      }
-    }
-  }
-}
-
-initLogPath();
+// 初始化logs目录
+initLogs();
+// 初始化uploads目录
+initUploads();
 
 /**
  * Get port from environment and store in Express.

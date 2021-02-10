@@ -11,6 +11,7 @@ const onerror = require("koa-onerror");
 const front = require("./front/routes/index");
 const logUtil = require("./lib/logUtil");
 const responseFormatter = require('./lib/responseFormatter');
+const { avatarFullPath } = require('./config/uploadsConfig');
 
 // session配置
 const session_signed_key = ["some secret hurr"]; // 这个是配合signed属性的签名key
@@ -35,7 +36,15 @@ app.use(
 	koaBody({
 		multipart: true,
 		formidable: {
-			uploadDir: __dirname + "/uploads",
+			multipart: true,
+			keepExtensions: true,
+			uploadDir: avatarFullPath,
+			// onFileBegin: (name, file) => {
+			// 	console.log(name, '123')
+			// 	console.log(file, '123')
+			// 	file.path = file.path
+
+			// }
 		},
 	})
 );
