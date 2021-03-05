@@ -43,7 +43,7 @@ const addOne = async (ctx) => {
 };
 
 // 查找-多条数据
-// 根据userId找到该用户下的数据, 可分页
+// 根据userId找到该用户下的账户数据, 可分页
 const findMultiple = async (ctx) => {
 	console.log(`请求->账户->查询用户的账户列表: accounts.findMultiple; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
@@ -81,7 +81,7 @@ const findMultiple = async (ctx) => {
 
 };
 
-// 查找-指定ID查找用户信息
+// 查找-指定ID查找账户信息
 const findOne = async (ctx) => {
 	console.log(`请求->账户->查询数据详细信息: accounts.findOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
@@ -112,7 +112,7 @@ const findOne = async (ctx) => {
 	}
 };
 
-// 更新一条用户信息
+// 更新一条账户信息
 const updateOne = async (ctx) => {
 	console.log(`请求->账户->更新一条数据: accounts.updateOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
@@ -127,7 +127,7 @@ const updateOne = async (ctx) => {
 			throw new ApiError(errorType, errorMessage);
 		}
 		// 执行操作---
-		// 结构数据
+		// 解构数据
 		let { id, userId, ...other } = validParams;
 		// 校验是否存在于数据库中
 		let ins = await schema;
@@ -156,14 +156,46 @@ const updateOne = async (ctx) => {
 	}
 };
 
-// 删除用户
-// const deleteOneUser = async (ctx) => {
-
-// };
+// 删除
+const deleteOne = async (ctx) => {
+	console.log(`请求->账户->删除一条数据: accounts.deleteOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+	try {
+		let body = ctx.request.body || {};
+		let fields = { id: '' };
+		let validParams = Object.keys(fields).reduce((total, key, index, arr) => {
+			total[key] = body[key] || fields[key];
+			return total;
+		}, {})
+		let { checkResult, errorMessage, errorType } = verifyParams(validParams); // 校验有效参数是否合法
+		if (!checkResult) {
+			throw new ApiError(errorType, errorMessage);
+		}
+		// 执行操作---
+		// 解构数据
+		let { id } = validParams;
+		// 校验是否存在于数据库中
+		let ins = await schema;
+		let table = ins.getTable('accounts');
+		// 检查数据是否存在
+		let info = await table.select('id').where(`id=:id`).bind('id', id).execute().then(s => formatFetch(s))
+		if (!info) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '数据不存在');
+		}
+		// 如果存在, 则删除
+		let result = await table.delete().where(`id=:id`).bind('id', id).execute().then(s => {
+			let count = s.getAffectedItemsCount();
+			return count ? true : false
+		})
+		ctx.body = result;
+	} catch (error) {
+		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+	}
+};
 
 module.exports = {
 	addOne,
 	findMultiple,
 	findOne,
 	updateOne,
+	deleteOne,
 }

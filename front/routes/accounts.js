@@ -10,11 +10,6 @@ router.get('/findOne', controller.findOne)
 
 router.post('/updateOne', controller.updateOne)
 
-// router.post('/delete', controller.deleteOneUser)
-
-
-
-
-// router.post('/uploadProfilePicture', controller.uploadProfilePicture)
+router.post('/deleteOne', controller.deleteOne)
 
 module.exports = router
