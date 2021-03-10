@@ -1,8 +1,9 @@
 const router = require('koa-router')()
-const koaBody = require("koa-body");
 const controller = require('./../controllers/accounts');
 
 router.post('/addOne', controller.addOne)
+
+router.post('/addMultiple', controller.addMultiple)
 
 router.get('/findMultiple', controller.findMultiple) // 查找多条数据
 

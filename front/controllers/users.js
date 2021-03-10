@@ -2,30 +2,35 @@ const fs = require('fs');
 const path = require('path')
 const formidable = require('formidable');
 const { session, schema } = require("../../lib/mysqlx");
-const { usersRules, checkRules, checkField } = require("../../lib/usersRules");
+const {
+	rules, // 参数规则
+	screeningRules, // 筛选参数对应规则
+	verifyRules, // 校验是否符合规则
+	verifyParams, // 验证参数是否合法
+} = require("../../lib/accountsRules");
 const ApiError = require("../../lib/apiError");
 const ApiErrorNames = require("../../lib/apiErrorNames");
-const { filterParams, filterRules, formatFetch } = require("../../lib/utils");
+const { formatFetch, formatFetchAll } = require("../../lib/utils");
 const config = require('./../../config/default');
 const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/uploadsConfig');
 
 // 查找-指定ID查找用户信息
 const findOne = async (ctx) => {
-	console.log(`请求->用户->更新一条数据: updateOne.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+	console.log(`请求->用户->查询一条数据: users.findOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let body = ctx.request.query || {};
-	let fields = ['id'];
-	let { checkResult, errorMessage, errorType } = checkField(fields, body); // 校验参数是否合法
-	if (!checkResult) {
-		throw new ApiError(errorType, errorMessage);
-	}
-	let { id } = body;
+	let fields = { id: '' };
+	// 校验参数并返回有效参数
+	let validParams = verifyParams(fields, body)
+	// 执行操作---
+	let { id } = validParams;
 	try {
 		let ins = await schema;
 		let table = ins.getTable('users');
 		let userinfo = await table
-			.select('id', 'username', 'male', 'avatar', 'email', 'emailActive', 'status', 'createTime', 'updateTime')
+			.select('id', 'username', 'male', 'avatarId', 'email', 'emailActive', 'status', 'createTime', 'updateTime')
 			.where(`id=:id`)
 			.bind('id', id)
+			.select()
 			.execute()
 			.then(s => formatFetch(s))
 		if (!userinfo) {
@@ -41,7 +46,7 @@ const findOne = async (ctx) => {
 const updateOne = async (ctx) => {
 	console.log(`请求->用户->更新一条数据: updateOne.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let body = ctx.request.body || {};
-	let fields = ['id', 'male', 'avatar']; // 校验字段
+	let fields = ['id', 'male', 'avatarId']; // 校验字段
 	// body(用户上传参数) fields(插入表中的字段,也叫合法字段)
 	// 取出body和fields中共同的字段, 此处字段有可能有也有可能没有,只取出共同包含的
 	let params = Object.keys(body).reduce((total, key) => {
@@ -71,7 +76,7 @@ const updateOne = async (ctx) => {
 				throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
 			}
 		}
-		// table.update().where('id=:id').bind('id', id).set('male', '1').set('avatar', '1').execute().then(res => {
+		// table.update().where('id=:id').bind('id', id).set('male', '1').set('avatarId', '1').execute().then(res => {
 		// 	console.log(res)
 		// })
 		let updater = Object.keys(other).reduce((total, currentValue) => {

@@ -3,14 +3,14 @@ const path = require('path')
 const formidable = require('formidable');
 const { session, schema } = require("../../lib/mysqlx");
 const {
-	accountsRules, // 参数规则
+	rules, // 参数规则
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
 } = require("../../lib/accountsRules");
 const ApiError = require("../../lib/apiError");
 const ApiErrorNames = require("../../lib/apiErrorNames");
-const { filterParams, filterRules, formatFetch, formatFetchAll } = require("../../lib/utils");
+const { formatFetch, formatFetchAll } = require("../../lib/utils");
 const config = require('./../../config/default');
 const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/uploadsConfig');
 
@@ -21,15 +21,9 @@ const addOne = async (ctx) => {
 		let body = ctx.request.body || {};
 		// let fields = ['userId', 'website', 'websiteUrl', 'account', 'accountName', 'password', 'status', 'remark'];
 		let fields = { userId: '', website: '', websiteUrl: '', account: '', accountName: '', password: '', remark: '' };
-		let validParams = Object.keys(fields).reduce((total, key, index, arr) => {
-			total[key] = body[key] || fields[key];
-			return total;
-		}, {})
-		let { checkResult, errorMessage, errorType } = verifyParams(validParams); // 校验有效参数是否合法
-		if (!checkResult) {
-			throw new ApiError(errorType, errorMessage);
-		}
-
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		// 执行操作---
 		let keys = Object.keys(validParams); // 数组
 		let values = keys.map(key => validParams[key]) // 数组
 
@@ -42,6 +36,40 @@ const addOne = async (ctx) => {
 	}
 };
 
+// 同时插入多条数据
+const addMultiple = async (ctx) => {
+	console.log(`请求->账户->添加多条数据: accounts.addMultiple; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+	try {
+		let body = ctx.request.body || {};
+		let fields = { userId: '', website: '', websiteUrl: '', account: '', accountName: '', password: '', remark: '' };
+		// 校验参数并返回有效参数
+		let validParams = body.map(item => verifyParams(fields, item))
+		// 执行操作---
+		let keys = Object.keys(fields);
+
+		let ins = await schema;
+		let table = ins.getTable('accounts');
+		let inserter = validParams.reduce((total, currentValue) => {
+			let values = Object.keys(currentValue).map(key => {
+				return currentValue[key]
+			})
+			console.log(values)
+			total.values(values);
+			return total;
+		}, table.insert(keys))
+		let result = await inserter.execute().then(s => {
+			let warningsCount = s.getWarningsCount();
+			if (warningsCount === 0) {
+				return true;
+			}
+			return false;
+		})
+		ctx.body = result;
+	} catch (error) {
+		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+	}
+}
+
 // 查找-多条数据
 // 根据userId找到该用户下的账户数据, 可分页
 const findMultiple = async (ctx) => {
@@ -49,15 +77,9 @@ const findMultiple = async (ctx) => {
 	try {
 		let body = ctx.request.query || {};
 		let fields = { userId: '', pageNum: 1, pageSize: 10 };
-		let validParams = Object.keys(fields).reduce((total, key, index, arr) => {
-			total[key] = body[key] || fields[key];
-			return total;
-		}, {})
-		let { checkResult, errorMessage, errorType } = verifyParams(validParams); // 校验有效参数是否合法
-		if (!checkResult) {
-			throw new ApiError(errorType, errorMessage);
-		}
-
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		// 执行操作---
 		let { userId, pageNum, pageSize } = validParams;
 
 		let ins = await schema;
@@ -87,15 +109,9 @@ const findOne = async (ctx) => {
 	try {
 		let body = ctx.request.query || {};
 		let fields = { id: '' };
-		let validParams = Object.keys(fields).reduce((total, key, index, arr) => {
-			total[key] = body[key] || fields[key];
-			return total;
-		}, {})
-		let { checkResult, errorMessage, errorType } = verifyParams(validParams); // 校验有效参数是否合法
-		if (!checkResult) {
-			throw new ApiError(errorType, errorMessage);
-		}
-
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		// 执行操作---
 		let { id } = validParams;
 
 		let ins = await schema;
@@ -118,14 +134,8 @@ const updateOne = async (ctx) => {
 	try {
 		let body = ctx.request.body || {};
 		let fields = { id: '', userId: '', website: '', websiteUrl: '', account: '', accountName: '', password: '', status: '0', remark: '' };
-		let validParams = Object.keys(fields).reduce((total, key, index, arr) => {
-			total[key] = body[key] || fields[key];
-			return total;
-		}, {})
-		let { checkResult, errorMessage, errorType } = verifyParams(validParams); // 校验有效参数是否合法
-		if (!checkResult) {
-			throw new ApiError(errorType, errorMessage);
-		}
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
 		// 执行操作---
 		// 解构数据
 		let { id, userId, ...other } = validParams;
@@ -162,14 +172,8 @@ const deleteOne = async (ctx) => {
 	try {
 		let body = ctx.request.body || {};
 		let fields = { id: '' };
-		let validParams = Object.keys(fields).reduce((total, key, index, arr) => {
-			total[key] = body[key] || fields[key];
-			return total;
-		}, {})
-		let { checkResult, errorMessage, errorType } = verifyParams(validParams); // 校验有效参数是否合法
-		if (!checkResult) {
-			throw new ApiError(errorType, errorMessage);
-		}
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
 		// 执行操作---
 		// 解构数据
 		let { id } = validParams;
@@ -194,6 +198,7 @@ const deleteOne = async (ctx) => {
 
 module.exports = {
 	addOne,
+	addMultiple,
 	findMultiple,
 	findOne,
 	updateOne,
