@@ -1,39 +1,49 @@
-const { session, schema } = require("../../lib/mysqlx");
+const { session, schema } = require('../../lib/mysqlx');
 const {
 	rules, // 参数规则
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../../lib/usersRules");
-const ApiError = require("../../lib/apiError");
-const ApiErrorNames = require("../../lib/apiErrorNames");
-const { filterParams, filterRules, formatFetch } = require("../../lib/utils");
+} = require('../../lib/usersRules');
+const ApiError = require('../../lib/apiError');
+const ApiErrorNames = require('../../lib/apiErrorNames');
+const { filterParams, filterRules, formatFetch } = require('../../lib/utils');
 // var AES = require("crypto-js/aes");
 
 // 用户注册
 exports.register = async (ctx) => {
-	console.log(`请求->用户->注册: public.register; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+	console.log(`请求->用户->注册: public.register; method: ${ctx.request.method}; url: ${ctx.request.url} `);
 	try {
 		let body = ctx.request.body || {};
 		let fields = { username: '', password: '', repassword: '', email: '' };
 		// 校验参数并返回有效参数
-		let validParams = verifyParams(fields, body)
+		let validParams = verifyParams(fields, body);
 		// 执行操作---
 		let { username, password, repassword, email } = validParams;
 		let avatarId = Math.ceil(Math.random() * 6);
 		let keys = ['username', 'password', 'email', 'avatarId'];
-		let values = [username, password, email, avatarId]
+		let values = [username, password, email, avatarId];
 
 		let ins = await schema;
 		let table = ins.getTable('users');
 		// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
 		// 检查用户名是否被使用
-		let usernameBeUsed = await table.select('id').where(`username=:u`).bind('u', username).execute().then(s => formatFetch(s));
+		let usernameBeUsed = await table
+			.select('id')
+			.where(`username=:u`)
+			.bind('u', username)
+			.execute()
+			.then((s) => formatFetch(s));
 		if (usernameBeUsed) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '此用户名已被使用');
 		}
 		// 检查邮箱是否被使用
-		let emailBeUsed = await table.select('id').where(`email=:u`).bind('u', email).execute().then(s => formatFetch(s));
+		let emailBeUsed = await table
+			.select('id')
+			.where(`email=:u`)
+			.bind('u', email)
+			.execute()
+			.then((s) => formatFetch(s));
 		if (emailBeUsed) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '此邮箱已被使用'); // 邮箱已被使用
 		}
@@ -51,62 +61,40 @@ exports.register = async (ctx) => {
 // 用户登录
 exports.login = async (ctx) => {
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
-	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.body || {};
-	let fields = { username: '', password: '' };
-	// 校验参数并返回有效参数
-	let validParams = verifyParams(fields, body)
-	// 执行操作---
-	let params = filterParams(fields, body); // 获取指定参数
-	let { username, password } = validParams;
-	let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
-	let isEmail = patt.test(username); // 判断是否是邮箱
-	// console.log(isEmail, isEmail ? ['email', 'password'] : fields)
-	let rules = filterRules(isEmail ? ['email', 'password'] : fields, usersRules); // 获取参数对应规则; 如果是邮箱则获取邮箱对应规则
-	let { checkResult, errorMessage, errorType } = checkRules(params, rules); // 校验参数是否合法
-	if (!checkResult) {
-		throw new ApiError(errorType, errorMessage);
-	}
-	// 校验用户两次输入密码是否一致
+	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
 	try {
+		let body = ctx.request.body || {};
+		let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+		let isEmail = patt.test(body.username); // 判断是否是邮箱
+		let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, { ...body, email: body.username });
+		// 执行操作---
+		let { username, password } = body;
+
 		let ins = await schema;
 		let table = ins.getTable('users');
-		let info = await table.select('id', 'status').where(`${isEmail ? 'email' : 'username'}=:u`).bind('u', username).execute().then(s => formatFetch(s))
-		if (!info) {
-			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户不存在');
-		} else {
-			let { status } = info;
-			if (status === '0') {
-				throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
-			}
-		}
 		let userinfo = await table
-			.select('id', 'username', 'male', 'avatar', 'email', 'status', 'createTime', 'updateTime')
+			.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
 			.where(`${isEmail ? 'email' : 'username'}=:u and password=:p`)
 			.bind('u', username)
 			.bind('p', password)
 			.execute()
-			.then(s => {
-				let values = s.fetchOne();
-				if (!values) {
-					throw new ApiError(ApiErrorNames.ERROR_PARAMS, '密码错误');
-				}
-				let columns = s.getColumns();
-				let data = columns.reduce((total, currentValue, index, arr) => {
-					let key = currentValue.getColumnName();
-					total[key] = values[index];
-					return total;
-				}, {})
-				return data;
-			})
-		if (userinfo) {
-			ctx.session = {
-				username: userinfo.username,
-				id: userinfo.id,
-				email: userinfo.email,
-				isLogin: true
+			.then((s) => formatFetch(s));
+		if (!userinfo) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '账户名或密码错误');
+		} else {
+			let { status } = userinfo;
+			if (status === '0') {
+				throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
 			}
 		}
+		ctx.session = {
+			username: userinfo.username,
+			id: userinfo.id,
+			email: userinfo.email,
+			isLogin: true,
+		};
 		ctx.body = userinfo;
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
@@ -114,9 +102,9 @@ exports.login = async (ctx) => {
 };
 
 exports.loginOut = async (ctx) => {
-	ctx.session = null
-	ctx.body = true
-}
+	ctx.session = null;
+	ctx.body = true;
+};
 
 // exports.login = async (ctx) => {
 // 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
@@ -134,7 +122,7 @@ exports.loginOut = async (ctx) => {
 // 	let table = ins.getTable('users');
 // 	try {
 // 		let res = await table
-// 			.select('id', 'username', 'male', 'avatar', 'email', 'status', 'createTime', 'updateTime')
+// 			.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
 // 		let res1 = await res.where('username=:u and password=:p')
 // 			.bind('u', username)
 // 			.bind('p', password)

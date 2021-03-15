@@ -154,7 +154,7 @@ const updateOne = async (ctx) => {
 		}, table.update().where('id=:id and userId=:userId').bind('id', id).bind('userId', userId))
 		let result = await updater.execute().then(s => {
 			let warningsCount = s.getWarningsCount();
-			let affectCount = s.getAffectedRowsCount();
+			let affectCount = s.getAffectedItemsCount();
 			if (warningsCount === 0) {
 				return true;
 			}
