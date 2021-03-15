@@ -1,22 +1,28 @@
 const { session, schema } = require("../../lib/mysqlx");
-const { usersRules, checkRules, checkField } = require("../../lib/usersRules");
+const {
+	rules, // 参数规则
+	screeningRules, // 筛选参数对应规则
+	verifyRules, // 校验是否符合规则
+	verifyParams, // 验证参数是否合法
+} = require("../../lib/usersRules");
 const ApiError = require("../../lib/apiError");
 const ApiErrorNames = require("../../lib/apiErrorNames");
 const { filterParams, filterRules, formatFetch } = require("../../lib/utils");
 // var AES = require("crypto-js/aes");
 
+// 用户注册
 exports.register = async (ctx) => {
-	console.log(`请求->用户->注册: register.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.body || {};
-	let fields = ['username', 'password', 'repassword', 'email'];
-	let { checkResult, errorMessage, errorType } = checkField(fields, body); // 校验参数是否合法
-	if (!checkResult) {
-		throw new ApiError(errorType, errorMessage);
-	}
+	console.log(`请求->用户->注册: public.register; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
-		let { username, password, repassword, email } = params;
-		let keys = ['username', 'password', 'email'];
-		let values = [username, password, email]
+		let body = ctx.request.body || {};
+		let fields = { username: '', password: '', repassword: '', email: '' };
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		// 执行操作---
+		let { username, password, repassword, email } = validParams;
+		let avatarId = Math.ceil(Math.random() * 6);
+		let keys = ['username', 'password', 'email', 'avatarId'];
+		let values = [username, password, email, avatarId]
 
 		let ins = await schema;
 		let table = ins.getTable('users');
@@ -42,13 +48,17 @@ exports.register = async (ctx) => {
 	}
 };
 
+// 用户登录
 exports.login = async (ctx) => {
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let body = ctx.request.body || {};
-	let fields = ['username', 'password'];
+	let fields = { username: '', password: '' };
+	// 校验参数并返回有效参数
+	let validParams = verifyParams(fields, body)
+	// 执行操作---
 	let params = filterParams(fields, body); // 获取指定参数
-	let { username, password } = params;
+	let { username, password } = validParams;
 	let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
 	let isEmail = patt.test(username); // 判断是否是邮箱
 	// console.log(isEmail, isEmail ? ['email', 'password'] : fields)

@@ -17,13 +17,13 @@ const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/up
 // 查找-指定ID查找用户信息
 const findOne = async (ctx) => {
 	console.log(`请求->用户->查询一条数据: users.findOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.query || {};
-	let fields = { id: '' };
-	// 校验参数并返回有效参数
-	let validParams = verifyParams(fields, body)
-	// 执行操作---
-	let { id } = validParams;
 	try {
+		let body = ctx.request.query || {};
+		let fields = { id: '' };
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		// 执行操作---
+		let { id } = validParams;
 		let ins = await schema;
 		let table = ins.getTable('users');
 		let userinfo = await table
@@ -44,27 +44,14 @@ const findOne = async (ctx) => {
 
 // 更新一条用户信息
 const updateOne = async (ctx) => {
-	console.log(`请求->用户->更新一条数据: updateOne.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.body || {};
-	let fields = ['id', 'male', 'avatarId']; // 校验字段
-	// body(用户上传参数) fields(插入表中的字段,也叫合法字段)
-	// 取出body和fields中共同的字段, 此处字段有可能有也有可能没有,只取出共同包含的
-	let params = Object.keys(body).reduce((total, key) => {
-		let res = fields.find(item => key === item);
-		if (res) {
-			total[key] = body[key];
-		}
-		return total;
-	}, {});
-	if (Object.keys(params).length <= 0) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, '参数缺失');
-	}
-	let { checkResult, errorMessage, errorType } = checkField(Object.keys(params), params); // 校验参数是否合法
-	if (!checkResult) {
-		throw new ApiError(errorType, errorMessage);
-	}
-	let { id, ...other } = params;
+	console.log(`请求->用户->更新一条数据: users.updateOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
+		let body = ctx.request.body || {};
+		let fields = { id: '', male: '', avatarId: '' }; // 校验字段
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		// 执行操作---
+		let { id, ...other } = validParams;
 		let ins = await schema;
 		let table = ins.getTable('users');
 		let info = await table.select('id', 'status').where(`id=:u`).bind('u', id).execute().then(s => formatFetch(s))
@@ -76,29 +63,18 @@ const updateOne = async (ctx) => {
 				throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
 			}
 		}
-		// table.update().where('id=:id').bind('id', id).set('male', '1').set('avatarId', '1').execute().then(res => {
-		// 	console.log(res)
-		// })
 		let updater = Object.keys(other).reduce((total, currentValue) => {
 			total.set(currentValue, other[currentValue])
 			return total;
 		}, table.update().where('id=:id').bind('id', id))
 		let result = await updater.execute().then(s => {
 			let warningsCount = s.getWarningsCount();
-			let affectCount = s.getAffectedRowsCount();
-			if (warningsCount === 0) {
+			let AffectedItemsCount = s.getAffectedItemsCount();
+			if (warningsCount === 0 && AffectedItemsCount === 1) {
 				return true;
 			}
 			return false;
-			// console.log(s)
-			// console.log(s.getWarnings())
-			// console.log(s.getWarningsCount())
-			// console.log(s.getAffectedItemsCount())
-			// console.log(s.getAffectedRowsCount())
-			// console.log(s.getAutoIncrementValue())
-			// console.log(s.getGeneratedIds())
 		})
-		console.log(result)
 		ctx.body = result;
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
@@ -111,32 +87,30 @@ const updateOne = async (ctx) => {
 // };
 
 // 用户头像上传
-// 参数 id: 用户id
-// 参数 file: 用户头像文件
 const uploadProfilePicture = async (ctx) => {
 	console.log(`请求->用户->用户头像上传: uploadProfilePicture.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.body || {}; // 为空
-	let fields = ['id'];
-	let { checkResult, errorMessage, errorType } = checkField(fields, body); // 校验参数是否合法
-	if (!checkResult) {
-		throw new ApiError(errorType, errorMessage);
-	}
-	const file = ctx.request.files.file;
-	if (!file) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户头像不能为空');
-	}
-	const { path: filePath, name, type, lastModifiedDate } = file;
-	// 检查上传文件是否合法, 如果非法则删除文件
-	let allowedType = ['image/png', 'image/jpeg', 'image/gif']
-	if (!allowedType.find(t => t === type)) {
-		fs.unlinkSync(filePath)
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, '头像只支持' + allowedType.toString() + '格式');
-	}
-	// 获取到上传文件名
-	let fileName = path.basename(filePath);
 	try {
+		let body = ctx.request.body || {}; // 为空
+		let fields = { id: '' };
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		const file = ctx.request.files.file;
+		if (!file) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户头像不能为空');
+		}
+		// 执行操作---
+		const { path: filePath, name, type, lastModifiedDate } = file;
+		// 检查上传文件是否合法, 如果非法则删除文件
+		let allowedType = ['image/png', 'image/jpeg', 'image/gif']
+		if (!allowedType.find(t => t === type)) {
+			fs.unlinkSync(filePath)
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '头像只支持' + allowedType.toString() + '格式');
+		}
+		// 获取到上传文件名
+		let fileName = path.basename(filePath);
+
 		// 将用户id,文件名,文件路径存入数据库
-		let { id: userId } = body;
+		let { id: userId } = validParams;
 		let keys = ['userId', 'fileName'];
 		let values = [userId, fileName];
 		let ins = await schema;
