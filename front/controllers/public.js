@@ -7,7 +7,7 @@ const {
 } = require('../../lib/usersRules');
 const ApiError = require('../../lib/apiError');
 const ApiErrorNames = require('../../lib/apiErrorNames');
-const { filterParams, filterRules, formatFetch } = require('../../lib/utils');
+const { filterParams, filterRules, formatFetch, formatFetchAll } = require('../../lib/utils');
 // var AES = require("crypto-js/aes");
 
 // 用户注册
@@ -19,13 +19,22 @@ exports.register = async (ctx) => {
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, body);
 		// 执行操作---
+		let ins = await schema;
+		let table = ins.getTable('users');
+
+		// 随机设定头像
+		let avatarIdArr = await ins.getTable('avatars').select('id').where('isSystemCreate=1').execute().then(s => formatFetchAll(s));
+		if (!avatarIdArr) {
+			throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '未知错误');
+		}
+		let avatarIndex = Math.floor(Math.random() * 6);
+		let { id: avatarId } = avatarIdArr[avatarIndex];
+
+		// 构建用户数据
 		let { username, password, repassword, email } = validParams;
-		let avatarId = Math.ceil(Math.random() * 6);
 		let keys = ['username', 'password', 'email', 'avatarId'];
 		let values = [username, password, email, avatarId];
 
-		let ins = await schema;
-		let table = ins.getTable('users');
 		// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
 		// 检查用户名是否被使用
 		let usernameBeUsed = await table

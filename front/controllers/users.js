@@ -30,13 +30,26 @@ const findOne = async (ctx) => {
 			.select('id', 'username', 'male', 'avatarId', 'email', 'emailActive', 'status', 'createTime', 'updateTime')
 			.where(`id=:id`)
 			.bind('id', id)
-			.select()
 			.execute()
 			.then(s => formatFetch(s))
 		if (!userinfo) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户不存在');
 		}
-		ctx.body = userinfo;
+		let avatarInfo = await ins.getTable('avatars')
+			.select('isSystemCreate', 'fileName', 'createTime')
+			.where(`id=:id`)
+			.bind('id', userinfo.avatarId)
+			.execute()
+			.then(s => formatFetch(s))
+		let { isSystemCreate, fileName, createTime } = avatarInfo;
+
+		ctx.body = {
+			...userinfo,
+			isSystemCreate,
+			avatarFileName: fileName,
+			avatarFullPath: fileName ? (ctx.request.header.host + avatarPath + '/' + fileName) : null,
+			avatarCreateTime: createTime
+		};
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
 	}
@@ -87,6 +100,8 @@ const updateOne = async (ctx) => {
 // };
 
 // 用户头像上传
+// 参数: id; 用户id
+// 参数: file; 头像file
 const uploadProfilePicture = async (ctx) => {
 	console.log(`请求->用户->用户头像上传: uploadProfilePicture.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
@@ -109,13 +124,32 @@ const uploadProfilePicture = async (ctx) => {
 		// 获取到上传文件名
 		let fileName = path.basename(filePath);
 
-		// 将用户id,文件名,文件路径存入数据库
+		// 将用户id,文件名
 		let { id: userId } = validParams;
-		let keys = ['userId', 'fileName'];
-		let values = [userId, fileName];
+		let keys = ['fileName'];
+		let values = [fileName];
 		let ins = await schema;
-		let table = ins.getTable('avatars');
-		let res = await table.insert(keys).values(values).execute();
+		// 校验该用户是否存在
+		let userInfo = await ins.getTable('users').select('id', 'status').where(`id=:u`).bind('u', userId).execute().then(s => formatFetch(s))
+		if (!userInfo) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户不存在');
+		} else {
+			let { status } = userInfo;
+			if (status === '0') {
+				throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
+			}
+		}
+		// 用户存在, 保存上传记录
+		let uploadInfo = await ins.getTable('avatars').insert(keys).values(values).execute();
+		let avatarId = uploadInfo.getAutoIncrementValue();
+		if (!uploadInfo.getAffectedItemsCount() || !avatarId) {
+			throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '上传失败');
+		}
+		// 图片上传成功, 更新用户表记录
+		let userUpdateInfo = await ins.getTable('users').update().where('id=:id').bind('id', userId).set('avatarId', avatarId).execute();
+		if (!userUpdateInfo.getAffectedItemsCount()) {
+			throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '上传成功, 但更新失败');
+		}
 		ctx.body = true;
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);

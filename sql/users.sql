@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 本地用户accounts1Admin
+ Source Server         : 本地用户root
  Source Server Type    : MySQL
  Source Server Version : 80023
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 05/03/2021 09:48:13
+ Date: 16/03/2021 17:49:43
 */
 
 SET NAMES utf8mb4;
@@ -46,6 +46,7 @@ INSERT INTO `users` VALUES (77, 'test4', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gyc
 INSERT INTO `users` VALUES (79, 'test2', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', NULL, '1064926202@qq.com', 0, '1', '2021-02-05 11:46:53', '2021-02-07 11:26:51');
 INSERT INTO `users` VALUES (81, 'test3', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', NULL, '1064926203@qq.com', 0, '1', '2021-02-05 15:01:21', '2021-02-07 11:26:53');
 INSERT INTO `users` VALUES (82, 'test5', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', NULL, '1064926205@qq.com', 0, '1', '2021-02-05 15:26:27', '2021-02-07 11:26:54');
-INSERT INTO `users` VALUES (87, 'test6', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '0', '1', '1064926206@qq.com', 0, '1', '2021-02-05 15:43:52', '2021-02-08 15:48:55');
+INSERT INTO `users` VALUES (87, 'test6', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '0', '8', '1064926206@qq.com', 0, '1', '2021-02-05 15:43:52', '2021-03-16 17:47:25');
+INSERT INTO `users` VALUES (88, 'uyao1', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', '6', 'uyao1@qq.com', 0, '1', '2021-03-16 17:24:47', '2021-03-16 17:24:47');
 
 SET FOREIGN_KEY_CHECKS = 1;

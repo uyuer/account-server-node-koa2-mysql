@@ -38,6 +38,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `username`(`username`) USING BTREE COMMENT '用户名唯一',
   UNIQUE INDEX `email`(`email`) USING BTREE COMMENT '邮箱唯一'
 ) ENGINE = InnoDB AUTO_INCREMENT = 88 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
 -- ----------------------------
 -- Records of users
 -- ----------------------------
@@ -46,7 +47,9 @@ INSERT INTO `users` VALUES (77, 'test4', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gyc
 INSERT INTO `users` VALUES (79, 'test2', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', NULL, '1064926202@qq.com', 0, '1', '2021-02-05 11:46:53', '2021-02-07 11:26:51');
 INSERT INTO `users` VALUES (81, 'test3', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', NULL, '1064926203@qq.com', 0, '1', '2021-02-05 15:01:21', '2021-02-07 11:26:53');
 INSERT INTO `users` VALUES (82, 'test5', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', NULL, '1064926205@qq.com', 0, '1', '2021-02-05 15:26:27', '2021-02-07 11:26:54');
-INSERT INTO `users` VALUES (87, 'test6', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '0', '1', '1064926206@qq.com', 0, '1', '2021-02-05 15:43:52', '2021-02-08 15:48:55');
+INSERT INTO `users` VALUES (87, 'test6', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '0', '8', '1064926206@qq.com', 0, '1', '2021-02-05 15:43:52', '2021-03-16 17:47:25');
+INSERT INTO `users` VALUES (88, 'uyao1', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '-1', '6', 'uyao1@qq.com', 0, '1', '2021-03-16 17:24:47', '2021-03-16 17:24:47');
+
 SET FOREIGN_KEY_CHECKS = 1;
 -- 创建账户表
 -- ----------------------------
@@ -66,7 +69,8 @@ CREATE TABLE `accounts`  (
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
 -- ----------------------------
 -- Records of accounts
 -- ----------------------------
@@ -82,6 +86,7 @@ INSERT INTO `accounts` VALUES (11, 87, '百度5修改', 'http://baidu.xiugai.com
 INSERT INTO `accounts` VALUES (12, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 15:44:36', '2021-03-04 17:58:26');
 INSERT INTO `accounts` VALUES (13, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 15:44:49', '2021-03-04 17:58:26');
 INSERT INTO `accounts` VALUES (14, 87, '百度5修改2', 'http://baidu.xiugai2.com', '13777072927', '号码拖时间修改2', '1234567890', '0', '', '2021-03-04 17:19:58', '2021-03-04 18:00:45');
+
 SET FOREIGN_KEY_CHECKS = 1;
 -- 创建头像表
 -- ----------------------------
@@ -90,17 +95,22 @@ SET FOREIGN_KEY_CHECKS = 1;
 DROP TABLE IF EXISTS `avatars`;
 CREATE TABLE `avatars`  (
   `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '头像id',
-  `userId` int(0) NOT NULL COMMENT '所属用户id',
   `fileName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '图片名',
+  `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
   `createTime` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
 -- ----------------------------
 -- Records of avatars
 -- ----------------------------
-INSERT INTO `avatars` VALUES (1, 87, 'upload_f6ec56599a2f1ae9fd46a54931abf1de.png', '2021-02-22 14:59:06');
-INSERT INTO `avatars` VALUES (2, 87, 'upload_2a43f3ced771a4d373f78ff806f6b55c.png', '2021-02-22 14:59:06');
-INSERT INTO `avatars` VALUES (3, 87, 'upload_96769e6d4d367cf0badb5cb44596c9ef.png', '2021-02-22 14:59:06');
-INSERT INTO `avatars` VALUES (4, 87, 'upload_1403e1d96199be04380bc9010db273db.png', '2021-02-22 14:59:06');
-INSERT INTO `avatars` VALUES (5, 87, 'upload_87c1082cd0ec9d80d0c7bf1372aa1e52.png', '2021-02-22 14:59:21');
+INSERT INTO `avatars` VALUES (1, '1.png', 1, '2021-03-16 17:14:02');
+INSERT INTO `avatars` VALUES (2, '2.png', 1, '2021-03-16 17:14:02');
+INSERT INTO `avatars` VALUES (3, '3.png', 1, '2021-03-16 17:14:02');
+INSERT INTO `avatars` VALUES (4, '4.png', 1, '2021-03-16 17:14:02');
+INSERT INTO `avatars` VALUES (5, '5.png', 1, '2021-03-16 17:14:02');
+INSERT INTO `avatars` VALUES (6, '6.png', 1, '2021-03-16 17:25:30');
+INSERT INTO `avatars` VALUES (7, 'upload_f1d823ae671a805b5fa5cacced648e79.jpg', 0, '2021-03-16 17:42:41');
+INSERT INTO `avatars` VALUES (8, 'upload_0c924114e38a634aa68679687917ee21.jpg', 0, '2021-03-16 17:47:25');
+
 SET FOREIGN_KEY_CHECKS = 1;
