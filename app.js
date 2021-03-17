@@ -9,6 +9,7 @@ const onerror = require("koa-onerror");
 
 
 const front = require("./front/routes/index");
+const backRoute = require("./back/routes/index");
 const logUtil = require("./lib/logUtil");
 const responseFormatter = require('./lib/responseFormatter');
 const { avatarFullPath } = require('./config/uploadsConfig');
@@ -75,10 +76,18 @@ app.use(async (ctx, next) => {
 		logUtil.logError(ctx, error, ms);
 	}
 });
+
 //添加格式化处理响应结果的中间件，在添加路由之前调用
 //仅对/api开头的url返回内容进行格式化处理
 app.use(responseFormatter('^/api'));
 // routes
 app.use(front.routes(), front.allowedMethods());
+
+// 发送HTML页面
+app.use(async (ctx) => {
+	let url = ctx.request.url;
+	let html = await backRoute(url);
+	ctx.body = html;
+})
 
 module.exports = app;
