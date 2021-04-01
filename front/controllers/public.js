@@ -10,12 +10,20 @@ const ApiErrorNames = require('../../lib/apiErrorNames');
 const { filterParams, filterRules, formatFetch, formatFetchAll } = require('../../lib/utils');
 // var AES = require("crypto-js/aes");
 
+// // AES加密 加密用户网站密码
+// let ciphertext = CryptoJS.AES.encrypt('123456', '123456').toString();
+// let plaintext = CryptoJS.AES.decrypt(ciphertext, '123456').toString(CryptoJS.enc.Utf8);
+// console.log(ciphertext, plaintext)
+
+// // sha256加密 加密用户登录密码, 用户密码为密钥key
+// CryptoJS.SHA256('123456', '123456').toString()
+
 // 用户注册
 exports.register = async (ctx) => {
 	console.log(`请求->用户->注册: public.register; method: ${ctx.request.method}; url: ${ctx.request.url} `);
 	try {
 		let body = ctx.request.body || {};
-		let fields = { username: '', password: '', repassword: '', email: '' };
+		let fields = { username: '', password: '', repassword: '', email: '', male: '-1' };
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, body);
 		// 执行操作---
@@ -31,9 +39,9 @@ exports.register = async (ctx) => {
 		let { id: avatarId } = avatarIdArr[avatarIndex];
 
 		// 构建用户数据
-		let { username, password, repassword, email } = validParams;
-		let keys = ['username', 'password', 'email', 'avatarId'];
-		let values = [username, password, email, avatarId];
+		let { username, password, repassword, email, male } = validParams;
+		let keys = ['username', 'password', 'email', 'male', 'avatarId'];
+		let values = [username, password, email, male, avatarId];
 
 		// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
 		// 检查用户名是否被使用
@@ -110,10 +118,51 @@ exports.login = async (ctx) => {
 	}
 };
 
-exports.loginOut = async (ctx) => {
+exports.logout = async (ctx) => {
 	ctx.session = null;
 	ctx.body = true;
 };
+
+const nodemailer = require('nodemailer')
+
+const userEmail = 'uyuers@qq.com'
+const transporter = nodemailer.createTransport({
+	// host: 'smtp.qq.email',
+	service: 'qq',
+	secureConnection: true,
+	auth: {
+		user: userEmail,
+		pass: 'fweqxtkyzlnbbech'  //这个是开启`POP3/SMTP/IMAP`的授权码
+	}
+})
+exports.sendcode = async (ctx) => {
+	// const email = ctx.query.email
+	const email = '271654537@qq.com';
+	// 记得检测该 email 是否已注册
+	const code = Math.random().toString().slice(2, 6)
+	ctx.session.emailcode = code //随机验证码
+	const mailOptions = {
+		from: userEmail,
+		cc: userEmail,
+		to: email,
+		subject: '验证码',
+		text: '说明内容',
+		html: '<h2>【个人网站】</h2>验证码：<span>${code}</span>'
+	}
+	try {
+		await transporter.sendMail(mailOptions)
+		ctx.body = {
+			code: 0,
+			message: '邮箱验证码发送成功！',
+		}
+	} catch (e) {
+		ctx.body = {
+			code: -1,
+			message: '邮箱验证码发送失败！',
+		}
+	}
+};
+
 
 // exports.login = async (ctx) => {
 // 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)

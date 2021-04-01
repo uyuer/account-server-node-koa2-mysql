@@ -25,6 +25,7 @@
     "koa-views": "^6.2.0",
     "log4js": "^6.3.0",
     "node-rsa": "^1.1.1",
+    "nodemailer": "^6.5.0",
     "pug": "^2.0.3"
   },
   "devDependencies": {

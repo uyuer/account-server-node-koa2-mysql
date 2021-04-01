@@ -1,25 +1,22 @@
--- 创建数据库
-create DATABASE accounts1;
--- 创建用户
-use mysql;
-create user 'accounts1Admin'@'%' IDENTIFIED by 'adgjmptw123';
--- 授权用户
-grant SELECT,
-	INSERT,
-	UPDATE,
-	DELETE,
-	CREATE VIEW,
-	EXECUTE,
-	DROP,
-	INDEX,
-	ALTER on accounts1.* to 'accounts1Admin'@'%';
-FLUSH PRIVILEGES;
-SHOW GRANTS for accounts1Admin;
--- 初始化表
-use accounts1;
--- 创建用户表
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : root
+ Source Server Type    : MySQL
+ Source Server Version : 80021
+ Source Host           : localhost:3306
+ Source Schema         : accounts1
+
+ Target Server Type    : MySQL
+ Target Server Version : 80021
+ File Encoding         : 65001
+
+ Date: 01/04/2021 20:31:00
+*/
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
 -- ----------------------------
 -- Table structure for accounts
 -- ----------------------------

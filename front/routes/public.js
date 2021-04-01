@@ -3,6 +3,7 @@ const controller = require("./../controllers/public");
 
 router.post("/register", controller.register);
 router.post("/login", controller.login);
-router.get("/loginOut", controller.loginOut);
+router.get("/logout", controller.logout);
+router.get("/sendcode", controller.sendcode);
 
 module.exports = router;
