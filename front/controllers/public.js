@@ -7,6 +7,7 @@ const {
 } = require('../../lib/usersRules');
 const ApiError = require('../../lib/apiError');
 const ApiErrorNames = require('../../lib/apiErrorNames');
+const { sendEmailCode } = require('../../lib/email')
 const { filterParams, filterRules, formatFetch, formatFetchAll } = require('../../lib/utils');
 // var AES = require("crypto-js/aes");
 
@@ -23,7 +24,7 @@ exports.register = async (ctx) => {
 	console.log(`请求->用户->注册: public.register; method: ${ctx.request.method}; url: ${ctx.request.url} `);
 	try {
 		let body = ctx.request.body || {};
-		let fields = { username: '', password: '', repassword: '', email: '', male: '-1' };
+		let fields = { username: '', password: '', repassword: '', email: '', male: '-1', code: '' };
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, body);
 		// 执行操作---
@@ -75,6 +76,43 @@ exports.register = async (ctx) => {
 	}
 };
 
+// 发送邮件验证码
+exports.sendcode = async (ctx) => {
+	console.log(`请求->用户->发送邮箱: public.sendcode; method: ${ctx.request.method}; url: ${ctx.request.url} `);
+	try {
+		let body = ctx.request.body || {};
+		let fields = { email: '' };
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body);
+		// 执行操作---
+		let ins = await schema;
+		let table = ins.getTable('users');
+
+		const { email } = validParams;
+		const code = Math.random().toString().slice(2, 6); // 随机生成的验证码
+
+		// 检查邮箱是否被使用
+		let emailBeUsed = await table
+			.select('id')
+			.where(`email=:u`)
+			.bind('u', email)
+			.execute()
+			.then((s) => formatFetch(s));
+		if (emailBeUsed) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '此邮箱已被使用'); // 邮箱已被使用
+		}
+		// 发送验证码
+		const res = await sendEmailCode(email, code);
+		// 记录验证码
+		
+
+		console.log(res)
+		ctx.body = true;
+	} catch (error) {
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
+	}
+};
+
 // 用户登录
 exports.login = async (ctx) => {
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
@@ -121,46 +159,6 @@ exports.login = async (ctx) => {
 exports.logout = async (ctx) => {
 	ctx.session = null;
 	ctx.body = true;
-};
-
-const nodemailer = require('nodemailer')
-
-const userEmail = 'uyuers@qq.com'
-const transporter = nodemailer.createTransport({
-	// host: 'smtp.qq.email',
-	service: 'qq',
-	secureConnection: true,
-	auth: {
-		user: userEmail,
-		pass: 'fweqxtkyzlnbbech'  //这个是开启`POP3/SMTP/IMAP`的授权码
-	}
-})
-exports.sendcode = async (ctx) => {
-	// const email = ctx.query.email
-	const email = '271654537@qq.com';
-	// 记得检测该 email 是否已注册
-	const code = Math.random().toString().slice(2, 6)
-	ctx.session.emailcode = code //随机验证码
-	const mailOptions = {
-		from: userEmail,
-		cc: userEmail,
-		to: email,
-		subject: '验证码',
-		text: '说明内容',
-		html: '<h2>【个人网站】</h2>验证码：<span>${code}</span>'
-	}
-	try {
-		await transporter.sendMail(mailOptions)
-		ctx.body = {
-			code: 0,
-			message: '邮箱验证码发送成功！',
-		}
-	} catch (e) {
-		ctx.body = {
-			code: -1,
-			message: '邮箱验证码发送失败！',
-		}
-	}
 };
 
 

@@ -1,16 +1,16 @@
 const router = require('koa-router')()
-const controller = require('./../controllers/accounts');
+const controller = require('./../controllers');
 
-router.post('/addOne', controller.addOne)
+router.post('/addOne', controller.accounts.addOne)
 
-router.post('/addMultiple', controller.addMultiple)
+router.post('/addMultiple', controller.accounts.addMultiple)
 
-router.get('/findMultiple', controller.findMultiple) // 查找多条数据
+router.get('/findMultiple', controller.accounts.findMultiple) // 查找多条数据
 
-router.get('/findOne', controller.findOne)
+router.get('/findOne', controller.accounts.findOne)
 
-router.post('/updateOne', controller.updateOne)
+router.post('/updateOne', controller.accounts.updateOne)
 
-router.post('/deleteOne', controller.deleteOne)
+router.post('/deleteOne', controller.accounts.deleteOne)
 
 module.exports = router
