@@ -63,7 +63,7 @@ CREATE TABLE `avatars`  (
   `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '头像id',
   `fileName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '图片名',
   `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
-  `createTime` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
+  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
@@ -84,13 +84,14 @@ INSERT INTO `avatars` VALUES (8, 'upload_0c924114e38a634aa68679687917ee21.jpg', 
 -- ----------------------------
 DROP TABLE IF EXISTS `registeremail`;
 CREATE TABLE `registeremail`  (
-  `id` int(0) NOT NULL COMMENT '自增id',
+  `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id',
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '注册邮箱',
   `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发送至邮箱的验证码',
-  `expires` timestamp(0) NOT NULL COMMENT '过期时间',
+  `expires` bigint(0) NOT NULL COMMENT '过期时间',
+  `expiresTime` timestamp(0) NOT NULL COMMENT '过期时间(直观版)',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '当用户注册的时候\r\n用户输入邮箱->获取验证码\r\n表中没有同样的邮箱->无处理\r\n表中有同样的邮箱->\r\n(例子: \r\n当一个用户用testa@qq.com获取了验证码后, 另一个用户也用testa@qq.com获取验证码, 这时数据库中存在两个相同邮箱\r\n解决办法:\r\n先到先得, 无论有几个邮箱, 当用户包含验证码的完整注册信息提交后即可)\r\n\r\n当同一个用户获取两次或多次验证码(这时候没有超时)\r\n解决办法就是, 直接让该邮箱其他验证码失效, 生成新的验证码' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '当用户注册的时候\r\n用户输入邮箱->获取验证码\r\n表中没有同样的邮箱->无处理\r\n表中有同样的邮箱->\r\n(例子: \r\n当一个用户用testa@qq.com获取了验证码后, 另一个用户也用testa@qq.com获取验证码, 这时数据库中存在两个相同邮箱\r\n解决办法:\r\n先到先得, 无论有几个邮箱, 当用户包含验证码的完整注册信息提交后即可)\r\n\r\n当同一个用户获取两次或多次验证码(这时候没有超时)\r\n解决办法就是, 直接让该邮箱其他验证码失效, 生成新的验证码' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of registeremail
@@ -102,11 +103,11 @@ CREATE TABLE `registeremail`  (
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
   `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '用户id',
+  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱(不可以为空, 由用户自己添加邮箱并激活, 未激活邮箱不能使用邮箱登录)',
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
   `password` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码',
   `male` enum('0','1','2') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '性别(0:女,1:男,2:保密)',
   `avatarId` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '头像(系统随机设定一个默认, 可更换)',
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱(不可以为空, 由用户自己添加邮箱并激活, 未激活邮箱不能使用邮箱登录)',
   `emailActive` tinyint(1) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT '邮箱是否激活(0:未激活,1:激活)',
   `status` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '状态(0:冻结,1正常)',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
@@ -120,17 +121,18 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (42, 'admin', 'U2FsdGVkX1/YEDIGp1HIZHmXMUDomIrYNzdT37OXQsU=', '2', NULL, '1064926209@qq.com', 0, '1', '2021-02-03 15:59:59', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (77, 'test4', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, '1064926204@qq.com', 0, '0', '2021-02-04 16:09:14', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (79, 'test2', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, '1064926202@qq.com', 0, '1', '2021-02-05 11:46:53', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (81, 'test3', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, '1064926203@qq.com', 0, '1', '2021-02-05 15:01:21', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (82, 'test5', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, '1064926205@qq.com', 0, '1', '2021-02-05 15:26:27', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (87, 'test6', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', '8', '1064926206@qq.com', 0, '1', '2021-02-05 15:43:52', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (88, 'uyao1', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', '6', 'uyao1@qq.com', 0, '1', '2021-03-16 17:24:47', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (89, 'test000', '123456', '2', '5', '1064926000@qq.com', 0, '1', '2021-03-31 21:17:09', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (90, 'test001', '123456', '2', '1', '1064926001@qq.com', 0, '1', '2021-03-31 21:30:31', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (91, 'test002', '123456', '2', '5', '1064926002@qq.com', 0, '1', '2021-03-31 21:32:12', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (92, 'test003', '123456', '2', '5', '1064926003@qq.com', 0, '1', '2021-03-31 21:34:15', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (93, 'test004', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '2', '1064926004@qq.com', 0, '1', '2021-04-01 15:29:45', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (42, '1064926209@qq.com', 'admin', 'U2FsdGVkX1/YEDIGp1HIZHmXMUDomIrYNzdT37OXQsU=', '2', NULL, 0, '1', '2021-02-03 15:59:59', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (77, '1064926204@qq.com', 'test4', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, 0, '0', '2021-02-04 16:09:14', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (79, '1064926202@qq.com', 'test2', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, 0, '1', '2021-02-05 11:46:53', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (81, '1064926203@qq.com', 'test3', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, 0, '1', '2021-02-05 15:01:21', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (82, '1064926205@qq.com', 'test5', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', NULL, 0, '1', '2021-02-05 15:26:27', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (87, '1064926206@qq.com', 'test6', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', '8', 0, '1', '2021-02-05 15:43:52', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (88, 'uyao1@qq.com', 'uyao1', 'U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=', '2', '6', 0, '1', '2021-03-16 17:24:47', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (89, '1064926000@qq.com', 'test000', '123456', '2', '5', 0, '1', '2021-03-31 21:17:09', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (90, '1064926001@qq.com', 'test001', '123456', '2', '1', 0, '1', '2021-03-31 21:30:31', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (91, '1064926002@qq.com', 'test002', '123456', '2', '5', 0, '1', '2021-03-31 21:32:12', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (92, '1064926003@qq.com', 'test003', '123456', '2', '5', 0, '1', '2021-03-31 21:34:15', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (93, '1064926004@qq.com', 'test004', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '2', 0, '1', '2021-04-01 15:29:45', '2021-04-01 15:45:40');
 
 SET FOREIGN_KEY_CHECKS = 1;
+

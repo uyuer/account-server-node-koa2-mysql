@@ -1,9 +1,9 @@
-const public = require('./public');
+const ordinary = require('./ordinary');
 const users = require('./users');
 const accounts = require('./accounts');
 
 module.exports = {
-    public,
+    ordinary,
     users,
     accounts,
 }

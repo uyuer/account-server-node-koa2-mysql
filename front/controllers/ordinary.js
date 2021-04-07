@@ -1,3 +1,4 @@
+const dayjs = require('dayjs')
 const { session, schema } = require('../../lib/mysqlx');
 const {
 	rules, // 参数规则
@@ -18,35 +19,43 @@ const { filterParams, filterRules, formatFetch, formatFetchAll } = require('../.
 
 // // sha256加密 加密用户登录密码, 用户密码为密钥key
 // CryptoJS.SHA256('123456', '123456').toString()
+// let ins = await schema;
+
+async function getTable() {
+	let ins = await schema;
+	let usersTable = ins.getTable('users');
+	let avatarsTable = ins.getTable('avatars');
+	let registerEmailTable = ins.getTable('registeremail');
+	return {
+		usersTable, avatarsTable, registerEmailTable
+	}
+}
 
 // 用户注册
 exports.register = async (ctx) => {
-	console.log(`请求->用户->注册: public.register; method: ${ctx.request.method}; url: ${ctx.request.url} `);
+	console.log(`请求->用户->注册: ordinary.register; method: ${ctx.request.method}; url: ${ctx.request.url} `);
 	try {
 		let body = ctx.request.body || {};
-		let fields = { username: '', password: '', repassword: '', email: '', male: '-1', code: '' };
+		let fields = { username: '', password: '', repassword: '', male: '2', email: '', code: '' };
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, body);
 		// 执行操作---
-		let ins = await schema;
-		let table = ins.getTable('users');
+		let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
-		// 随机设定头像
-		let avatarIdArr = await ins.getTable('avatars').select('id').where('isSystemCreate=1').execute().then(s => formatFetchAll(s));
-		if (!avatarIdArr) {
-			throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '未知错误');
-		}
-		let avatarIndex = Math.floor(Math.random() * 6);
-		let { id: avatarId } = avatarIdArr[avatarIndex];
-
-		// 构建用户数据
-		let { username, password, repassword, email, male } = validParams;
-		let keys = ['username', 'password', 'email', 'male', 'avatarId'];
-		let values = [username, password, email, male, avatarId];
-
+		let { username, password, repassword, male, email, code } = validParams;
 		// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
+		// 检查邮箱是否被使用
+		let emailBeUsed = await usersTable
+			.select('id')
+			.where(`email=:e`)
+			.bind('e', email)
+			.execute()
+			.then((s) => formatFetch(s));
+		if (emailBeUsed) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '此邮箱已被使用'); // 邮箱已被使用
+		}
 		// 检查用户名是否被使用
-		let usernameBeUsed = await table
+		let usernameBeUsed = await usersTable
 			.select('id')
 			.where(`username=:u`)
 			.bind('u', username)
@@ -55,22 +64,50 @@ exports.register = async (ctx) => {
 		if (usernameBeUsed) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '此用户名已被使用');
 		}
-		// 检查邮箱是否被使用
-		let emailBeUsed = await table
-			.select('id')
-			.where(`email=:u`)
-			.bind('u', email)
-			.execute()
-			.then((s) => formatFetch(s));
-		if (emailBeUsed) {
-			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '此邮箱已被使用'); // 邮箱已被使用
-		}
 		// 校验用户两次输入密码是否一致
 		if (password !== repassword) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '两次输入密码不一致');
 		}
-		let res = await table.insert(keys).values(values).execute();
-		ctx.body = true;
+		// 检查邮箱验证码是否正确
+		let registerEmail = await registerEmailTable
+			.select('id', 'expires', 'expiresTime')
+			.where(`email=:email and code=:code`)
+			.bind('email', email)
+			.bind('code', code)
+			.execute()
+			.then((s) => formatFetch(s));
+		if (!registerEmail) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '验证码错误'); // 邮箱已被使用
+		}
+		let { id: registerEmailId, expires } = registerEmail;
+		let currentTime = dayjs();
+		// 当前时间在过期时间之后
+		if (currentTime.isAfter(dayjs(expires))) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '验证码已过期, 请重新获取'); // 邮箱已被使用
+		}
+		// 随机设定头像
+		let avatarIdArr = await avatarsTable.select('id').where('isSystemCreate=1').execute().then(s => formatFetchAll(s));
+		if (!avatarIdArr) {
+			throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '未知错误, 未查询出系统头像');
+		}
+		let avatarIndex = Math.floor(Math.random() * 6);
+		let { id: avatarId } = avatarIdArr[avatarIndex];
+		// 构建用户数据
+		let keys = ['username', 'password', 'email', 'male', 'avatarId'];
+		let values = [username, password, email, male, avatarId];
+		// 插入数据库,注册成功后删除注册验证码
+		let result = await usersTable.insert(keys).values(values).execute().then(async s => {
+			let affectCount = s.getAffectedItemsCount();
+			if (affectCount === 1) {
+				return await registerEmailTable.delete().where('id=:id').bind('id', registerEmailId).execute().then(s => {
+					let count = s.getAffectedItemsCount();
+					return count ? true : false
+				})
+			}
+			return false;
+		});
+		ctx.session.email = {};
+		ctx.body = result;
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
 	}
@@ -78,35 +115,49 @@ exports.register = async (ctx) => {
 
 // 发送邮件验证码
 exports.sendcode = async (ctx) => {
-	console.log(`请求->用户->发送邮箱: public.sendcode; method: ${ctx.request.method}; url: ${ctx.request.url} `);
+	console.log(`请求->用户->发送邮箱: ordinary.sendcode; method: ${ctx.request.method}; url: ${ctx.request.url} `);
+	console.log(ctx.session.email)
 	try {
 		let body = ctx.request.body || {};
 		let fields = { email: '' };
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, body);
 		// 执行操作---
-		let ins = await schema;
-		let table = ins.getTable('users');
+		let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
 		const { email } = validParams;
 		const code = Math.random().toString().slice(2, 6); // 随机生成的验证码
-
 		// 检查邮箱是否被使用
-		let emailBeUsed = await table
-			.select('id')
-			.where(`email=:u`)
-			.bind('u', email)
+		let emailBeUsed = await usersTable.select('id')
+			.where(`email=:email`)
+			.bind('e', email)
 			.execute()
 			.then((s) => formatFetch(s));
 		if (emailBeUsed) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '此邮箱已被使用'); // 邮箱已被使用
 		}
+		// 检查是否频繁操作, 将用户操作计入session;
+		let currentTime = dayjs();
+		let { sendTime = '', count = 0 } = ctx.session.email || {};
+		// 暂时不用count
+		// count++;
+		// if (count >= 5) {
+		// 	throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '操作频繁');
+		// }
+		if (sendTime) {
+			if (dayjs(sendTime).isAfter(dayjs(currentTime).subtract(60, 'second'))) {
+				throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '操作频繁');
+			}
+		}
+		ctx.session.email = { sendTime: currentTime.valueOf(), sendTimeFormat: currentTime.format(), count }
 		// 发送验证码
-		const res = await sendEmailCode(email, code);
-		// 记录验证码
-		
-
-		console.log(res)
+		await sendEmailCode(email, code);
+		// 记录验证码到数据库
+		let expires = currentTime.add(30, 'minute');
+		let keys = ['email', 'code', 'expires', 'expiresTime']
+		let values = [email, code, expires.valueOf(), expires.format()];
+		let res = await registerEmailTable.insert(keys).values(values).execute();
+		// 结束
 		ctx.body = true;
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
@@ -125,11 +176,11 @@ exports.login = async (ctx) => {
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, { ...body, email: body.username });
 		// 执行操作---
+		let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+
 		let { username, password } = body;
 
-		let ins = await schema;
-		let table = ins.getTable('users');
-		let userinfo = await table
+		let userinfo = await usersTable
 			.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
 			.where(`${isEmail ? 'email' : 'username'}=:u and password=:p`)
 			.bind('u', username)
