@@ -11,8 +11,8 @@ const {
 const ApiError = require("../../lib/apiError");
 const ApiErrorNames = require("../../lib/apiErrorNames");
 const { formatFetch, formatFetchAll } = require("../../lib/utils");
-const config = require('./../../config/default');
-const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/uploadsConfig');
+const config = require('./../../config');
+const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/upload');
 
 // 添加一条数据
 const addOne = async (ctx) => {

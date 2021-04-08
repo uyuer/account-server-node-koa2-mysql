@@ -11,45 +11,46 @@ const {
 const ApiError = require("../../lib/apiError");
 const ApiErrorNames = require("../../lib/apiErrorNames");
 const { formatFetch, formatFetchAll } = require("../../lib/utils");
-const config = require('./../../config/default');
-const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/uploadsConfig');
+const config = require('./../../config');
+const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/upload');
 
 // 查找-指定ID查找用户信息
 const findOne = async (ctx) => {
 	console.log(`请求->用户->查询一条数据: users.findOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
-		let body = ctx.request.query || {};
-		let fields = { id: '' };
-		// 校验参数并返回有效参数
-		let validParams = verifyParams(fields, body)
-		// 执行操作---
-		let { id } = validParams;
-		let ins = await schema;
-		let table = ins.getTable('users');
-		let userinfo = await table
-			.select('id', 'username', 'male', 'avatarId', 'email', 'emailActive', 'status', 'createTime', 'updateTime')
-			.where(`id=:id`)
-			.bind('id', id)
-			.execute()
-			.then(s => formatFetch(s))
-		if (!userinfo) {
-			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户不存在');
-		}
-		let avatarInfo = await ins.getTable('avatars')
-			.select('isSystemCreate', 'fileName', 'createTime')
-			.where(`id=:id`)
-			.bind('id', userinfo.avatarId)
-			.execute()
-			.then(s => formatFetch(s))
-		let { isSystemCreate, fileName, createTime } = avatarInfo;
+		// let body = ctx.request.query || {};
+		// let fields = { id: '' };
+		// // 校验参数并返回有效参数
+		// let validParams = verifyParams(fields, body)
+		// // 执行操作---
+		// let { id } = validParams;
+		// let ins = await schema;
+		// let table = ins.getTable('users');
+		// let userinfo = await table
+		// 	.select('id', 'username', 'male', 'avatarId', 'email', 'emailActive', 'status', 'createTime', 'updateTime')
+		// 	.where(`id=:id`)
+		// 	.bind('id', id)
+		// 	.execute()
+		// 	.then(s => formatFetch(s))
+		// if (!userinfo) {
+		// 	throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户不存在');
+		// }
+		// let avatarInfo = await ins.getTable('avatars')
+		// 	.select('isSystemCreate', 'fileName', 'createTime')
+		// 	.where(`id=:id`)
+		// 	.bind('id', userinfo.avatarId)
+		// 	.execute()
+		// 	.then(s => formatFetch(s))
+		// let { isSystemCreate, fileName, createTime } = avatarInfo;
 
-		ctx.body = {
-			...userinfo,
-			isSystemCreate,
-			avatarFileName: fileName,
-			avatarFullPath: fileName ? (ctx.request.header.host + avatarPath + '/' + fileName) : null,
-			avatarCreateTime: createTime
-		};
+		// ctx.body = {
+		// 	...userinfo,
+		// 	isSystemCreate,
+		// 	avatarFileName: fileName,
+		// 	avatarFullPath: fileName ? (ctx.request.header.host + avatarPath + '/' + fileName) : null,
+		// 	avatarCreateTime: createTime
+		// };
+		ctx.body = true;
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
 	}

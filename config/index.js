@@ -1,9 +1,15 @@
-var development_env = require('./development');
-var test_env = require('./test');
+require('dotenv').config('./env');
 
-//根据不同的NODE_ENV，输出不同的配置对象，默认输出development的配置对象
-// console.log(development_env, process.env.NODE_ENV || 'development')
+const {
+    SECRET
+} = process.env;
+
+const database = require('./database');
+const upload = require('./upload');
+
 module.exports = {
-    development: development_env,
-    test: test_env
-}[process.env.NODE_ENV || 'development']
+    port: 3000, // 项目启动端口
+    SECRET,
+    database,
+    upload,
+}

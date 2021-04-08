@@ -13,8 +13,8 @@ var path = require("path");
 
 //引入配置文件
 var config = require('../config');
-const { initLogs } = require('../config/logConfig');
-const { initUploads } = require('../config/uploadsConfig');
+const { initLogs } = require('../config/log');
+const { initUploads } = require('../config/upload');
 
 const { confirmPath } = require('./../lib/utils');
 

@@ -1,5 +1,6 @@
 const dayjs = require('dayjs')
-const { session, schema } = require('../../lib/mysqlx');
+const jsonwebtoken = require('jsonwebtoken');
+const { schema } = require('../../lib/mysqlx');
 const {
 	rules, // 参数规则
 	screeningRules, // 筛选参数对应规则
@@ -10,6 +11,7 @@ const ApiError = require('../../lib/apiError');
 const ApiErrorNames = require('../../lib/apiErrorNames');
 const { sendEmailCode } = require('../../lib/email')
 const { filterParams, filterRules, formatFetch, formatFetchAll } = require('../../lib/utils');
+const config = require('../../config')
 // var AES = require("crypto-js/aes");
 
 // // AES加密 加密用户网站密码
@@ -129,7 +131,7 @@ exports.sendcode = async (ctx) => {
 		const code = Math.random().toString().slice(2, 6); // 随机生成的验证码
 		// 检查邮箱是否被使用
 		let emailBeUsed = await usersTable.select('id')
-			.where(`email=:email`)
+			.where(`email=:e`)
 			.bind('e', email)
 			.execute()
 			.then((s) => formatFetch(s));
@@ -168,17 +170,20 @@ exports.sendcode = async (ctx) => {
 exports.login = async (ctx) => {
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
+	console.log(process.env.NODE_ENV, '123')
 	try {
+		// 是否设置登录频繁操作的验证
+		// .....
 		let body = ctx.request.body || {};
 		let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
 		let isEmail = patt.test(body.username); // 判断是否是邮箱
 		let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, { ...body, email: body.username });
+		let { password } = validParams;
+		let username = validParams.username || validParams.email;
 		// 执行操作---
 		let { usersTable, avatarsTable, registerEmailTable } = await getTable();
-
-		let { username, password } = body;
 
 		let userinfo = await usersTable
 			.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
@@ -195,13 +200,26 @@ exports.login = async (ctx) => {
 				throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
 			}
 		}
+		ctx.state.user = {
+			username: userinfo.username,
+			id: userinfo.id,
+			email: userinfo.email,
+		}
 		ctx.session = {
 			username: userinfo.username,
 			id: userinfo.id,
 			email: userinfo.email,
 			isLogin: true,
 		};
-		ctx.body = userinfo;
+		ctx.body = {
+			user: userinfo,
+			token: jsonwebtoken.sign(
+				{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
+				'12345678',
+				{ expiresIn: '1h' }
+			),
+			config
+		};
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
 	}
