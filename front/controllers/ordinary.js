@@ -70,6 +70,7 @@ exports.register = async (ctx) => {
 		if (password !== repassword) {
 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '两次输入密码不一致');
 		}
+		// 搁置:另一种流程思路,只需要这个邮箱对应的最新的验证码
 		// 检查邮箱验证码是否正确
 		let registerEmail = await registerEmailTable
 			.select('id', 'expires', 'expiresTime')
@@ -170,7 +171,7 @@ exports.sendcode = async (ctx) => {
 exports.login = async (ctx) => {
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
-	console.log(process.env.NODE_ENV, '123')
+	// console.log(process.env.NODE_ENV, '123')
 	try {
 		// 是否设置登录频繁操作的验证
 		// .....
@@ -215,10 +216,9 @@ exports.login = async (ctx) => {
 			user: userinfo,
 			token: jsonwebtoken.sign(
 				{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
-				'12345678',
+				config.SECRET,
 				{ expiresIn: '1h' }
 			),
-			config
 		};
 	} catch (error) {
 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
@@ -229,45 +229,3 @@ exports.logout = async (ctx) => {
 	ctx.session = null;
 	ctx.body = true;
 };
-
-
-// exports.login = async (ctx) => {
-// 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-// 	let body = ctx.request.body || {};
-// 	let fields = ['username', 'password'];
-// 	let params = filterParams(fields, body); // 获取指定参数
-// 	let rules = filterRules(fields, usersRules); // 获取参数对应规则
-// 	// let { checkResult, errorMessage, errorType } = checkRules(params, rules); // 校验参数是否合法
-// 	// if (!checkResult) {
-// 	// 	throw new ApiError(errorType, errorMessage);
-// 	// }
-// 	// 校验用户两次输入密码是否一致
-// 	let { username, password } = params;
-// 	let ins = await schema;
-// 	let table = ins.getTable('users');
-// 	try {
-// 		let res = await table
-// 			.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
-// 		let res1 = await res.where('username=:u and password=:p')
-// 			.bind('u', username)
-// 			.bind('p', password)
-// 			.execute()
-// 		let res2 = await res.where('email=:u and password=:p')
-// 			.bind('u', username)
-// 			.bind('p', password)
-// 			.execute()
-// 		let values = res1.fetchOne() || res2.fetchOne()
-// 		if (!values) {
-// 			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '');
-// 		}
-// 		let columns = res1.getColumns();
-// 		let data = columns.reduce((total, currentValue, index, arr) => {
-// 			let key = currentValue.getColumnName();
-// 			total[key] = values[index];
-// 			return total;
-// 		}, {})
-// 		ctx.body = data;
-// 	} catch (error) {
-// 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
-// 	}
-// };
