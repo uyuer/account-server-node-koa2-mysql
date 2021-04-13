@@ -85,7 +85,7 @@ const findMultiple = async (ctx) => {
 		let ins = await schema;
 		let table = ins.getTable('accounts');
 		let userinfo = await table
-			.select('id', 'userId', 'website', 'websiteUrl', 'account', 'accountName', 'password', 'status', 'createTime', 'updateTime')
+			.select('id', 'userId', 'website', 'websiteUrl', 'account', 'accountName', 'password', 'status', 'remark', 'createTime', 'updateTime')
 			.where(`userId=:userId`)
 			.bind('userId', userId)
 			.limit(pageSize)
@@ -117,7 +117,7 @@ const findOne = async (ctx) => {
 		let ins = await schema;
 		let table = ins.getTable('accounts');
 		let userinfo = await table
-			.select('id', 'userId', 'website', 'websiteUrl', 'account', 'accountName', 'password', 'status', 'createTime', 'updateTime')
+			.select('id', 'userId', 'website', 'websiteUrl', 'account', 'accountName', 'password', 'status', 'remark', 'createTime', 'updateTime')
 			.where(`id=:id`)
 			.bind('id', id)
 			.execute()

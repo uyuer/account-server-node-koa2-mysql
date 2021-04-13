@@ -27,13 +27,16 @@ DROP TABLE IF EXISTS `accounts`;
 CREATE TABLE `accounts`  (
   `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '账号id',
   `userId` int(0) NOT NULL COMMENT '所属用户id',
-  `website` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网站名称',
-  `websiteUrl` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网站地址',
-  `account` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '账号',
-  `accountName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '该网站下账号名',
+  `site` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网站名称',
+  `website` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网站地址',
+  `introduction` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网站简介, 可以添加一些说明文字',
+  `account` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '注册账户(在网站注册的时候使用的账户)',
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '加密密码(使用AES加密, 需要密钥来解密)',
+  `associates` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '绑定或关联的账户(注册账户关联或绑定的账户)可能有多个关联(字符串数组形式)',
+  `nickname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网站上的昵称',
   `status` enum('0','1','2') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '状态(0:正常,1:停用,2:注销)',
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `tags` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标签(对网站功能用途进行分类时使用,例如:娱乐,工作等)',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -42,18 +45,18 @@ CREATE TABLE `accounts`  (
 -- ----------------------------
 -- Records of accounts
 -- ----------------------------
-INSERT INTO `accounts` VALUES (3, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 11:42:12', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (4, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 14:13:34', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (5, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 14:13:38', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (6, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 14:13:41', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (7, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 14:13:44', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (8, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 14:13:47', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (9, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 15:17:44', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (10, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 15:18:38', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (11, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 15:43:28', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (12, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 15:44:36', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (13, 87, '百度5修改', 'http://baidu.xiugai.com', '13777072927', '号码拖时间修改', '12345678', '0', '', '2021-02-23 15:44:49', '2021-03-04 17:58:26');
-INSERT INTO `accounts` VALUES (14, 87, '百度5修改2', 'http://baidu.xiugai2.com', '13777072927', '号码拖时间修改2', '1234567890', '0', '', '2021-03-04 17:19:58', '2021-03-04 18:00:45');
+INSERT INTO `accounts` VALUES (3, 87, '百度', 'http://baidu.com', NULL, '', '12345678', NULL, NULL, '0', '百度账号, 这个账号在百度云知道等地方都有使用, 多个地方使用, 绑定了手机号, 多点字查看下超出部分', NULL, '2021-02-23 11:42:12', '2021-04-13 20:51:28');
+INSERT INTO `accounts` VALUES (4, 87, '优酷', 'https://youku.com', NULL, '', '12345678', NULL, NULL, '0', '视频网站', NULL, '2021-02-23 14:13:34', '2021-04-13 20:47:19');
+INSERT INTO `accounts` VALUES (5, 87, '在线作图平台', 'https://www.processon.com', NULL, '', '12345678', NULL, NULL, '0', '在线作图平台, 有些缺点, 总体很方便', NULL, '2021-02-23 14:13:38', '2021-04-13 20:47:35');
+INSERT INTO `accounts` VALUES (6, 87, '菜鸟教程', 'https://www.runoob.com', NULL, '', '12345678', NULL, NULL, '0', '学习编程, 查文档资源的地方', NULL, '2021-02-23 14:13:41', '2021-04-13 20:47:49');
+INSERT INTO `accounts` VALUES (7, 87, '知乎', 'https://www.zhihu.com', NULL, '', '12345678', NULL, NULL, '0', '逼乎', NULL, '2021-02-23 14:13:44', '2021-04-13 20:47:59');
+INSERT INTO `accounts` VALUES (8, 87, '淘宝', 'https://www.taobao.com', NULL, '', '12345678', NULL, NULL, '0', '购物网站', NULL, '2021-02-23 14:13:47', '2021-04-13 20:48:05');
+INSERT INTO `accounts` VALUES (9, 87, '百度', 'http://baidu.com', NULL, '', '12345678', NULL, NULL, '0', '', NULL, '2021-02-23 15:17:44', '2021-04-12 22:14:25');
+INSERT INTO `accounts` VALUES (10, 87, '百度', 'http://baidu.com', NULL, '', '12345678', NULL, NULL, '0', '', NULL, '2021-02-23 15:18:38', '2021-04-12 22:14:25');
+INSERT INTO `accounts` VALUES (11, 87, '百度', 'http://baidu.com', NULL, '', '12345678', NULL, NULL, '0', '', NULL, '2021-02-23 15:43:28', '2021-04-12 22:14:25');
+INSERT INTO `accounts` VALUES (12, 87, '百度', 'http://baidu.com', NULL, '', '12345678', NULL, NULL, '0', '', NULL, '2021-02-23 15:44:36', '2021-04-12 22:14:25');
+INSERT INTO `accounts` VALUES (13, 87, '百度', 'http://baidu.com', NULL, '', '12345678', NULL, NULL, '0', '', NULL, '2021-02-23 15:44:49', '2021-04-12 22:14:25');
+INSERT INTO `accounts` VALUES (14, 87, '百度', 'http://baidu.com', NULL, '', '1234567890', NULL, NULL, '0', '', NULL, '2021-03-04 17:19:58', '2021-04-12 22:14:25');
 
 -- ----------------------------
 -- Table structure for avatars
@@ -91,7 +94,7 @@ CREATE TABLE `registeremail`  (
   `expiresTime` timestamp(0) NOT NULL COMMENT '过期时间(直观版)',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '当用户注册的时候\r\n用户输入邮箱->获取验证码\r\n表中没有同样的邮箱->无处理\r\n表中有同样的邮箱->\r\n(例子: \r\n当一个用户用testa@qq.com获取了验证码后, 另一个用户也用testa@qq.com获取验证码, 这时数据库中存在两个相同邮箱\r\n解决办法:\r\n先到先得, 无论有几个邮箱, 当用户包含验证码的完整注册信息提交后即可)\r\n\r\n当同一个用户获取两次或多次验证码(这时候没有超时)\r\n解决办法就是, 直接让该邮箱其他验证码失效, 生成新的验证码' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '当用户注册的时候\r\n用户输入邮箱->获取验证码\r\n表中没有同样的邮箱->无处理\r\n表中有同样的邮箱->\r\n(例子: \r\n当一个用户用testa@qq.com获取了验证码后, 另一个用户也用testa@qq.com获取验证码, 这时数据库中存在两个相同邮箱\r\n解决办法:\r\n先到先得, 无论有几个邮箱, 当用户包含验证码的完整注册信息提交后即可)\r\n\r\n当同一个用户获取两次或多次验证码(这时候没有超时)\r\n解决办法就是, 直接让该邮箱其他验证码失效, 生成新的验证码' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of registeremail
@@ -116,7 +119,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `id`(`id`) USING BTREE COMMENT 'id',
   UNIQUE INDEX `username`(`username`) USING BTREE COMMENT '用户名唯一',
   UNIQUE INDEX `email`(`email`) USING BTREE COMMENT '邮箱唯一'
-) ENGINE = InnoDB AUTO_INCREMENT = 94 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
@@ -133,6 +136,6 @@ INSERT INTO `users` VALUES (90, '1064926001@qq.com', 'test001', '123456', '2', '
 INSERT INTO `users` VALUES (91, '1064926002@qq.com', 'test002', '123456', '2', '5', 0, '1', '2021-03-31 21:32:12', '2021-04-01 15:45:40');
 INSERT INTO `users` VALUES (92, '1064926003@qq.com', 'test003', '123456', '2', '5', 0, '1', '2021-03-31 21:34:15', '2021-04-01 15:45:40');
 INSERT INTO `users` VALUES (93, '1064926004@qq.com', 'test004', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '2', 0, '1', '2021-04-01 15:29:45', '2021-04-01 15:45:40');
+INSERT INTO `users` VALUES (94, '271654537@qq.com', 'test005', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 0, '1', '2021-04-09 23:23:26', '2021-04-09 23:23:26');
 
 SET FOREIGN_KEY_CHECKS = 1;
-
