@@ -14,6 +14,7 @@ const { formatFetch, formatFetchAll } = require("../../lib/utils");
 const config = require('./../../config');
 const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/upload');
 
+// let arr = ['id', 'userId', 'site', 'website', 'introduction', 'account', 'password', 'associates', 'nickname', 'status', 'remark', 'tags', 'createTime', 'updateTime']
 let tableFields = {
 	userId: '', // 所属用户id
 	site: '', // 网站名称
@@ -56,7 +57,7 @@ const addOne = async (ctx) => {
 		let res = await table.insert(keys).values(values).execute();
 		ctx.body = true;
 	} catch (error) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
 	}
 };
 
@@ -69,18 +70,17 @@ const addMultiple = async (ctx) => {
 		// 校验参数并返回有效参数
 		let validParams = body.map(item => verifyParams(fields, item))
 		// 执行操作---
-		let keys = Object.keys(fields);
-
 		let ins = await schema;
-		let table = ins.getTable('accounts');
+		let accountTable = ins.getTable('accounts');
+
+		let keys = Object.keys(fields);
 		let inserter = validParams.reduce((total, currentValue) => {
 			let values = Object.keys(currentValue).map(key => {
 				return currentValue[key]
 			})
-			console.log(values)
 			total.values(values);
 			return total;
-		}, table.insert(keys))
+		}, accountTable.insert(keys))
 		let result = await inserter.execute().then(s => {
 			let warningsCount = s.getWarningsCount();
 			if (warningsCount === 0) {
@@ -90,9 +90,40 @@ const addMultiple = async (ctx) => {
 		})
 		ctx.body = result;
 	} catch (error) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
 	}
 }
+
+// 查找-全部数据
+// 根据userId找到该用户下的全部账户数据
+const findALL = async (ctx) => {
+	console.log(`请求->账户->查询用户全部账户数据: accounts.findALL; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+	try {
+		let body = ctx.request.query || {};
+		let fields = { userId: '' };
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		// 执行操作---
+		let ins = await schema;
+		let accountTable = ins.getTable('accounts');
+
+		let { userId } = validParams;
+
+		let userinfo = await accountTable
+			.select('id', 'userId', 'site', 'website', 'introduction', 'account', 'password', 'associates', 'nickname', 'status', 'remark', 'tags', 'createTime', 'updateTime')
+			.where(`userId=:userId`)
+			.bind('userId', userId)
+			.execute()
+			.then(s => formatFetchAll(s))
+		ctx.body = {
+			data: userinfo,
+			totalCount: userinfo.length,
+		}
+	} catch (error) {
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
+	}
+
+};
 
 // 查找-多条数据
 // 根据userId找到该用户下的账户数据, 可分页
@@ -107,9 +138,19 @@ const findMultiple = async (ctx) => {
 		let { userId, pageNum, pageSize } = validParams;
 
 		let ins = await schema;
-		let table = ins.getTable('accounts');
-		let userinfo = await table
-			.select('id', 'userId', 'site', 'website', 'introduction', 'account', 'password', 'associates', 'nickname', 'status', 'remark', 'tags', 'createTime', 'updateTime')
+		let accountTable = ins.getTable('accounts');
+		let totalCount = await accountTable
+			.select()
+			.where(`userId=:userId`)
+			.bind('userId', userId)
+			.execute()
+			.then((res => {
+				let all = res.fetchAll();
+				let arr = Array(...all)
+				return arr.length || 0;
+			})) || 0
+		let userinfo = await accountTable
+			.select()
 			.where(`userId=:userId`)
 			.bind('userId', userId)
 			.limit(pageSize)
@@ -118,11 +159,12 @@ const findMultiple = async (ctx) => {
 			.then(s => formatFetchAll(s))
 		ctx.body = {
 			data: userinfo,
-			pageNum,
-			pageSize
+			pageNum: Number(pageNum),
+			pageSize: Number(pageSize),
+			totalCount
 		}
 	} catch (error) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
 	}
 
 };
@@ -136,11 +178,12 @@ const findOne = async (ctx) => {
 		// 校验参数并返回有效参数
 		let validParams = verifyParams(fields, body)
 		// 执行操作---
+		let ins = await schema;
+		let accountTable = ins.getTable('accounts');
+
 		let { id } = validParams;
 
-		let ins = await schema;
-		let table = ins.getTable('accounts');
-		let userinfo = await table
+		let userinfo = await accountTable
 			.select('id', 'userId', 'website', 'websiteUrl', 'account', 'accountName', 'password', 'status', 'remark', 'createTime', 'updateTime')
 			.where(`id=:id`)
 			.bind('id', id)
@@ -148,7 +191,7 @@ const findOne = async (ctx) => {
 			.then(s => formatFetch(s))
 		ctx.body = userinfo;
 	} catch (error) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
 	}
 };
 
@@ -186,7 +229,7 @@ const updateOne = async (ctx) => {
 		})
 		ctx.body = result;
 	} catch (error) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
 	}
 };
 
@@ -216,13 +259,14 @@ const deleteOne = async (ctx) => {
 		})
 		ctx.body = result;
 	} catch (error) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+		throw new ApiError(ApiErrorNames.UNKNOW_ERROR, error.message);
 	}
 };
 
 module.exports = {
 	addOne,
 	addMultiple,
+	findALL,
 	findMultiple,
 	findOne,
 	updateOne,
