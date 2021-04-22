@@ -11,6 +11,7 @@
 		"5b8bc411-794c-3f21-e6c8-d3ff9863036b",
 		"4a7da99a-9448-a23a-c34c-00a86446b258",
 		"57b3dcd0-92b7-8d20-5daf-d169c7118df5",
+		"060e75db-089b-dfdc-9eaa-f95ed749385f",
 		"c29dd38e-7577-9c01-5952-206d8bf5d3ff",
 		"12f35a6c-eb04-683b-700f-0ed681e6a062",
 		"21937e2c-bae4-f52f-d434-34181005b0e8",
@@ -64,6 +65,35 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {}
+		},
+		{
+			"id": "060e75db-089b-dfdc-9eaa-f95ed749385f",
+			"headers": "",
+			"headerData": [],
+			"url": "localhost:3000/api/users/sendcode",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "email",
+					"value": "271654537@qq.com",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1619085498652,
+			"name": "用户-发送邮件验证码",
+			"description": "/api/users/sendcode\n发送邮件验证码",
+			"collectionId": "82caf9b8-2253-4be0-e439-206d7aebfd99",
+			"responses": []
 		},
 		{
 			"id": "12f35a6c-eb04-683b-700f-0ed681e6a062",
@@ -166,8 +196,15 @@
 		},
 		{
 			"id": "354422fe-c4c6-c6b2-dddf-f2f8030dd968",
-			"headers": "",
-			"headerData": [],
+			"headers": "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjoxMDEsImlhdCI6MTYxNzk1NTQ0NiwiZXhwIjoxNjE3OTU5MDQ2fQ.vfUaLsr3mxUc_PaPH3YhrfUl3MVukZNZDCPjY1inZew\n",
+			"headerData": [
+				{
+					"key": "authorization",
+					"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjoxMDEsImlhdCI6MTYxNzk1NTQ0NiwiZXhwIjoxNjE3OTU5MDQ2fQ.vfUaLsr3mxUc_PaPH3YhrfUl3MVukZNZDCPjY1inZew",
+					"description": "",
+					"enabled": true
+				}
+			],
 			"url": "localhost:3000/api/users/findOne?id=87",
 			"queryParams": [
 				{
@@ -187,8 +224,8 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1612776273613,
-			"name": "用户-查询-根据指定ID查找用户",
+			"time": 1619085525962,
+			"name": "用户-查询-查询一条数据",
 			"description": "",
 			"collectionId": "82caf9b8-2253-4be0-e439-206d7aebfd99",
 			"responses": []
@@ -292,38 +329,38 @@
 			"data": [
 				{
 					"key": "username",
-					"value": "test7",
+					"value": "uyao1",
 					"description": "用户名",
 					"type": "text",
-					"enabled": false
+					"enabled": true
 				},
 				{
 					"key": "password",
 					"value": "U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=",
 					"description": "用户密码",
 					"type": "text",
-					"enabled": false
+					"enabled": true
 				},
 				{
 					"key": "repassword",
 					"value": "U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=",
 					"description": "确认密码",
 					"type": "text",
-					"enabled": false
+					"enabled": true
 				},
 				{
 					"key": "email",
-					"value": "1064926207@qq.com",
+					"value": "uyao1@qq.com",
 					"description": "邮箱(用于找回密码)",
 					"type": "text",
-					"enabled": false
+					"enabled": true
 				}
 			],
 			"dataMode": "urlencoded",
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1612690309547,
+			"time": 1615887073332,
 			"name": "用户-注册",
 			"description": "用户注册",
 			"collectionId": "82caf9b8-2253-4be0-e439-206d7aebfd99",
@@ -333,7 +370,7 @@
 			"id": "57b3dcd0-92b7-8d20-5daf-d169c7118df5",
 			"headers": "",
 			"headerData": [],
-			"url": "localhost:3000/api/users/logout",
+			"url": "localhost:3000/api/users/loginOut",
 			"queryParams": [],
 			"pathVariables": {},
 			"pathVariableData": [],
@@ -372,14 +409,14 @@
 			"data": [
 				{
 					"key": "username",
-					"value": "1064926204@qq.com",
+					"value": "test5",
 					"description": "用户名或者邮箱",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "password",
-					"value": "U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=",
+					"value": "12345678",
 					"description": "密码",
 					"type": "text",
 					"enabled": true
@@ -390,7 +427,7 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1612668383742,
+			"time": 1619085519264,
 			"name": "用户-登录",
 			"description": "",
 			"collectionId": "82caf9b8-2253-4be0-e439-206d7aebfd99",
@@ -547,11 +584,17 @@
 		},
 		{
 			"id": "8e0c0ae3-d22a-46b1-6cbd-eb3c7f3236b1",
-			"headers": "Content-Type: application/x-www-form-urlencoded\n",
+			"headers": "Content-Type: application/x-www-form-urlencoded\nauthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MDg0Mzg3LCJleHAiOjE2MTkwODc5ODd9.pyOcYSouAliNPyzDa12afC-8gg5jZOq91A76FboCH3Q\n",
 			"headerData": [
 				{
 					"key": "Content-Type",
 					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "authorization",
+					"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MDg0Mzg3LCJleHAiOjE2MTkwODc5ODd9.pyOcYSouAliNPyzDa12afC-8gg5jZOq91A76FboCH3Q",
 					"description": "",
 					"enabled": true
 				}
@@ -571,44 +614,72 @@
 					"enabled": true
 				},
 				{
-					"key": "website",
-					"value": "百度5",
-					"description": "网站名",
+					"key": "site",
+					"value": "百度",
+					"description": "网站名称",
 					"type": "text",
 					"enabled": true
 				},
 				{
-					"key": "websiteUrl",
+					"key": "website",
 					"value": "http://baidu.com",
 					"description": "网站地址",
 					"type": "text",
 					"enabled": true
 				},
 				{
-					"key": "account",
-					"value": "13777072927",
-					"description": "注册账号",
+					"key": "introduction",
+					"value": "互联网搜索引擎",
+					"description": "网站简介",
 					"type": "text",
 					"enabled": true
 				},
 				{
-					"key": "accountName",
-					"value": "号码拖时间",
-					"description": "用户名",
+					"key": "account",
+					"value": "13777072927",
+					"description": "注册账户(在网站注册的时候使用的账户)",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "password",
 					"value": "123456",
-					"description": "密码",
+					"description": "加密密码(使用AES加密, 需要密钥来解密)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "nickname",
+					"value": "号码拖时间",
+					"description": "昵称",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "associates",
+					"value": "[\"1064926209@qq.com\"]",
+					"description": "绑定或关联的账户(注册账户关联或绑定的账户)可能有多个关联(字符串数组形式)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "status",
+					"value": "0",
+					"description": "状态(0:正常,1:停用,2:注销)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "tags",
+					"value": "[\"搜索\",\"工作\"]",
+					"description": "标签(对网站功能用途进行分类时使用,例如:娱乐,工作等)",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "remark",
-					"value": "备注",
-					"description": "测试用例",
+					"value": "搜索入口",
+					"description": "备注",
 					"type": "text",
 					"enabled": true
 				}
@@ -617,7 +688,7 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1614066368253,
+			"time": 1619085242248,
 			"name": "账户-新增-一条数据",
 			"description": "/api/accounts/addOne\n添加一条账户数据",
 			"collectionId": "82caf9b8-2253-4be0-e439-206d7aebfd99",
@@ -726,15 +797,14 @@
 			],
 			"url": "localhost:3000/api/users/uploadProfilePicture",
 			"queryParams": [],
+			"preRequestScript": null,
 			"pathVariables": {},
 			"pathVariableData": [],
-			"preRequestScript": null,
 			"method": "POST",
-			"collectionId": "82caf9b8-2253-4be0-e439-206d7aebfd99",
 			"data": [
 				{
 					"key": "file",
-					"value": "",
+					"value": "QQ图片20190505143948.jpg",
 					"description": "",
 					"type": "file",
 					"enabled": true
@@ -748,15 +818,15 @@
 				}
 			],
 			"dataMode": "params",
-			"name": "用户-更新-头像上传",
-			"description": "/api/users/uploadProfilePicture\n用户头像上传",
-			"descriptionFormat": "html",
-			"time": 1613977464163,
 			"version": 2,
-			"responses": [],
 			"tests": null,
 			"currentHelper": "normal",
-			"helperAttributes": {}
+			"helperAttributes": {},
+			"time": 1615802873792,
+			"name": "用户-更新-头像上传",
+			"description": "/api/users/uploadProfilePicture\n用户头像上传",
+			"collectionId": "82caf9b8-2253-4be0-e439-206d7aebfd99",
+			"responses": []
 		}
 	]
 }
