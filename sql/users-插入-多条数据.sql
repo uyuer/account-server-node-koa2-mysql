@@ -1,1 +1,0 @@
-INSERT INTO users (username, password, email) VALUES ('test_m1', '123456', '1064926201@qq.com'), ('test_m2', '123456', '1064926202@qq.com'); 
