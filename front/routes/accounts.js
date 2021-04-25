@@ -13,6 +13,10 @@ router.get('/findOne', controller.accounts.findOne)
 
 router.post('/updateOne', controller.accounts.updateOne)
 
+router.post('/updateMultiple', controller.accounts.updateMultiple)
+
 router.post('/deleteOne', controller.accounts.deleteOne)
+
+router.post('/deleteMultiple', controller.accounts.deleteMultiple)
 
 module.exports = router

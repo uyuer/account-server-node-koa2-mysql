@@ -217,7 +217,7 @@ exports.login = async (ctx) => {
 			token: jsonwebtoken.sign(
 				{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
 				config.SECRET,
-				{ expiresIn: '1h' }
+				{ expiresIn: '7d' }
 			),
 		};
 	} catch (error) {

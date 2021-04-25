@@ -6,6 +6,29 @@
 	},
 	"item": [
 		{
+			"name": "初始化项目",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "localhost:3000/api/initialize",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"initialize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "用户-查询-根据指定ID查找用户",
 			"request": {
 				"method": "GET",
@@ -156,53 +179,6 @@
 			"response": []
 		},
 		{
-			"name": "用户-新增一条信息",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded"
-					}
-				],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "password",
-							"value": "123456"
-						},
-						{
-							"key": "username",
-							"value": "test"
-						},
-						{
-							"key": "email",
-							"value": "1064926200@qq.com"
-						},
-						{
-							"key": "male",
-							"value": "",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "localhost:3000/users/add",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"users",
-						"add"
-					]
-				},
-				"description": "新增单条用户信息"
-			},
-			"response": []
-		},
-		{
 			"name": "用户-登录",
 			"request": {
 				"method": "POST",
@@ -261,29 +237,31 @@
 							"key": "username",
 							"value": "test7",
 							"description": "用户名",
-							"type": "text",
-							"disabled": true
+							"type": "text"
 						},
 						{
 							"key": "password",
 							"value": "U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=",
 							"description": "用户密码",
-							"type": "text",
-							"disabled": true
+							"type": "text"
 						},
 						{
 							"key": "repassword",
 							"value": "U2FsdGVkX1+D0BX1odsEbzsRnanKZ1zjh42gycUC+30=",
 							"description": "确认密码",
-							"type": "text",
-							"disabled": true
+							"type": "text"
 						},
 						{
 							"key": "email",
 							"value": "1064926207@qq.com",
 							"description": "邮箱(用于找回密码)",
-							"type": "text",
-							"disabled": true
+							"type": "text"
+						},
+						{
+							"key": "male",
+							"value": "2",
+							"description": "性别",
+							"type": "text"
 						}
 					]
 				},
@@ -304,7 +282,7 @@
 			"response": []
 		},
 		{
-			"name": "用户-登录退出",
+			"name": "用户-退出",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -324,87 +302,6 @@
 			"response": []
 		},
 		{
-			"name": "初始化项目",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": []
-				},
-				"url": {
-					"raw": "localhost:3000/api/initialize",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"initialize"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "查找-多条件查询",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:3000/users/findMultipleUser?pageSize=10&pageNum=1",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"users",
-						"findMultipleUser"
-					],
-					"query": [
-						{
-							"key": "pageSize",
-							"value": "10"
-						},
-						{
-							"key": "pageNum",
-							"value": "1"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "初始化-连接测试",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded"
-					}
-				],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": []
-				},
-				"url": {
-					"raw": "localhost:3000/api/initialize/connect",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"initialize",
-						"connect"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "账户-新增-一条数据",
 			"request": {
 				"auth": {
@@ -412,7 +309,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTAxMTk0LCJleHAiOjE2MTkxMDQ3OTR9.HU2VljF1Wj3Y0gWfpQIMaPv7EEIsuyo5mvQzIv2onSY",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTcwODQ3LCJleHAiOjE2MTk3NzU2NDd9.tFvlYGKC8pc4kDIcHoQwT9rE0aTVkp4j6ghHto_24oQ",
 							"type": "string"
 						}
 					]
@@ -519,7 +416,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTAxMTk0LCJleHAiOjE2MTkxMDQ3OTR9.HU2VljF1Wj3Y0gWfpQIMaPv7EEIsuyo5mvQzIv2onSY",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTcwODQ3LCJleHAiOjE2MTk3NzU2NDd9.tFvlYGKC8pc4kDIcHoQwT9rE0aTVkp4j6ghHto_24oQ",
 							"type": "string"
 						}
 					]
@@ -533,7 +430,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\r\n    {\r\n    \"userId\": \"87\",\r\n    \"site\": \"react\",\r\n    \"website\": \"http://react.com\",\r\n    \"introduction\": \"前端框架\",\r\n    \"account\": \"13777072927\",\r\n    \"password\": \"123456\",\r\n    \"nickname\": \"uyuer\",\r\n    \"associates\": \"[\\\"1064926209@qq.com\\\"]\",\r\n    \"status\": \"0\",\r\n    \"tags\": \"[\\\"程序\\\",\\\"工作\\\"]\",\r\n    \"remark\": \"学习\"\r\n  },\r\n  {\r\n    \"userId\": \"87\",\r\n    \"site\": \"AngularJS\",\r\n    \"website\": \"http://angularjs.com\",\r\n    \"introduction\": \"前端框架\",\r\n    \"account\": \"13777072927\",\r\n    \"password\": \"123456\",\r\n    \"nickname\": \"uyao\",\r\n    \"associates\": \"[\\\"1064926209@qq.com\\\"]\",\r\n    \"status\": \"0\",\r\n    \"tags\": \"[\\\"程序\\\",\\\"工作\\\"]\",\r\n    \"remark\": \"程序学习\"\r\n  }\r\n]",
+					"raw": "[\r\n    {\r\n        \"userId\": \"87\",\r\n        \"site\": \"react\",\r\n        \"website\": \"http://react.com\",\r\n        \"introduction\": \"前端框架\",\r\n        \"account\": \"13777072927\",\r\n        \"password\": \"123456\",\r\n        \"nickname\": \"uyuer\",\r\n        \"associates\": \"[\\\"1064926209@qq.com\\\"]\",\r\n        \"status\": \"0\",\r\n        \"tags\": \"[\\\"程序\\\",\\\"工作\\\"]\",\r\n        \"remark\": \"学习\"\r\n    },\r\n    {\r\n        \"userId\": \"87\",\r\n        \"site\": \"AngularJS\",\r\n        \"website\": \"http://angularjs.com\",\r\n        \"introduction\": \"前端框架\",\r\n        \"account\": \"13777072927\",\r\n        \"password\": \"123456\",\r\n        \"nickname\": \"uyao\",\r\n        \"associates\": \"[\\\"1064926209@qq.com\\\"]\",\r\n        \"status\": \"0\",\r\n        \"tags\": \"[\\\"程序\\\",\\\"工作\\\"]\",\r\n        \"remark\": \"程序学习\"\r\n    }\r\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -564,7 +461,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTA0ODg5LCJleHAiOjE2MTkxMDg0ODl9.S_n6is0fH1ng2m-yCZ7ksGTO2BZaVrZ1R76m91o5XuY",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTcwODQ3LCJleHAiOjE2MTk3NzU2NDd9.tFvlYGKC8pc4kDIcHoQwT9rE0aTVkp4j6ghHto_24oQ",
 							"type": "string"
 						}
 					]
@@ -599,8 +496,13 @@
 					"type": "bearer",
 					"bearer": [
 						{
+							"key": "password",
+							"value": "{{accounts-koa2-mysql-token}}",
+							"type": "string"
+						},
+						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTA0ODg5LCJleHAiOjE2MTkxMDg0ODl9.S_n6is0fH1ng2m-yCZ7ksGTO2BZaVrZ1R76m91o5XuY",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTcwODQ3LCJleHAiOjE2MTk3NzU2NDd9.tFvlYGKC8pc4kDIcHoQwT9rE0aTVkp4j6ghHto_24oQ",
 							"type": "string"
 						}
 					]
@@ -739,6 +641,46 @@
 			"response": []
 		},
 		{
+			"name": "账户-更新-更新多条数据",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTcwODQ3LCJleHAiOjE2MTk3NzU2NDd9.tFvlYGKC8pc4kDIcHoQwT9rE0aTVkp4j6ghHto_24oQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"id\": \"18\",\r\n        \"userId\": \"87\",\r\n        \"site\": \"react\",\r\n        \"website\": \"http://react.com\",\r\n        \"introduction\": \"前端框架\",\r\n        \"account\": \"13777072927\",\r\n        \"password\": \"123456\",\r\n        \"nickname\": \"uyuer\",\r\n        \"associates\": \"[\\\"1064926209@qq.com\\\"]\",\r\n        \"status\": \"0\",\r\n        \"tags\": \"[\\\"程序\\\",\\\"工作\\\"]\",\r\n        \"remark\": \"学习\"\r\n    },\r\n    {\r\n        \"id\": \"19\",\r\n        \"userId\": \"87\",\r\n        \"site\": \"AngularJS\",\r\n        \"website\": \"http://angularjs.com\",\r\n        \"introduction\": \"前端框架\",\r\n        \"account\": \"13777072927\",\r\n        \"password\": \"123456\",\r\n        \"nickname\": \"uyao\",\r\n        \"associates\": \"[\\\"1064926209@qq.com\\\"]\",\r\n        \"status\": \"0\",\r\n        \"tags\": \"[\\\"程序\\\",\\\"工作\\\"]\",\r\n        \"remark\": \"程序学习\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/accounts/updateMultiple",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"accounts",
+						"updateMultiple"
+					]
+				},
+				"description": "更新多条数据\r\n/api/accounts/updateMultiple"
+			},
+			"response": []
+		},
+		{
 			"name": "账户-删除-删除一条数据",
 			"request": {
 				"method": "POST",
@@ -775,6 +717,47 @@
 			"response": []
 		},
 		{
+			"name": "账户-删除-删除多条数据",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTcwODQ3LCJleHAiOjE2MTk3NzU2NDd9.tFvlYGKC8pc4kDIcHoQwT9rE0aTVkp4j6ghHto_24oQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "ids",
+							"value": "20,24",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/api/accounts/deleteMultiple",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"accounts",
+						"deleteMultiple"
+					]
+				},
+				"description": "/api/accounts/deleteMultiple\r\n删除多条数据"
+			},
+			"response": []
+		},
+		{
 			"name": "用户-注册-邮箱验证",
 			"request": {
 				"method": "GET",
@@ -793,6 +776,12 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "accounts-koa2-mysql-token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDAwNSIsImVtYWlsIjoiMjcxNjU0NTM3QHFxLmNvbSIsImlkIjo5NCwiaWF0IjoxNjE5MTcwODQ3LCJleHAiOjE2MTk3NzU2NDd9.tFvlYGKC8pc4kDIcHoQwT9rE0aTVkp4j6ghHto_24oQ"
 		}
 	]
 }
