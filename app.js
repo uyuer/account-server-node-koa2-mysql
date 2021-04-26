@@ -14,6 +14,8 @@ const responseFormatter = require('./lib/responseFormatter');
 const front = require("./front/routes/index");
 const backRoute = require("./back/routes/index");
 
+console.log('NODE_ENV:', process.env.NODE_ENV)
+
 app.use(
 	koaBody({
 		multipart: true,

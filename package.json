@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "nodemon bin/www",
-    "dev": "cross-env NODE_ENV=development nodemon bin/www --exec babel-node",
-    "prd": "pm2 start bin/www",
-    "test": "mocha"
+    "start": "set NODE_ENV=development && nodemon bin/www",
+    "dev": "set NODE_ENV=development && nodemon bin/www",
+    "test": "set NODE_ENV=test",
+    "prd": "set NODE_ENV=production && pm2 start bin/www"
   },
   "dependencies": {
     "@mysql/xdevapi": "8.0.23",

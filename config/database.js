@@ -15,5 +15,4 @@ module.exports = {
     DATABASE: DB_NAME, //数据库名称
     USERNAME: DB_USERNAME, //mysql用户名
     PASSWORD: DB_PASSWORD, //mysql密码
-    INSECUREAUTH: DB_INSECUREAUTH,
 }
