@@ -1,7 +1,8 @@
 require('dotenv').config('./env');
 
 const {
-    SECRET
+    SECRET,
+    PORT,
 } = process.env;
 
 const database = require('./database');
@@ -10,9 +11,9 @@ const email = require('./email');
 
 // 配置, 从全局变量中读取数据
 module.exports = {
-    port: 3000, // 项目启动端口
-    SECRET,
     database,
     upload,
     email,
+    SECRET,
+    port: PORT, // 项目启动端口
 }

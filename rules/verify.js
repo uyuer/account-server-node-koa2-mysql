@@ -1,6 +1,6 @@
-const ApiError = require("./apiError");
-const ApiErrorNames = require("./apiErrorNames");
-const { filterParams, filterRules, isFunction } = require("./utils");
+const ApiError = require("../lib/apiError.lib");
+const ApiErrorNames = require("../lib/apiErrorNames");
+const { filterParams, filterRules, isFunction } = require("../lib/utils");
 
 module.exports = (Rules) => {
 

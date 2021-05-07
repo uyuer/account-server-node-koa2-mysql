@@ -10,7 +10,7 @@ const config = require('./config');
 const loggerLib = require("./lib/logger.lib");
 const sessionLib = require('./lib/session.lib');
 const tokenLib = require('./lib/token.lib');
-const responseFormatter = require('./lib/responseFormatter');
+const apiFormatter = require('./lib/apiFormatter');
 const front = require("./front/routes/index");
 const backRoute = require("./back/routes/index");
 
@@ -57,7 +57,7 @@ app.use(tokenLib.unless);
 
 //添加格式化处理响应结果的中间件，在添加路由之前调用
 //仅对/api开头的url返回内容进行格式化处理
-app.use(responseFormatter('^/api'));
+app.use(apiFormatter('^/api'));
 // routes
 app.use(front.routes(), front.allowedMethods());
 
