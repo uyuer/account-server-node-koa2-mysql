@@ -150,8 +150,8 @@ const findMultiple = async (ctx) => {
 	}
 };
 // 查找-全部数据(根据userId找到该用户下的全部账户数据)
-const findALL = async (ctx) => {
-	console.log(`请求->账户->查询用户全部账户数据: accounts.findALL; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+const findAll = async (ctx) => {
+	console.log(`请求->账户->查询用户全部账户数据: accounts.findAll; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	try {
 		let body = ctx.request.query || {};
 		let fields = { userId: '' };
@@ -333,7 +333,7 @@ module.exports = {
 	addMultiple,
 	findOne,
 	findMultiple,
-	findALL,
+	findAll,
 	updateOne,
 	updateMultiple,
 	deleteOne,

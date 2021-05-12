@@ -29,6 +29,7 @@ use accounts1;
 -- 创建用户表
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
 -- ----------------------------
 -- Table structure for accounts
 -- ----------------------------
@@ -49,7 +50,7 @@ CREATE TABLE `accounts`  (
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of accounts
@@ -68,6 +69,7 @@ INSERT INTO `accounts` VALUES (19, 87, 'AngularJS', 'http://angularjs.com', '前
 INSERT INTO `accounts` VALUES (25, 87, 'AngularJS', 'http://angularjs.com', '前端框架', '13777072927', '123456', '[\"1064926209@qq.com\"]', 'uyao', '0', '程序学习', '[\"程序\",\"工作\"]', '2021-04-24 15:32:38', '2021-04-24 15:32:38');
 INSERT INTO `accounts` VALUES (26, 87, 'react', 'http://react.com', '前端框架', '13777072927', '123456', '[\"1064926209@qq.com\"]', 'uyuer', '0', '学习', '[\"程序\",\"工作\"]', '2021-04-24 15:32:40', '2021-04-24 15:32:40');
 INSERT INTO `accounts` VALUES (27, 87, 'AngularJS', 'http://angularjs.com', '前端框架', '13777072927', '123456', '[\"1064926209@qq.com\"]', 'uyao', '0', '程序学习', '[\"程序\",\"工作\"]', '2021-04-24 15:32:40', '2021-04-24 15:32:40');
+INSERT INTO `accounts` VALUES (28, 87, '在线作图', 'https://www.processon.com', '可以在线画流程图', '13777072927', 'U2FsdGVkX19OaCweyqlYV0pJC91ghyduDxx0whOzmys=', '1064926209@qq.com', '用户-122', '0', '学习工作', '[工作]', '2021-05-07 21:10:18', '2021-05-07 21:10:18');
 
 -- ----------------------------
 -- Table structure for avatars
@@ -77,7 +79,7 @@ CREATE TABLE `avatars`  (
   `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '头像id',
   `fileName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '图片名',
   `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
-  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
+  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
@@ -92,6 +94,35 @@ INSERT INTO `avatars` VALUES (5, '5.png', 1, '2021-03-16 17:14:02');
 INSERT INTO `avatars` VALUES (6, '6.png', 1, '2021-03-16 17:25:30');
 INSERT INTO `avatars` VALUES (7, 'upload_f1d823ae671a805b5fa5cacced648e79.jpg', 0, '2021-03-16 17:42:41');
 INSERT INTO `avatars` VALUES (8, 'upload_0c924114e38a634aa68679687917ee21.jpg', 0, '2021-03-16 17:47:25');
+
+-- ----------------------------
+-- Table structure for labels
+-- ----------------------------
+DROP TABLE IF EXISTS `labels`;
+CREATE TABLE `labels`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `label` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '标签名(不能重复)',
+  `creatorId` int(0) NOT NULL DEFAULT 1 COMMENT '创建者ID, 默认为系统管理员创建',
+  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
+  `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  PRIMARY KEY (`id`, `label`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of labels
+-- ----------------------------
+INSERT INTO `labels` VALUES (1, '学习', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:37');
+INSERT INTO `labels` VALUES (2, '视频', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (3, '动漫', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (4, '游戏', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (5, '程序', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (6, '工具', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (7, '软件', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (8, '生活', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (9, '工作', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (10, '博客', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
+INSERT INTO `labels` VALUES (11, '电商', 1, '2021-05-12 22:30:17', '2021-05-12 22:32:40');
+INSERT INTO `labels` VALUES (12, '测试编辑标签1', 1, '2021-05-12 23:22:24', '2021-05-12 23:25:46');
 
 -- ----------------------------
 -- Table structure for registeremail
@@ -135,7 +166,7 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (42, '1064926209@qq.com', 'admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', '2021-02-03 15:59:59', '2021-04-25 22:26:50');
+INSERT INTO `users` VALUES (1, '1064926209@qq.com', 'admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', '2021-02-03 15:59:59', '2021-05-12 22:13:41');
 INSERT INTO `users` VALUES (77, '1064926204@qq.com', 'test4', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '0', '2021-02-04 16:09:14', '2021-04-25 22:26:50');
 INSERT INTO `users` VALUES (79, '1064926202@qq.com', 'test2', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', '2021-02-05 11:46:53', '2021-04-25 22:26:50');
 INSERT INTO `users` VALUES (81, '1064926203@qq.com', 'test3', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', '2021-02-05 15:01:21', '2021-04-25 22:26:50');
