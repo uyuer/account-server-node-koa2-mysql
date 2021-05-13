@@ -101,12 +101,19 @@ const findAll = async (ctx) => {
 		// 执行操作---
 		let ins = await schema;
 		let labelsTable = ins.getTable('labels');
+		let usersTable = ins.getTable('users');
 
 		let { creatorId } = validParams;
-
+		// 查询系统管理账户
+		let sysUser = await usersTable
+			.select('id')
+			.where(`username=:u`)
+			.bind('u', 'admin')
+			.execute()
+			.then((s) => formatFetch(s));
 		let labelsList = await labelsTable
 			.select()
-			.where(`creatorId=${creatorId}`)
+			.where(`creatorId=${sysUser.id} or creatorId=${creatorId}`)
 			.execute()
 			.then(s => formatFetchAll(s))
 		ctx.body = labelsList;
