@@ -1,0 +1,4 @@
+{
+    "verbose": true,
+    "watch": ["bin/*","config/*","controllers/*","lib/*","routes/*","rules/*","uploads/defaultAvatar/*","app.js"]
+}

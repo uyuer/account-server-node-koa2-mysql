@@ -1,18 +1,18 @@
 const fs = require('fs');
 const path = require('path')
 const formidable = require('formidable');
-const { session, schema } = require("../../lib/mysqlx.lib");
+const { session, schema } = require("../lib/mysqlx.lib");
 const {
 	rules, // 参数规则
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../../rules/accountsRules");
-const ApiError = require("../../lib/apiError.lib");
-const ApiErrorNames = require("../../lib/apiErrorNames");
-const { formatFetch, formatFetchAll, isArray } = require("../../lib/utils");
-const config = require('./../../config');
-const { baseUploadsPath, avatarPath, avatarFullPath } = require('../../config/upload');
+} = require("../rules/accountsRules");
+const ApiError = require("../lib/apiError.lib");
+const ApiErrorNames = require("../lib/apiErrorNames");
+const { formatFetch, formatFetchAll, isArray } = require("../lib/utils");
+const config = require('./../config');
+const { baseUploadsPath, avatarPath, avatarFullPath } = require('../config/upload');
 
 // let arr = ['id', 'userId', 'site', 'website', 'introduction', 'account', 'password', 'associates', 'nickname', 'status', 'remark', 'tags', 'createTime', 'updateTime']
 let tableFields = {
@@ -309,7 +309,7 @@ const deleteMultiple = async (ctx) => {
 		// 校验是否存在于数据库中
 		let ins = await schema;
 		let accountsTable = ins.getTable('accounts');
-		
+
 		// delete from accounts where id in ('20','24')
 		let sql = `
 		DELETE FROM ${accountsTable.getSchema().getName()}.${accountsTable.getName()} WHERE id IN (${ids})
@@ -328,6 +328,64 @@ const deleteMultiple = async (ctx) => {
 	}
 };
 
+// 导入json文件
+const importJSONFile = async (ctx) => {
+	console.log(`请求->用户->JSON文件上传: accounts.importJSONFile; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+	try {
+		let body = ctx.request.body || {}; // 为空
+		let fields = { userId: '' };
+		// 校验参数并返回有效参数
+		let validParams = verifyParams(fields, body)
+		const file = ctx.request.files.file;
+		if (!file) {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '导入文件不能为空');
+		}
+		// 执行操作---
+		const { path: filePath, name, type, lastModifiedDate } = file;
+		// 检查上传文件是否合法, 如果非法则删除文件
+		let allowedType = ['application/json']
+		if (!allowedType.find(t => t === type)) {
+			fs.unlinkSync(filePath)
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '只支持导入文件为' + allowedType.toString() + '格式');
+		}
+		let dataStr = fs.readFileSync(filePath);
+		const data = JSON.parse(dataStr)
+		// console.log("同步读取: " + data);
+		console.log(ctx.session)
+		// // 获取到上传文件名
+		// let fileName = path.basename(filePath);
+
+		// // 将用户id,文件名
+		// let { id: userId } = validParams;
+		// let keys = ['fileName'];
+		// let values = [fileName];
+		// let ins = await schema;
+		// // 校验该用户是否存在
+		// let userInfo = await ins.getTable('users').select('id', 'status').where(`id=:u`).bind('u', userId).execute().then(s => formatFetch(s))
+		// if (!userInfo) {
+		// 	throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户不存在');
+		// } else {
+		// 	let { status } = userInfo;
+		// 	if (status === '0') {
+		// 		throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
+		// 	}
+		// }
+		// // 用户存在, 保存上传记录
+		// let uploadInfo = await ins.getTable('avatars').insert(keys).values(values).execute();
+		// let avatarId = uploadInfo.getAutoIncrementValue();
+		// if (!uploadInfo.getAffectedItemsCount() || !avatarId) {
+		// 	throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '上传失败');
+		// }
+		// // 图片上传成功, 更新用户表记录
+		// let userUpdateInfo = await ins.getTable('users').update().where('id=:id').bind('id', userId).set('avatarId', avatarId).execute();
+		// if (!userUpdateInfo.getAffectedItemsCount()) {
+		// 	throw new ApiError(ApiErrorNames.UNKNOW_ERROR, '上传成功, 但更新失败');
+		// }
+		ctx.body = true;
+	} catch (error) {
+		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+	}
+}
 module.exports = {
 	addOne,
 	addMultiple,
@@ -338,4 +396,5 @@ module.exports = {
 	updateMultiple,
 	deleteOne,
 	deleteMultiple,
+	importJSONFile,
 }

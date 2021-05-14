@@ -1,16 +1,16 @@
 const fs = require('fs');
 const path = require('path')
 const formidable = require('formidable');
-const { session, schema } = require("../../lib/mysqlx.lib");
+const { session, schema } = require("../lib/mysqlx.lib");
 const {
 	rules, // 参数规则
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../../rules/accountsRules");
-const ApiError = require("../../lib/apiError.lib");
-const ApiErrorNames = require("../../lib/apiErrorNames");
-const { formatFetch, formatFetchAll, isArray } = require("../../lib/utils");
+} = require("../rules/accountsRules");
+const ApiError = require("../lib/apiError.lib");
+const ApiErrorNames = require("../lib/apiErrorNames");
+const { formatFetch, formatFetchAll, isArray } = require("../lib/utils");
 
 let tableFields = {
 	label: '', // 标签名

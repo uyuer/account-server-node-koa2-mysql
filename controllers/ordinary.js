@@ -1,17 +1,17 @@
 const dayjs = require('dayjs')
 const jsonwebtoken = require('jsonwebtoken');
-const { schema } = require('../../lib/mysqlx.lib');
+const { schema } = require('../lib/mysqlx.lib');
 const {
 	rules, // 参数规则
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require('../../rules/usersRules');
-const ApiError = require('../../lib/apiError.lib');
-const ApiErrorNames = require('../../lib/apiErrorNames');
-const { sendEmailCode } = require('../../lib/email.lib')
-const { filterParams, filterRules, formatFetch, formatFetchAll } = require('../../lib/utils');
-const config = require('../../config')
+} = require('../rules/usersRules');
+const ApiError = require('../lib/apiError.lib');
+const ApiErrorNames = require('../lib/apiErrorNames');
+const { sendEmailCode } = require('../lib/email.lib')
+const { filterParams, filterRules, formatFetch, formatFetchAll } = require('../lib/utils');
+const config = require('../config')
 // var AES = require("crypto-js/aes");
 
 // // AES加密 加密用户网站密码

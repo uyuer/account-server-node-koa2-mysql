@@ -11,8 +11,8 @@ const loggerLib = require("./lib/logger.lib");
 const sessionLib = require('./lib/session.lib');
 const tokenLib = require('./lib/token.lib');
 const apiFormatter = require('./lib/apiFormatter');
-const front = require("./front/routes/index");
-const backRoute = require("./back/routes/index");
+const routes = require("./routes/index");
+// const backRoute = require("./back/routes/index");
 
 console.log('NODE_ENV:', process.env.NODE_ENV)
 
@@ -22,7 +22,8 @@ app.use(
 		formidable: {
 			multipart: true,
 			keepExtensions: true,
-			uploadDir: config.upload.avatarFullPath,
+			// uploadDir: config.upload.avatarFullPath,
+			uploadDir: config.uploadTmp,
 			// onFileBegin: (name, file) => {
 			// 	console.log(name, '123')
 			// 	console.log(file, '123')
@@ -59,13 +60,13 @@ app.use(tokenLib.unless);
 //仅对/api开头的url返回内容进行格式化处理
 app.use(apiFormatter('^/api'));
 // routes
-app.use(front.routes(), front.allowedMethods());
+app.use(routes.routes(), routes.allowedMethods());
 
-// 发送HTML页面
-app.use(async (ctx) => {
-	let url = ctx.request.url;
-	let html = await backRoute(url);
-	ctx.body = html;
-})
+// // 发送HTML页面
+// app.use(async (ctx) => {
+// 	let url = ctx.request.url;
+// 	let html = await backRoute(url);
+// 	ctx.body = html;
+// })
 
 module.exports = app;

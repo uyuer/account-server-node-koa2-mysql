@@ -3,6 +3,7 @@ node_modules/
 npm-debug.log*
 logs/
 uploads/avatar/
+tmp/
 
 # misc
 .DS_Store

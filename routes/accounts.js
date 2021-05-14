@@ -19,4 +19,6 @@ router.post('/deleteOne', controller.accounts.deleteOne)
 
 router.post('/deleteMultiple', controller.accounts.deleteMultiple)
 
+router.post('/importJSONFile', controller.accounts.importJSONFile)
+
 module.exports = router

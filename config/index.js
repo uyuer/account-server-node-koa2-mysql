@@ -5,6 +5,9 @@ const {
     PORT,
 } = process.env;
 
+// 上传文件临时位置
+const uploadTmp = './tmp';
+
 const database = require('./database');
 const upload = require('./upload');
 const email = require('./email');
@@ -16,4 +19,5 @@ module.exports = {
     email,
     SECRET,
     port: PORT, // 项目启动端口
+    uploadTmp,
 }
