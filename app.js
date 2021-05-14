@@ -13,8 +13,12 @@ const tokenLib = require('./lib/token.lib');
 const apiFormatter = require('./lib/apiFormatter');
 const routes = require("./routes/index");
 // const backRoute = require("./back/routes/index");
+const catchError = require("./lib/catchError");
 
 console.log('NODE_ENV:', process.env.NODE_ENV)
+
+// TODO:文件绝对路径问题
+// ...
 
 app.use(
 	koaBody({
@@ -59,6 +63,8 @@ app.use(tokenLib.unless);
 //添加格式化处理响应结果的中间件，在添加路由之前调用
 //仅对/api开头的url返回内容进行格式化处理
 app.use(apiFormatter('^/api'));
+// TODO:新增-考虑是否要使用这个
+// app.use(catchError);
 // routes
 app.use(routes.routes(), routes.allowedMethods());
 

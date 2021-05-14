@@ -352,6 +352,7 @@ const importJSONFile = async (ctx) => {
 		const data = JSON.parse(dataStr)
 		// console.log("同步读取: " + data);
 		console.log(ctx.session)
+		// console.log(path.resolve('./tmp'))
 		// // 获取到上传文件名
 		// let fileName = path.basename(filePath);
 

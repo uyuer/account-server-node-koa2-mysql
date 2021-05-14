@@ -1,4 +1,5 @@
 require('dotenv').config('./env');
+const path = require('path')
 
 const {
     SECRET,
@@ -6,7 +7,12 @@ const {
 } = process.env;
 
 // 上传文件临时位置
+const rootPath = path.resolve('.')
+// const rootPath = path.resolve() // 与上面等同
 const uploadTmp = './tmp';
+// const uploadTmp = path.resolve('.', './tmp')
+// const uploadTmp = path.resolve('.', 'tmp')
+// const uploadTmp = path.resolve('./tmp') // 与上面等同
 
 const database = require('./database');
 const upload = require('./upload');
@@ -19,5 +25,6 @@ module.exports = {
     email,
     SECRET,
     port: PORT, // 项目启动端口
+    rootPath,
     uploadTmp,
 }
