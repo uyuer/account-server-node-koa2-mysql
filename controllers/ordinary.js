@@ -171,58 +171,58 @@ exports.sendcode = async (ctx) => {
 exports.login = async (ctx) => {
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
-	// console.log(process.env.NODE_ENV, '123')
-	try {
-		// 是否设置登录频繁操作的验证
-		// .....
-		let body = ctx.request.body || {};
-		let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
-		let isEmail = patt.test(body.username); // 判断是否是邮箱
-		let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
-		// 校验参数并返回有效参数
-		let validParams = verifyParams(fields, { ...body, email: body.username });
-		let { password } = validParams;
-		let username = validParams.username || validParams.email;
-		// 执行操作---
-		let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+	// ctx.throw(400, '错误信息', { user: '123' })
+	// try {
+	// 是否设置登录频繁操作的验证
+	// .....
+	let body = ctx.request.body || {};
+	let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+	let isEmail = patt.test(body.username); // 判断是否是邮箱
+	let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
+	// 校验参数并返回有效参数
+	let validParams = verifyParams(fields, { ...body, email: body.username }, false, ctx);
+	let { password } = validParams;
+	let username = validParams.username || validParams.email;
+	// 执行操作---
+	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
-		let userinfo = await usersTable
-			.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
-			.where(`${isEmail ? 'email' : 'username'}=:u and password=:p`)
-			.bind('u', username)
-			.bind('p', password)
-			.execute()
-			.then((s) => formatFetch(s));
-		if (!userinfo) {
-			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '账户名或密码错误');
-		} else {
-			let { status } = userinfo;
-			if (status === '0') {
-				throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
-			}
+	let userinfo = await usersTable
+		.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
+		.where(`${isEmail ? 'email' : 'username'}=:u and password=:p`)
+		.bind('u', username)
+		.bind('p', password)
+		.execute()
+		.then((s) => formatFetch(s));
+	if (!userinfo) {
+		throw new ApiError(ApiErrorNames.ERROR_PARAMS, '账户名或密码错误');
+	} else {
+		let { status } = userinfo;
+		if (status === '0') {
+			throw new ApiError(ApiErrorNames.ERROR_PARAMS, '用户被冻结');
 		}
-		ctx.state.user = {
-			username: userinfo.username,
-			id: userinfo.id,
-			email: userinfo.email,
-		}
-		ctx.session = {
-			username: userinfo.username,
-			id: userinfo.id,
-			email: userinfo.email,
-			isLogin: true,
-		};
-		ctx.body = {
-			user: userinfo,
-			token: jsonwebtoken.sign(
-				{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
-				config.SECRET,
-				{ expiresIn: '7d' }
-			),
-		};
-	} catch (error) {
-		throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
 	}
+	ctx.state.user = {
+		username: userinfo.username,
+		id: userinfo.id,
+		email: userinfo.email,
+	}
+	ctx.session = {
+		username: userinfo.username,
+		id: userinfo.id,
+		email: userinfo.email,
+		isLogin: true,
+	};
+	ctx.body = {
+		user: userinfo,
+		token: jsonwebtoken.sign(
+			{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
+			config.SECRET,
+			{ expiresIn: '7d' }
+		),
+	};
+	// } catch (error) {
+	// 	throw new ApiError(ApiErrorNames.ERROR_PARAMS, error.message);
+	// }
 };
 
 exports.logout = async (ctx) => {

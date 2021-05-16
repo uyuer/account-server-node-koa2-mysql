@@ -4,6 +4,8 @@ const views = require("koa-views");
 const json = require("koa-json");
 const koaLogger = require("koa-logger");
 const koaBody = require("koa-body");
+// const error = require("koa-json-error");
+// const parameter = require("koa-parameter");
 
 const config = require('./config');
 
@@ -13,27 +15,30 @@ const tokenLib = require('./lib/token.lib');
 const apiFormatter = require('./lib/apiFormatter');
 const routes = require("./routes/index");
 // const backRoute = require("./back/routes/index");
-const catchError = require("./lib/catchError");
+// const catchError = require("./lib/catchError");
 
 console.log('NODE_ENV:', process.env.NODE_ENV)
-
 // TODO:文件绝对路径问题
 // ...
-
+// app.use(async (ctx, next) => {
+// 	ctx.verify = () => {
+// 		console.log(123)
+// 	}
+// 	await next()
+// })
 app.use(
 	koaBody({
-		multipart: true,
+		multipart: true,  // 支持文件上传
+		// encoding:'gzip',
 		formidable: {
-			multipart: true,
-			keepExtensions: true,
+			keepExtensions: true, // 保持文件的后缀
+			maxFieldsSize: 2 * 1024 * 1024, // 文件上传大小
 			// uploadDir: config.upload.avatarFullPath,
-			uploadDir: config.uploadTmp,
-			// onFileBegin: (name, file) => {
-			// 	console.log(name, '123')
-			// 	console.log(file, '123')
-			// 	file.path = file.path
-
-			// }
+			uploadDir: config.uploadTmp, // 设置文件上传目录
+			onFileBegin: (name, file) => { // 文件上传前的设置
+				console.log(`name: ${name}`);
+				console.log(file);
+			},
 		},
 	})
 );
@@ -60,14 +65,30 @@ app.use(tokenLib.gatherToken);
 app.use(tokenLib.authToken);
 app.use(tokenLib.unless);
 
+// TODO:新增-考虑是否要使用这个
+// app.use(catchError);
+
 //添加格式化处理响应结果的中间件，在添加路由之前调用
 //仅对/api开头的url返回内容进行格式化处理
 app.use(apiFormatter('^/api'));
-// TODO:新增-考虑是否要使用这个
-// app.use(catchError);
 // routes
 app.use(routes.routes(), routes.allowedMethods());
 
+app.use(async (ctx, next) => {
+	if (ctx.status === 404) {
+		ctx.throw(404, 'Not Found')
+	}
+})
+
+app.on('error', (err, ctx) => {
+	console.log('错误了', err.status, ctx.status)
+	console.log(ctx.verify())
+	ctx.body = {
+		code: err.status || 500,
+		message: err.message,
+		data: null,
+	}
+});
 // // 发送HTML页面
 // app.use(async (ctx) => {
 // 	let url = ctx.request.url;

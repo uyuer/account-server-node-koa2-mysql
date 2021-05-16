@@ -3,7 +3,6 @@ const ApiErrorNames = require("../lib/apiErrorNames");
 const { filterParams, filterRules, isFunction } = require("../lib/utils");
 
 module.exports = (Rules) => {
-
     // 筛选参数对应规则
     function screeningRules(params = {}, rules = {}) {
         let fields = Object.keys(params);
