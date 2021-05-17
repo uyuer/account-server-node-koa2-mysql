@@ -1,6 +1,4 @@
-const verify = require('./verify');
-
-// 参数准入规则
+// accounts参数准入规则
 let accountsRules = {
     id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
     userId: [{ required: true, message: "用户id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
@@ -34,4 +32,4 @@ let accountsRules = {
     }],
 };
 
-module.exports = verify(accountsRules);
+module.exports = accountsRules;

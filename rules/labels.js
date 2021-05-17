@@ -1,5 +1,3 @@
-const verify = require('./verify');
-
 // 参数准入规则
 let labelsRules = {
     id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
@@ -7,4 +5,4 @@ let labelsRules = {
     creatorId: [{ required: true, message: "创建者用户id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
 };
 
-module.exports = verify(labelsRules);
+module.exports = labelsRules;

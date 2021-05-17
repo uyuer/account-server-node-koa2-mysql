@@ -9,13 +9,11 @@ const koaBody = require("koa-body");
 
 const config = require('./config');
 
-const loggerLib = require("./lib/logger.lib");
-const sessionLib = require('./lib/session.lib');
-const tokenLib = require('./lib/token.lib');
+const loggerLib = require("./lib/logger");
+const sessionLib = require('./lib/session');
+const tokenLib = require('./lib/token');
 const apiFormatter = require('./lib/apiFormatter');
 const routes = require("./routes/index");
-// const backRoute = require("./back/routes/index");
-// const catchError = require("./lib/catchError");
 
 console.log('NODE_ENV:', process.env.NODE_ENV)
 // TODO:文件绝对路径问题
@@ -81,11 +79,10 @@ app.use(async (ctx, next) => {
 })
 
 app.on('error', (err, ctx) => {
-	console.log('错误了', err.status, ctx.status)
-	console.log(ctx.verify())
+	console.log('捕获到错误信息', err.status, ctx.status)
 	ctx.body = {
 		code: err.status || 500,
-		message: err.message,
+		message: err.message || '异常错误',
 		data: null,
 	}
 });

@@ -1,5 +1,3 @@
-const verify = require('./verify');
-
 // 用户表数据准入规则
 let userRules = {
     id: [
@@ -36,4 +34,4 @@ let userRules = {
     ]
 };
 
-module.exports = verify(userRules);
+module.exports = userRules;
