@@ -22,7 +22,7 @@ const findOne = async (ctx) => {
 	// 校验参数并返回有效参数
 	let { errors, validParams } = verifyParams(fields, body, usersRules);
 	if (errors.length > 0) {
-		ctx.throw(400, errors[0]);
+		return ctx.throw(400, errors[0]);
 	}
 	// 执行操作---
 	let { id } = validParams;

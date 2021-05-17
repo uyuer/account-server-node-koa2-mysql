@@ -12,6 +12,7 @@ const {
 const usersRules = require("../rules/users");
 const { sendEmailCode } = require('../lib/email')
 const { formatFetch, formatFetchAll } = require('../lib/utils');
+const Table = require('../lib/usersTable');
 // var AES = require("crypto-js/aes");
 
 // // AES加密 加密用户网站密码
@@ -167,58 +168,63 @@ exports.sendcode = async (ctx) => {
 
 // 用户登录
 exports.login = async (ctx) => {
-	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
-	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
-	// 是否设置登录频繁操作的验证
-	// .....
-	let body = ctx.request.body || {};
-	let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
-	let isEmail = patt.test(body.username); // 判断是否是邮箱
-	let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
-	// 校验参数并返回有效参数
-	let { errors, validParams } = verifyParams(fields, { ...body, email: body.username }, usersRules);
-	if (errors.length > 0) {
-		ctx.throw(400, errors[0]);
-	}
-	let { password } = validParams;
-	let username = validParams.username || validParams.email;
-	// 执行操作---
-	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+	let usersTable = await Table.build('users')
+	let userinfo = await usersTable.findOne(`id=${87}`)
+	console.log(userinfo)
+	ctx.body = true;
 
-	let userinfo = await usersTable
-		.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
-		.where(`${isEmail ? 'email' : 'username'}=:u and password=:p`)
-		.bind('u', username)
-		.bind('p', password)
-		.execute()
-		.then((s) => formatFetch(s));
-	if (!userinfo) {
-		return ctx.throw(400, '账户名或密码错误');
-	} else {
-		let { status } = userinfo;
-		if (status === '0') {
-			return ctx.throw(400, '用户被冻结');
-		}
-	}
-	ctx.state.user = {
-		username: userinfo.username,
-		id: userinfo.id,
-		email: userinfo.email,
-	}
-	ctx.session = {
-		username: userinfo.username,
-		id: userinfo.id,
-		email: userinfo.email,
-		isLogin: true,
-	};
-	ctx.body = {
-		user: userinfo,
-		token: jsonwebtoken.sign(
-			{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
-			config.SECRET,
-			{ expiresIn: '7d' }
-		),
-	};
+	// // var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
+	// console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
+	// // 是否设置登录频繁操作的验证
+	// // .....
+	// let body = ctx.request.body || {};
+	// let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+	// let isEmail = patt.test(body.username); // 判断是否是邮箱
+	// let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
+	// // 校验参数并返回有效参数
+	// let { errors, validParams } = verifyParams(fields, { ...body, email: body.username }, usersRules);
+	// if (errors.length > 0) {
+	// 	ctx.throw(400, errors[0]);
+	// }
+	// let { password } = validParams;
+	// let username = validParams.username || validParams.email;
+	// // 执行操作---
+	// let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+
+	// let userinfo = await usersTable
+	// 	.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
+	// 	.where(`${isEmail ? 'email' : 'username'}=:u and password=:p`)
+	// 	.bind('u', username)
+	// 	.bind('p', password)
+	// 	.execute()
+	// 	.then((s) => formatFetch(s));
+	// if (!userinfo) {
+	// 	return ctx.throw(400, '账户名或密码错误');
+	// } else {
+	// 	let { status } = userinfo;
+	// 	if (status === '0') {
+	// 		return ctx.throw(400, '用户被冻结');
+	// 	}
+	// }
+	// ctx.state.user = {
+	// 	username: userinfo.username,
+	// 	id: userinfo.id,
+	// 	email: userinfo.email,
+	// }
+	// ctx.session = {
+	// 	username: userinfo.username,
+	// 	id: userinfo.id,
+	// 	email: userinfo.email,
+	// 	isLogin: true,
+	// };
+	// ctx.body = {
+	// 	user: userinfo,
+	// 	token: jsonwebtoken.sign(
+	// 		{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
+	// 		config.SECRET,
+	// 		{ expiresIn: '7d' }
+	// 	),
+	// };
 };
 
 exports.logout = async (ctx) => {
