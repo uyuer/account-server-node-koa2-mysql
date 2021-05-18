@@ -174,6 +174,9 @@ const updateMultiple = async (ctx) => {
 	})
 	// TODO: id校验, 不能让用户乱传id和userId
 	// 执行操作
+	// console.log(ctx.session)
+	// ctx.body = ctx.session
+	// 更新
 	let { accountsTable } = await getTable();
 	let result = await accountsTable.updateMultiple('id', validParams);
 	ctx.body = result;
@@ -192,19 +195,16 @@ const deleteOne = async (ctx) => {
 	}
 	// 校验完毕, 执行操作---
 	let { id } = validParams;
-	// 校验是否存在于数据库中
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
+	// --分割线--
+	// TODO:这里需要校验用户是否有权限删除数据, 防止用户删除其他用户的数据
+	let { accountsTable } = await getTable();
 	// 检查数据是否存在
-	let info = await accountsTable.select('id').where(`id=:id`).bind('id', id).execute().then(s => formatFetch(s))
+	let info = await accountsTable.findOne(`id=${id}`);
 	if (!info) {
 		return ctx.throw(400, '数据不存在');
 	}
 	// 如果存在, 则删除
-	let result = await accountsTable.delete().where(`id=:id`).bind('id', id).execute().then(s => {
-		let count = s.getAffectedItemsCount();
-		return count ? true : false
-	})
+	let result = await accountsTable.deleteOne(`id=${id}`);
 	ctx.body = result;
 };
 // 删除多条数据
@@ -219,22 +219,15 @@ const deleteMultiple = async (ctx) => {
 	}
 	// 校验完毕, 执行操作---
 	let { ids } = validParams;
-	// 校验是否存在于数据库中
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-
-	// delete from accounts where id in ('20','24')
-	let sql = `
-		DELETE FROM ${accountsTable.getSchema().getName()}.${accountsTable.getName()} WHERE id IN (${ids})
-		`;
-	let result = await accountsTable.getSession().sql(sql).execute().then(s => {
-		let warningsCount = s.getWarningsCount();
-		let affectCount = s.getAffectedItemsCount();
-		if (affectCount > 0) {
-			return true;
-		}
-		return false;
-	})
+	// TODO:这里需要校验用户是否有权限删除数据, 防止用户删除其他用户的数据
+	// --分割线--
+	let { accountsTable } = await getTable();
+	// 开始删除
+	// DELETE FROM accounts WHERE id IN (17,18) and userId = 87;
+	// let result = await accountsTable.deleteMultiple(`id`, ids);
+	// console.log(`id IN (${ids}) and userId=${ctx.session.id}`)
+	// let result = await accountsTable.deleteMultiple(`id IN (${ids}) and userId=${ctx.session.id}`);
+	let result = await accountsTable.deleteOne(`id IN (${ids}) and userId=${ctx.session.id}`);
 	ctx.body = result;
 };
 
