@@ -14,8 +14,23 @@ const { formatFetch, formatFetchAll, isArray } = require("../lib/utils");
 const config = require('./../config');
 const { baseUploadsPath, avatarPath, avatarFullPath } = require('../config/upload');
 const accountsRules = require("../rules/accounts");
+const Table = require('../lib/usersTable');
 
+async function getTable() {
+	let ins = await schema;
+	let usersTable = await Table.build('users');
+	let avatarsTable = await Table.build('avatars');
+	let registerEmailTable = await Table.build('registeremail');
+	let accountsTable = await Table.build('accounts');
+	return {
+		usersTable, avatarsTable, registerEmailTable, accountsTable
+	}
+}
 // let arr = ['id', 'userId', 'site', 'website', 'introduction', 'account', 'password', 'associates', 'nickname', 'status', 'remark', 'tags', 'createTime', 'updateTime']
+
+// TODO:缺一个类型校验和转化
+// ...
+
 let tableFields = {
 	userId: '', // 所属用户id
 	site: '', // 网站名称
@@ -40,13 +55,10 @@ const addOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
-	let keys = Object.keys(validParams); // 数组
-	let values = keys.map(key => validParams[key]) // 数组
-
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-	let res = await accountsTable.insert(keys).values(values).execute();
+	// 校验完毕, 执行操作---
+	let keys = Object.keys(fields); // 数组
+	let { accountsTable } = await getTable();
+	let info = await accountsTable.addOne(keys, validParams);
 	ctx.body = true;
 };
 // 同时插入多条数据
@@ -62,26 +74,11 @@ const addMultiple = async (ctx) => {
 		}
 		return params;
 	})
-	// 执行操作---
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-
-	let keys = Object.keys(fields);
-	let inserter = validParams.reduce((total, currentValue) => {
-		let values = Object.keys(currentValue).map(key => {
-			return currentValue[key]
-		})
-		total.values(values);
-		return total;
-	}, accountsTable.insert(keys))
-	let result = await inserter.execute().then(s => {
-		let warningsCount = s.getWarningsCount();
-		if (warningsCount === 0) {
-			return true;
-		}
-		return false;
-	})
-	ctx.body = result;
+	// 校验完毕, 执行操作---
+	let keys = Object.keys(fields); // 数组
+	let { accountsTable } = await getTable();
+	let info = await accountsTable.addMultiple(keys, validParams);
+	ctx.body = info;
 }
 
 // 查询
@@ -95,19 +92,11 @@ const findOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-
+	// 校验完毕, 执行操作---
 	let { id } = validParams;
-
-	let userinfo = await accountsTable
-		.select()
-		.where(`id=:id`)
-		.bind('id', id)
-		.execute()
-		.then(s => formatFetch(s))
-	ctx.body = userinfo;
+	let { accountsTable } = await getTable();
+	let info = await accountsTable.findOne(`id=${id}`, []);
+	ctx.body = info;
 };
 // 查找-多条数据(根据userId找到该用户下的账户数据, 可分页)
 const findMultiple = async (ctx) => {
@@ -119,35 +108,11 @@ const findMultiple = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { userId, pageNum, pageSize } = validParams;
-
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-	let totalCount = await accountsTable
-		.select()
-		.where(`userId=:userId`)
-		.bind('userId', userId)
-		.execute()
-		.then((res => {
-			let all = res.fetchAll();
-			let arr = Array(...all)
-			return arr.length || 0;
-		})) || 0
-	let userinfo = await accountsTable
-		.select()
-		.where(`userId=:userId`)
-		.bind('userId', userId)
-		.limit(pageSize)
-		.offset((pageNum - 1) * pageSize)
-		.execute()
-		.then(s => formatFetchAll(s))
-	ctx.body = {
-		data: userinfo,
-		pageNum: Number(pageNum),
-		pageSize: Number(pageSize),
-		totalCount
-	}
+	let { accountsTable } = await getTable();
+	let list = await accountsTable.findMultiple(`userId=${userId}`, [], pageNum, pageSize);
+	ctx.body = list;
 };
 // 查找-全部数据(根据userId找到该用户下的全部账户数据)
 const findAll = async (ctx) => {
@@ -159,23 +124,12 @@ const findAll = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-
+	// 校验完毕, 执行操作---
 	let { userId } = validParams;
-
-	let userinfo = await accountsTable
-		.select()
-		.where(`userId=:userId`)
-		.bind('userId', userId)
-		.execute()
-		.then(s => formatFetchAll(s))
-	ctx.body = {
-		data: userinfo,
-		totalCount: userinfo.length,
-	}
-
+	// 查询
+	let { accountsTable } = await getTable();
+	let list = await accountsTable.findAll(`userId=${userId}`);
+	ctx.body = list
 };
 
 // 更新
@@ -189,29 +143,17 @@ const updateOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { id, userId, ...other } = validParams;
+	let where = `id=${id} and userId=${userId}`;
 	// 校验是否存在于数据库中
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-	let info = await accountsTable.select('id').where(`id=:id`).bind('id', id).execute().then(s => formatFetch(s))
+	let { accountsTable } = await getTable();
+	let info = await accountsTable.findOne(where);
 	if (!info) {
 		return ctx.throw(400, '数据不存在');
 	}
-
-	// 构建插入数据
-	let updater = Object.keys(other).reduce((total, currentValue) => {
-		total.set(currentValue, other[currentValue])
-		return total;
-	}, accountsTable.update().where('id=:id and userId=:userId').bind('id', id).bind('userId', userId))
-	let result = await updater.execute().then(s => {
-		let warningsCount = s.getWarningsCount();
-		let affectCount = s.getAffectedItemsCount();
-		if (warningsCount === 0) {
-			return true;
-		}
-		return false;
-	})
+	// 插入
+	let result = await accountsTable.updateOne(where, other);
 	ctx.body = result;
 };
 // 更新多条账户信息
@@ -230,39 +172,11 @@ const updateMultiple = async (ctx) => {
 		}
 		return params;
 	})
+	// TODO: id校验, 不能让用户乱传id和userId
 	// 执行操作
-	let ins = await schema;
-	let accountsTable = ins.getTable('accounts');
-
-	let ids = [];
-	let obj = validParams.reduce((total, currentValue, index, arr) => {
-		let { id, userId, ...validParams } = currentValue;
-		ids.push(id);
-		Object.keys(validParams).forEach(key => {
-			total[key] ? total[key].push(validParams[key]) : total[key] = [validParams[key]]
-		})
-		return total;
-	}, {})
-	let snippet = Object.keys(obj).map((key) => {
-		let arr = obj[key];
-		let fieldsArr = arr.map((item, index) => {
-			return `WHEN ${ids[index]} THEN '${item}'`
-		})
-		return `${key} = CASE id ${fieldsArr.join(' ')} END`;
-	})
-	let sql = `
-			UPDATE ${accountsTable.getSchema().getName()}.${accountsTable.getName()} SET ${snippet.join(',')} WHERE id IN (${ids.toString()})
-		`;
-	console.log(sql)
-	let result = await accountsTable.getSession().sql(sql).execute().then(s => {
-		let warningsCount = s.getWarningsCount();
-		let affectCount = s.getAffectedItemsCount();
-		if (warningsCount === 0) {
-			return true;
-		}
-		return false;
-	})
-	ctx.body = result
+	let { accountsTable } = await getTable();
+	let result = await accountsTable.updateMultiple('id', validParams);
+	ctx.body = result;
 }
 
 // 删除
@@ -276,7 +190,7 @@ const deleteOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { id } = validParams;
 	// 校验是否存在于数据库中
 	let ins = await schema;
@@ -303,7 +217,7 @@ const deleteMultiple = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { ids } = validParams;
 	// 校验是否存在于数据库中
 	let ins = await schema;
@@ -338,7 +252,7 @@ const importJSONFile = async (ctx) => {
 	if (!file) {
 		return ctx.throw(400, '导入文件不能为空');
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	const { path: filePath, name, type, lastModifiedDate } = file;
 	// 检查上传文件是否合法, 如果非法则删除文件
 	let allowedType = ['application/json']

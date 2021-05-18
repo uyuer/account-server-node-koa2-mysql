@@ -26,9 +26,10 @@ const Table = require('../lib/usersTable');
 
 async function getTable() {
 	let ins = await schema;
-	let usersTable = ins.getTable('users');
-	let avatarsTable = ins.getTable('avatars');
-	let registerEmailTable = ins.getTable('registeremail');
+	let usersTable = await Table.build('users');
+	let avatarsTable = await Table.build('avatars');
+	let registerEmailTable = await Table.build('registeremail');
+	// let registerEmailTable = ins.getTable('registeremail');
 	return {
 		usersTable, avatarsTable, registerEmailTable
 	}
@@ -44,28 +45,18 @@ exports.register = async (ctx) => {
 	if (errors.length > 0) {
 		ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
 	let { username, password, repassword, male, email, code } = validParams;
 	// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
 	// 检查邮箱是否被使用
-	let emailBeUsed = await usersTable
-		.select('id')
-		.where(`email=:e`)
-		.bind('e', email)
-		.execute()
-		.then((s) => formatFetch(s));
+	let emailBeUsed = await usersTable.findOne(`email='${email}'`);
 	if (emailBeUsed) {
 		return ctx.throw(400, '此邮箱已被使用');
 	}
 	// 检查用户名是否被使用
-	let usernameBeUsed = await usersTable
-		.select('id')
-		.where(`username=:u`)
-		.bind('u', username)
-		.execute()
-		.then((s) => formatFetch(s));
+	let usernameBeUsed = await usersTable.findOne(`username='${username}'`);
 	if (usernameBeUsed) {
 		return ctx.throw(400, '此用户名已被使用');
 	}
@@ -75,13 +66,7 @@ exports.register = async (ctx) => {
 	}
 	// 搁置:另一种流程思路,只需要这个邮箱对应的最新的验证码
 	// 检查邮箱验证码是否正确
-	let registerEmail = await registerEmailTable
-		.select('id', 'expires', 'expiresTime')
-		.where(`email=:email and code=:code`)
-		.bind('email', email)
-		.bind('code', code)
-		.execute()
-		.then((s) => formatFetch(s));
+	let registerEmail = await registerEmailTable.findOne(`email='${email}' and code=${code}`, ['id', 'expires', 'expiresTime']);
 	if (!registerEmail) {
 		return ctx.throw(400, '验证码错误');
 	}
@@ -127,7 +112,7 @@ exports.sendcode = async (ctx) => {
 	if (errors.length > 0) {
 		ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
 	const { email } = validParams;
@@ -188,7 +173,7 @@ exports.login = async (ctx) => {
 	// }
 	// let { password } = validParams;
 	// let username = validParams.username || validParams.email;
-	// // 执行操作---
+	// // 校验完毕, 执行操作---
 	// let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
 	// let userinfo = await usersTable

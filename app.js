@@ -79,7 +79,8 @@ app.use(async (ctx, next) => {
 })
 
 app.on('error', (err, ctx) => {
-	console.log('捕获到错误信息', err.status, ctx.status)
+	console.log('捕获到错误信息', err.status, ctx.status);
+	console.log(err)
 	ctx.body = {
 		code: err.status || 500,
 		message: err.message || '异常错误',

@@ -24,7 +24,7 @@ const findOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { id } = validParams;
 	let ins = await schema;
 	let table = ins.getTable('users');
@@ -64,7 +64,7 @@ const updateOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	let { id, ...other } = validParams;
 	let ins = await schema;
 	let table = ins.getTable('users');
@@ -113,7 +113,7 @@ const uploadProfilePicture = async (ctx) => {
 	if (!file) {
 		return ctx.throw(400, '用户头像不能为空');
 	}
-	// 执行操作---
+	// 校验完毕, 执行操作---
 	const { path: filePath, name, type, lastModifiedDate } = file;
 	// 检查上传文件是否合法, 如果非法则删除文件
 	let allowedType = ['image/png', 'image/jpeg', 'image/gif']
