@@ -84,6 +84,8 @@ const findOne = async (ctx) => {
 	let validParams = ctx.valid(fields, body, accountsRules)
 	// 校验通过, 执行操作---
 	let { accountsTable } = await getTable();
+	// TODO:这里需要判断用户是否拥有对该数据的操作权
+
 	let { id } = validParams;
 	// TODO:这里使用了userId辅助精确删除, 但是当admin等管理员删除时会存在问题, 可能需要做一个权限的判断之类的
 	let where = `id=${id} and userId='${userId}'`;
