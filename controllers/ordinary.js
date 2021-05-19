@@ -1,8 +1,7 @@
-const dayjs = require('dayjs')
 const jsonwebtoken = require('jsonwebtoken');
+const dayjs = require('dayjs')
 
 const config = require('../config')
-const { schema } = require('../lib/mysqlx');
 const {
 	screeningFields, // 根据有效字段筛选出有效参数, 过滤一些用户上传的其他无关参数
 	screeningRules, // 筛选参数对应规则
@@ -12,7 +11,7 @@ const {
 const usersRules = require("../rules/users");
 const { sendEmailCode } = require('../lib/email')
 const { formatFetch, formatFetchAll } = require('../lib/utils');
-const Table = require('../lib/usersTable');
+const Table = require('../lib/table.class');
 // var AES = require("crypto-js/aes");
 
 // // AES加密 加密用户网站密码
@@ -25,13 +24,12 @@ const Table = require('../lib/usersTable');
 // let ins = await schema;
 
 async function getTable() {
-	let ins = await schema;
 	let usersTable = await Table.build('users');
 	let avatarsTable = await Table.build('avatars');
 	let registerEmailTable = await Table.build('registeremail');
-	// let registerEmailTable = ins.getTable('registeremail');
+	let accountsTable = await Table.build('accounts');
 	return {
-		usersTable, avatarsTable, registerEmailTable
+		usersTable, avatarsTable, registerEmailTable, accountsTable
 	}
 }
 
@@ -45,7 +43,7 @@ exports.register = async (ctx) => {
 	if (errors.length > 0) {
 		ctx.throw(400, errors[0]);
 	}
-	// 校验完毕, 执行操作---
+	// 初步校验通过, 执行操作---
 	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
 	let { username, password, repassword, male, email, code } = validParams;
@@ -77,7 +75,7 @@ exports.register = async (ctx) => {
 		return ctx.throw(400, '验证码已过期, 请重新获取');
 	}
 	// 随机设定头像
-	let avatarIdArr = await avatarsTable.select('id').where('isSystemCreate=1').execute().then(s => formatFetchAll(s));
+	let avatarIdArr = await avatarsTable.findAll('isSystemCreate=1');
 	if (!avatarIdArr) {
 		return ctx.throw(400, '未知错误, 未查询出系统头像');
 	}
@@ -85,19 +83,9 @@ exports.register = async (ctx) => {
 	let { id: avatarId } = avatarIdArr[avatarIndex];
 	// 构建用户数据
 	let keys = ['username', 'password', 'email', 'male', 'avatarId'];
-	let values = [username, password, email, male, avatarId];
+	let values = { username, password, email, male, avatarId };
 	// 插入数据库,注册成功后删除注册验证码
-	let result = await usersTable.insert(keys).values(values).execute().then(async s => {
-		let affectCount = s.getAffectedItemsCount();
-		if (affectCount === 1) {
-			return await registerEmailTable.delete().where('id=:id').bind('id', registerEmailId).execute().then(s => {
-				let count = s.getAffectedItemsCount();
-				return count ? true : false
-			})
-		}
-		return false;
-	});
-	ctx.session.email = {};
+	let result = await usersTable.addOne(keys, values);
 	ctx.body = result;
 };
 
@@ -112,17 +100,13 @@ exports.sendcode = async (ctx) => {
 	if (errors.length > 0) {
 		ctx.throw(400, errors[0]);
 	}
-	// 校验完毕, 执行操作---
+	// 初步校验通过, 执行操作---
 	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
 
 	const { email } = validParams;
 	const code = Math.random().toString().slice(2, 6); // 随机生成的验证码
 	// 检查邮箱是否被使用
-	let emailBeUsed = await usersTable.select('id')
-		.where(`email=:e`)
-		.bind('e', email)
-		.execute()
-		.then((s) => formatFetch(s));
+	let emailBeUsed = await usersTable.findOne(`email=:e`);
 	if (emailBeUsed) {
 		return ctx.throw(400, '此邮箱已被使用');
 	}
@@ -145,71 +129,55 @@ exports.sendcode = async (ctx) => {
 	// 记录验证码到数据库
 	let expires = currentTime.add(30, 'minute');
 	let keys = ['email', 'code', 'expires', 'expiresTime']
-	let values = [email, code, expires.valueOf(), expires.format()];
-	let res = await registerEmailTable.insert(keys).values(values).execute();
+	let values = { email, code, expires: expires.valueOf(), expiresTime: expires.format() };
+	let result = await registerEmailTable.addOne(keys, values)
 	// 结束
-	ctx.body = true;
+	ctx.body = result;
 };
 
 // 用户登录
 exports.login = async (ctx) => {
-	let usersTable = await Table.build('users')
-	let userinfo = await usersTable.findOne(`id=${87}`)
-	console.log(userinfo)
-	ctx.body = true;
-
-	// // var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
-	// console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
-	// // 是否设置登录频繁操作的验证
-	// // .....
-	// let body = ctx.request.body || {};
-	// let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
-	// let isEmail = patt.test(body.username); // 判断是否是邮箱
-	// let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
-	// // 校验参数并返回有效参数
-	// let { errors, validParams } = verifyParams(fields, { ...body, email: body.username }, usersRules);
-	// if (errors.length > 0) {
-	// 	ctx.throw(400, errors[0]);
-	// }
-	// let { password } = validParams;
-	// let username = validParams.username || validParams.email;
-	// // 校验完毕, 执行操作---
-	// let { usersTable, avatarsTable, registerEmailTable } = await getTable();
-
-	// let userinfo = await usersTable
-	// 	.select('id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime')
-	// 	.where(`${isEmail ? 'email' : 'username'}=:u and password=:p`)
-	// 	.bind('u', username)
-	// 	.bind('p', password)
-	// 	.execute()
-	// 	.then((s) => formatFetch(s));
-	// if (!userinfo) {
-	// 	return ctx.throw(400, '账户名或密码错误');
-	// } else {
-	// 	let { status } = userinfo;
-	// 	if (status === '0') {
-	// 		return ctx.throw(400, '用户被冻结');
-	// 	}
-	// }
-	// ctx.state.user = {
-	// 	username: userinfo.username,
-	// 	id: userinfo.id,
-	// 	email: userinfo.email,
-	// }
-	// ctx.session = {
-	// 	username: userinfo.username,
-	// 	id: userinfo.id,
-	// 	email: userinfo.email,
-	// 	isLogin: true,
-	// };
-	// ctx.body = {
-	// 	user: userinfo,
-	// 	token: jsonwebtoken.sign(
-	// 		{ name: userinfo.username, email: userinfo.email, id: userinfo.id },  // 加密userToken
-	// 		config.SECRET,
-	// 		{ expiresIn: '7d' }
-	// 	),
-	// };
+	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
+	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
+	// 是否设置登录频繁操作的验证
+	// .....
+	let body = ctx.request.body || {};
+	let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+	let isEmail = patt.test(body.username); // 判断是否是邮箱
+	let fields = isEmail ? { email: '', password: '' } : { username: '', password: '' };
+	// 校验参数并返回有效参数
+	let { errors, validParams } = verifyParams(fields, { ...body, email: body.username }, usersRules);
+	if (errors.length > 0) {
+		ctx.throw(400, errors[0]);
+	}
+	let { password } = validParams;
+	let username = validParams.username || validParams.email;
+	// 初步校验通过, 执行操作---
+	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+	let keys = ['id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime'];
+	let userinfo = await usersTable.findOne(`${isEmail ? 'email' : 'username'}='${username}' and password='${password}'`, keys)
+	if (!userinfo) {
+		return ctx.throw(400, '账户名或密码错误');
+	} else {
+		let { status } = userinfo;
+		if (status === '0') {
+			return ctx.throw(400, '用户被冻结');
+		}
+	}
+	ctx.session = {
+		username: userinfo.username,
+		userId: userinfo.id,
+		email: userinfo.email,
+		isLogin: true,
+	};
+	ctx.body = {
+		user: userinfo,
+		token: jsonwebtoken.sign(
+			{ name: userinfo.username, email: userinfo.email, userId: userinfo.id },  // 加密userToken
+			config.SECRET,
+			{ expiresIn: '7d' }
+		),
+	};
 };
 
 exports.logout = async (ctx) => {

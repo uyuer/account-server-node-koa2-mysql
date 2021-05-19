@@ -12,6 +12,7 @@ const config = require('./config');
 const loggerLib = require("./lib/logger");
 const sessionLib = require('./lib/session');
 const tokenLib = require('./lib/token');
+const middle = require('./lib/middle');
 const apiFormatter = require('./lib/apiFormatter');
 const routes = require("./routes/index");
 
@@ -33,10 +34,10 @@ app.use(
 			maxFieldsSize: 2 * 1024 * 1024, // 文件上传大小
 			// uploadDir: config.upload.avatarFullPath,
 			uploadDir: config.uploadTmp, // 设置文件上传目录
-			onFileBegin: (name, file) => { // 文件上传前的设置
-				console.log(`name: ${name}`);
-				console.log(file);
-			},
+			// onFileBegin: (name, file) => { // 文件上传前的设置
+			// 	console.log(`name: ${name}`);
+			// 	console.log(file);
+			// },
 		},
 	})
 );
@@ -63,8 +64,10 @@ app.use(tokenLib.gatherToken);
 app.use(tokenLib.authToken);
 app.use(tokenLib.unless);
 
-// TODO:新增-考虑是否要使用这个
-// app.use(catchError);
+// 定义了一些和ctx有关的全局方法
+app.use(middle.userInfo)
+app.use(middle.arguments)
+app.use(middle.valid)
 
 //添加格式化处理响应结果的中间件，在添加路由之前调用
 //仅对/api开头的url返回内容进行格式化处理

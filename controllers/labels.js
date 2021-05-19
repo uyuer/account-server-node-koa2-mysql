@@ -26,7 +26,7 @@ const addOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 校验完毕, 执行操作---
+	// 初步校验通过, 执行操作---
 	let ins = await schema;
 	let labelsTable = ins.getTable('labels');
 
@@ -65,7 +65,7 @@ const updateOne = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 校验完毕, 执行操作---
+	// 初步校验通过, 执行操作---
 	let { id, creatorId, ...other } = validParams;
 	let ins = await schema;
 	let labelsTable = ins.getTable('labels');
@@ -98,7 +98,7 @@ const findAll = async (ctx) => {
 	if (errors.length > 0) {
 		return ctx.throw(400, errors[0]);
 	}
-	// 校验完毕, 执行操作---
+	// 初步校验通过, 执行操作---
 	let ins = await schema;
 	let labelsTable = ins.getTable('labels');
 	let usersTable = ins.getTable('users');
