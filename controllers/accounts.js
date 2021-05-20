@@ -246,8 +246,13 @@ const importJSONFile = async (ctx) => {
 	}
 	let { userId } = validParams;
 	let str = fs.readFileSync(filePath);
-	const fileData = JSON.parse(str);
-
+	let fileData = [];
+	try {
+		fs.unlinkSync(filePath);
+		fileData = JSON.parse(str);
+	} catch (error) {
+		return ctx.throw(400, error);
+	}
 	let { accountsTable } = await getTable();
 	// TODO:这里使用了userId辅助精确删除, 但是当admin等管理员删除时会存在问题, 可能需要做一个权限的判断之类的
 	let keys = Object.keys(tableFields);
