@@ -6,7 +6,7 @@ const {
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../lib/verify");
+} = require("../method/verify");
 const { schema } = require("../lib/mysqlx");
 const { formatFetch, formatFetchAll } = require("../lib/utils");
 
@@ -29,7 +29,7 @@ const findOne = async (ctx) => {
 	let ins = await schema;
 	let table = ins.getTable('users');
 	let userinfo = await table
-		.select('id', 'username', 'male', 'avatarId', 'email', 'emailActive', 'status', 'createTime', 'updateTime')
+		.select('id', 'username', 'male', 'avatarId', 'email', 'active', 'status', 'createTime', 'updateTime')
 		.where(`id=:id`)
 		.bind('id', id)
 		.execute()
@@ -45,7 +45,7 @@ const findOne = async (ctx) => {
 		.then(s => formatFetch(s))
 	let { isSystemCreate, fileName, createTime } = avatarInfo;
 
-	ctx.body = {
+	ctx.bodys = {
 		...userinfo,
 		isSystemCreate,
 		avatarFileName: fileName,
@@ -89,7 +89,7 @@ const updateOne = async (ctx) => {
 		}
 		return false;
 	})
-	ctx.body = result;
+	ctx.bodys = result;
 };
 
 // 删除用户
@@ -150,7 +150,7 @@ const uploadProfilePicture = async (ctx) => {
 	if (!userUpdateInfo.getAffectedItemsCount()) {
 		return ctx.throw(400, '上传成功, 但更新失败');
 	}
-	ctx.body = true;
+	ctx.bodys = true;
 }
 module.exports = {
 	updateOne,
@@ -162,7 +162,7 @@ module.exports = {
 // let res = fs.readFileSync(filePath);
 // console.log(Buffer.isBuffer(res))
 // console.log(res.toJSON())
-// ctx.body = {
+// ctx.bodys = {
 // 	name: '头像上传',
 // 	res: res.toJSON(),
 // }

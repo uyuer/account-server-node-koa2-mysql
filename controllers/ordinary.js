@@ -7,7 +7,7 @@ const {
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../lib/verify");
+} = require("../method/verify");
 const usersRules = require("../rules/users");
 const { sendEmailCode } = require('../lib/email')
 const { formatFetch, formatFetchAll } = require('../lib/utils');
@@ -86,7 +86,7 @@ exports.register = async (ctx) => {
 	let values = { username, password, email, male, avatarId };
 	// 插入数据库,注册成功后删除注册验证码
 	let result = await usersTable.addOne(keys, values);
-	ctx.body = result;
+	ctx.bodys = result;
 };
 
 // 发送邮件验证码
@@ -132,7 +132,7 @@ exports.sendcode = async (ctx) => {
 	let values = { email, code, expires: expires.valueOf(), expiresTime: expires.format() };
 	let result = await registerEmailTable.addOne(keys, values)
 	// 结束
-	ctx.body = result;
+	ctx.bodys = result;
 };
 
 // 用户登录
@@ -165,15 +165,15 @@ exports.login = async (ctx) => {
 		}
 	}
 	ctx.session = {
-		username: userinfo.username,
 		userId: userinfo.id,
+		username: userinfo.username,
 		email: userinfo.email,
 		isLogin: true,
 	};
-	ctx.body = {
+	ctx.bodys = {
 		user: userinfo,
 		token: jsonwebtoken.sign(
-			{ name: userinfo.username, email: userinfo.email, userId: userinfo.id },  // 加密userToken
+			{ userId: userinfo.id, username: userinfo.username, email: userinfo.email },  // 加密userToken
 			config.SECRET,
 			{ expiresIn: '7d' }
 		),
@@ -182,5 +182,5 @@ exports.login = async (ctx) => {
 
 exports.logout = async (ctx) => {
 	ctx.session = null;
-	ctx.body = true;
+	ctx.bodys = true;
 };

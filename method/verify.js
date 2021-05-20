@@ -1,4 +1,4 @@
-const { filterParams, filterRules, isFunction } = require("./utils");
+const { filterParams, filterRules, isFunction } = require("../lib/utils");
 
 /**
  * 根据有效字段筛选出有效参数, 过滤一些用户上传的其他无关参数

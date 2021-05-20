@@ -1,4 +1,16 @@
 {
     "verbose": true,
-    "watch": ["bin/*","config/*","controllers/*","lib/*","routes/*","rules/*","uploads/defaultAvatar/*","app.js",".env"]
+    "watch": [
+        "bin/*",
+        "config/*",
+        "controllers/*",
+        "lib/*",
+        "method/*",
+        "middle/*",
+        "routes/*",
+        "rules/*",
+        "uploads/defaultAvatar/*",
+        "app.js",
+        ".env"
+    ]
 }

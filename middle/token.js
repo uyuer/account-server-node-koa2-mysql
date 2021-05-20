@@ -25,7 +25,10 @@ const authToken = async (ctx, next) => {
                         complete: true
                     }, function (err, decoded) {
                         // console.log(err, decoded)
-                        ctx.session = { ...decoded.payload, isLogin: true }
+                        if (!err) {
+                            ctx.session = { ...decoded.payload, isLogin: true }
+                        }
+                        // return ctx.throw(401,'无效的token') // 无效代码
                     });
                 } catch (error) {
                     // TODO: 这个功能暂不考虑

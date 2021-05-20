@@ -7,7 +7,7 @@ const {
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../lib/verify");
+} = require("../method/verify");
 const { formatFetch, formatFetchAll, isArray } = require("../lib/utils");
 
 const labelsRules = require("../rules/labels");
@@ -52,7 +52,7 @@ const addOne = async (ctx) => {
 		}
 		return false;
 	});
-	ctx.body = result;
+	ctx.bodys = result;
 };
 // 编辑标签
 const updateOne = async (ctx) => {
@@ -85,7 +85,7 @@ const updateOne = async (ctx) => {
 		}
 		return false;
 	})
-	ctx.body = result;
+	ctx.bodys = result;
 };
 
 // 查找-全部数据(根据userId找到该用户下的全部账户数据)
@@ -116,7 +116,7 @@ const findAll = async (ctx) => {
 		.where(`creatorId=${sysUser.id} or creatorId=${creatorId}`)
 		.execute()
 		.then(s => formatFetchAll(s))
-	ctx.body = labelsList;
+	ctx.bodys = labelsList;
 };
 
 module.exports = {

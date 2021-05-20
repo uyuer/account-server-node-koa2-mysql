@@ -1,23 +1,28 @@
 const fs = require('fs');
-const path = require('path')
-const formidable = require('formidable');
 
-const {
-	screeningFields, // 根据有效字段筛选出有效参数, 过滤一些用户上传的其他无关参数
-	screeningRules, // 筛选参数对应规则
-	verifyRules, // 校验是否符合规则
-	verifyParams, // 验证参数是否合法
-} = require("../lib/verify");
-const { session, schema } = require("../lib/mysqlx");
-const { formatFetch, formatFetchAll, isArray, getType } = require("../lib/utils");
-
-const config = require('./../config');
-const { baseUploadsPath, avatarPath, avatarFullPath } = require('../config/upload');
+const { getTable } = require('../method');
 const accountsRules = require("../rules/accounts");
-const Table = require('../lib/table.class');
-const { getTable } = require('../lib/method');
 
-// let arr = ['id', 'userId', 'site', 'website', 'introduction', 'account', 'password', 'associates', 'nickname', 'status', 'remark', 'tags', 'createTime', 'updateTime']
+async function verifyUserStatus(userId) {
+	let { usersTable } = await getTable();
+	// TODO:这里需要判断用户是否拥有对该数据的操作权,因为有可能是管理员来操作数据
+	let user = await usersTable.findOne(`id=${userId}`, ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']);
+	// 检查用户是否存在
+	if (!user) {
+		// TODO:当用户选择注销后, 将用户基础信息保存到注销用户表中用于统计信息, 删除用户表中的信息及用户其他数据信息
+		return ctx.throw(403, '未知用户')
+	}
+	// 检查用户是否激活 (可能情况:添加了管理员, 但管理员未认证激活邮箱)
+	if (!user.active) {
+		return ctx.throw(403, '账户未激活, 请认证邮箱后再操作')
+	}
+	// 检查用户状态是否是冻结
+	if ([0].includes(user.status)) {
+		let status = ['账户已冻结, 请前往个人中心激活'];
+		return ctx.throw(403, status[user.status])
+	}
+	return user;
+}
 
 // TODO:缺一个类型校验和转化
 // ...
@@ -47,10 +52,28 @@ const addOne = async (ctx) => {
 	// 校验参数并返回有效参数
 	let validParams = ctx.valid(fields, body, accountsRules);
 	// 初步校验通过, 执行操作---
-	let { accountsTable } = await getTable();
+	let { accountsTable, usersTable } = await getTable();
+	// TODO:这里需要判断用户是否拥有对该数据的操作权,因为有可能是管理员来操作数据
+	let user = await usersTable.findOne(`id=${userId}`, ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']);
+	// 检查用户是否存在
+	if (!user) {
+		// TODO:当用户选择注销后, 将用户基础信息保存到注销用户表中用于统计信息, 删除用户表中的信息及用户其他数据信息
+		return ctx.throw(403, '未知用户')
+	}
+	// 检查用户是否激活 (可能情况:添加了管理员, 但管理员未认证激活邮箱)
+	if (!user.active) {
+		return ctx.throw(403, '账户未激活, 请认证邮箱后再操作')
+	}
+	// 检查用户状态是否是冻结
+	if ([0].includes(user.status)) {
+		let status = ['账户已冻结, 请前往个人中心激活'];
+		return ctx.throw(403, status[user.status])
+	}
+	// -----
+
 	let keys = Object.keys(fields); // 数组
 	let result = await accountsTable.addOne(keys, validParams);
-	ctx.body = result;
+	ctx.bodys = result;
 };
 // 同时插入多条数据
 const addMultiple = async (ctx) => {
@@ -67,7 +90,7 @@ const addMultiple = async (ctx) => {
 	let { accountsTable } = await getTable();
 	let keys = Object.keys(fields); // 数组
 	let result = await accountsTable.addMultiple(keys, validParams);
-	ctx.body = result;
+	ctx.bodys = result;
 }
 
 // 查询
@@ -79,19 +102,28 @@ const findOne = async (ctx) => {
 	// 获取参数
 	let body = ctx.arguments();
 	// seesion中的信息
-	let { userId } = ctx.userInfo();
+	let { userId, username } = ctx.userinfo();
 	// 校验参数并返回有效参数
 	let validParams = ctx.valid(fields, body, accountsRules)
 	// 校验通过, 执行操作---
-	let { accountsTable } = await getTable();
-	// TODO:这里需要判断用户是否拥有对该数据的操作权
+	let { accountsTable, usersTable } = await getTable();
+	// 校验用户合法性
+	let user = await verifyUserStatus(userId);
+	// console.log(ctx.verifyUserStatus)
+
+	let accounts = await accountsTable.findAll(`userId=${user.id}`, ['id']);
+	let possess = accounts.map(i => i.id).includes(Number(validParams.id)); // 用户拥有数据
+	if (user.role <= 0 && !possess) {
+		ctx.throw(403, '没有权限操作')
+	}
+	// -----
 
 	let { id } = validParams;
 	// TODO:这里使用了userId辅助精确删除, 但是当admin等管理员删除时会存在问题, 可能需要做一个权限的判断之类的
-	let where = `id=${id} and userId='${userId}'`;
+	let where = `id=${id}`;
 	let selects = []; // 查询全部
-	let info = await accountsTable.findOne(where, selects);
-	ctx.body = info;
+	let result = await accountsTable.findOne(where, selects);
+	ctx.bodys = result;
 };
 // 查找-多条数据(根据userId找到该用户下的账户数据, 可分页)
 const findMultiple = async (ctx) => {
@@ -107,8 +139,8 @@ const findMultiple = async (ctx) => {
 	let { userId, pageNum, pageSize } = validParams;
 	let where = `userId=${userId}`;
 	let selects = [];
-	let list = await accountsTable.findMultiple(where, selects, pageNum, pageSize);
-	ctx.body = list;
+	let result = await accountsTable.findMultiple(where, selects, pageNum, pageSize);
+	ctx.bodys = result;
 };
 // 查找-全部数据(根据userId找到该用户下的全部账户数据)
 const findAll = async (ctx) => {
@@ -122,8 +154,8 @@ const findAll = async (ctx) => {
 	// 初步校验通过, 执行操作---
 	let { accountsTable } = await getTable();
 	let { userId } = validParams;
-	let list = await accountsTable.findAll(`userId=${userId}`);
-	ctx.body = list
+	let result = await accountsTable.findAll(`userId=${userId}`);
+	ctx.bodys = result
 };
 
 // 更新
@@ -148,7 +180,7 @@ const updateOne = async (ctx) => {
 	}
 	// 插入
 	let result = await accountsTable.updateOne(where, params);
-	ctx.body = result;
+	ctx.bodys = result;
 };
 // 更新多条账户信息
 const updateMultiple = async (ctx) => {
@@ -161,7 +193,7 @@ const updateMultiple = async (ctx) => {
 		return ctx.throw(400, '参数类型错误, 期望字符串数组');
 	}
 	// seesion中的信息
-	let { userId } = ctx.userInfo();
+	let { userId } = ctx.userinfo();
 	// 校验参数并返回有效参数
 	let validParams = body.map(item => {
 		return ctx.valid(fields, item, accountsRules);
@@ -171,7 +203,7 @@ const updateMultiple = async (ctx) => {
 	// TODO:这里使用了userId辅助精确删除, 但是当admin等管理员删除时会存在问题, 可能需要做一个权限的判断之类的
 	let where = `userId=${userId} and`; // id校验, 不能让用户乱传id和userId
 	let result = await accountsTable.updateMultiple('id', where, validParams);
-	ctx.body = result;
+	ctx.bodys = result;
 }
 
 // 删除
@@ -183,7 +215,7 @@ const deleteOne = async (ctx) => {
 	// 获取参数
 	let body = ctx.arguments();
 	// seesion中的信息
-	let { userId } = ctx.userInfo();
+	let { userId } = ctx.userinfo();
 	// 校验参数并返回有效参数
 	let validParams = ctx.valid(fields, body, accountsRules);
 	// 初步校验通过, 执行操作---
@@ -198,7 +230,7 @@ const deleteOne = async (ctx) => {
 	}
 	// 如果存在, 则删除
 	let result = await accountsTable.deleteOne(where);
-	ctx.body = result;
+	ctx.bodys = result;
 };
 // 删除多条数据
 const deleteMultiple = async (ctx) => {
@@ -208,7 +240,7 @@ const deleteMultiple = async (ctx) => {
 	// 获取参数
 	let body = ctx.arguments();
 	// seesion中的信息
-	let user = ctx.userInfo();
+	let user = ctx.userinfo();
 	// 校验参数并返回有效参数
 	let validParams = ctx.valid(fields, body, accountsRules);
 	// 初步校验通过, 执行操作---
@@ -220,7 +252,7 @@ const deleteMultiple = async (ctx) => {
 	// DELETE FROM accounts WHERE id IN (17,18) and userId = 87;
 	// let result = await accountsTable.deleteMultiple(`id IN (${ids}) and userId=${ctx.session.id}`);
 	let result = await accountsTable.deleteOne(`userId=${user.userId} and id IN (${ids})`);
-	ctx.body = result;
+	ctx.bodys = result;
 };
 
 // 导入json文件
@@ -260,7 +292,7 @@ const importJSONFile = async (ctx) => {
 		return { ...item, userId }
 	})
 	let result = await accountsTable.addMultiple(keys, values);
-	ctx.body = result;
+	ctx.bodys = result;
 }
 module.exports = {
 	addOne,
