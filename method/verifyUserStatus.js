@@ -1,4 +1,4 @@
-const { getTable } = require('./method');
+const { getTable } = require('./getTable');
 
 /**
  * 校验用户状态
@@ -24,6 +24,16 @@ const verifyUserStatus = async (userId) => {
         return ctx.throw(403, status[user.status])
     }
     return user;
+
+    // // 校验用户合法性
+	// // console.log(ctx.verifyUserStatus)
+	// let user = await verifyUserStatus(userId);
+	// let accounts = await accountsTable.findAll(`userId=${user.id}`, ['id']);
+	// let possess = accounts.map(i => i.id).includes(Number(validParams.id)); // 用户拥有数据
+	// if (user.role <= 0 && !possess) {
+	// 	ctx.throw(403, '没有权限操作')
+	// }
+	// // -----
 }
 module.exports = {
     verifyUserStatus

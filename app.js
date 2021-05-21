@@ -64,7 +64,7 @@ app.use(middle.token.unless);
 app.use(middle.userinfo)
 app.use(middle.arguments)
 app.use(middle.valid)
-app.use(middle.verifyUserStatus)
+// app.use(middle.verifyUser)
 
 //添加格式化处理响应结果的中间件，在添加路由之前调用
 //仅对/api开头的url返回内容进行格式化处理

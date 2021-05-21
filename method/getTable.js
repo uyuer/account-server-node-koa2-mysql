@@ -2,11 +2,16 @@ const Table = require('../lib/table.class');
 
 async function getTable() {
     let usersTable = await Table.build('users');
-    let avatarsTable = await Table.build('avatars');
     let registerEmailTable = await Table.build('registeremail');
+    let avatarsTable = await Table.build('avatars');
     let accountsTable = await Table.build('accounts');
+    let labelsTable = await Table.build('labels');
     return {
-        usersTable, avatarsTable, registerEmailTable, accountsTable
+        usersTable,
+        registerEmailTable,
+        avatarsTable,
+        accountsTable,
+        labelsTable
     }
 }
 
