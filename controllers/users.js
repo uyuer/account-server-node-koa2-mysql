@@ -11,7 +11,7 @@ const { schema } = require("../lib/mysqlx");
 const { formatFetch, formatFetchAll } = require("../lib/utils");
 
 const config = require('./../config');
-const { baseUploadsPath, avatarPath, avatarFullPath } = require('../config/upload');
+const { avatarName } = require('../config/upload');
 const usersRules = require("../rules/users");
 
 // 查找-指定ID查找用户信息
@@ -49,7 +49,7 @@ const findOne = async (ctx) => {
 		...userinfo,
 		isSystemCreate,
 		avatarFileName: fileName,
-		avatarFullPath: fileName ? (ctx.request.header.host + avatarPath + '/' + fileName) : null,
+		avatarFullPath: fileName ? (ctx.request.header.host + '/' + avatarName + '/' + fileName) : null,
 		avatarCreateTime: createTime
 	};
 };

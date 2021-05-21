@@ -8,20 +8,17 @@ var app = require('../app');
 var debug = require('debug')('demo:server');
 var http = require('http');
 
-var fs = require('fs');
-var path = require("path");
-
 //引入配置文件
 var config = require('../config');
-const { initLogs } = require('../config/log');
-const { initUploads } = require('../config/upload');
-
-const { confirmPath } = require('./../lib/utils');
+const log = require('../config/log');
+const upload = require('../config/upload');
 
 // 初始化logs目录
-initLogs();
+log.initLogs();
+// 初始化临时文件目录
+upload.initTemp();
 // 初始化uploads目录
-initUploads();
+upload.initUploads();
 
 /**
  * Get port from environment and store in Express.

@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const { isArray } = require('../lib/utils')
 const { getTable, verifyUserStatus } = require('../method');
 const accountsRules = require("../rules/accounts");
 // TODO:缺一个类型校验和转化
@@ -58,7 +58,7 @@ const addMultiple = async (ctx) => {
 	console.log(`请求->账户->添加多条数据: accounts.addMultiple; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let session = ctx.session || {};
 	// 接口参数字段
-	let fields = tableFields;
+	let fields = paramFields;
 	// 获取参数
 	let body = ctx.arguments();
 	// 校验参数并返回有效参数
@@ -159,7 +159,7 @@ const updateMultiple = async (ctx) => {
 	// 获取参数
 	let body = ctx.arguments();
 	if (!isArray(body)) {
-		return ctx.throw(400, '参数类型错误, 期望JSON数组');
+		return ctx.throw(400, '参数错误, 期望JSON数组');
 	}
 	// 校验参数并返回有效参数
 	let validParams = body.map(item => {
@@ -250,14 +250,20 @@ const importJSONFile = async (ctx) => {
 	try {
 		fs.unlinkSync(filePath);
 		fileData = JSON.parse(str);
+		if (!isArray(fileData)) {
+			return ctx.throw(400, '参数错误, 期望JSON数组');
+		}
+		if (!fileData.length) {
+			return ctx.throw(400, '没有可导入的数据');
+		}
 	} catch (error) {
 		return ctx.throw(400, error);
 	}
 	let { accountsTable } = await getTable();
-	let keys = Object.keys(tableFields);
 	let values = fileData.map(item => {
 		return { ...item, userId }
 	})
+	let keys = Object.keys(values[0]);
 	let result = await accountsTable.addMultiple(keys, values);
 	ctx.bodys = result;
 }
