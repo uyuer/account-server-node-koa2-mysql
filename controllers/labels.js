@@ -7,7 +7,7 @@ const {
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../method/verify");
+} = require("../useless/verify");
 const { formatFetch, formatFetchAll, isArray } = require("../lib/utils");
 
 const labelsRules = require("../rules/labels");

@@ -89,3 +89,17 @@ const middles = () => {
 module.exports = middles()
 ```
 
+加密方式
+
+```
+var AES = require("crypto-js/aes");
+
+// AES加密 加密用户网站密码
+let ciphertext = CryptoJS.AES.encrypt('123456', '123456').toString();
+let plaintext = CryptoJS.AES.decrypt(ciphertext, '123456').toString(CryptoJS.enc.Utf8);
+console.log(ciphertext, plaintext)
+
+// sha256加密 加密用户登录密码, 用户密码为密钥key
+CryptoJS.SHA256('123456', '123456').toString()
+let ins = await schema;
+```

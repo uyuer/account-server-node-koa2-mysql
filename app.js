@@ -61,9 +61,10 @@ app.use(middle.token.authToken);
 app.use(middle.token.unless);
 
 // 定义了一些和ctx有关的全局方法
-app.use(middle.userinfo)
+// app.use(middle.userinfo)
 app.use(middle.arguments)
-app.use(middle.valid)
+// app.use(middle.valid)
+// app.use(middle.verifyParam)
 // app.use(middle.verifyUser)
 
 //添加格式化处理响应结果的中间件，在添加路由之前调用
@@ -79,8 +80,7 @@ app.use(async (ctx, next) => {
 })
 
 app.on('error', (err, ctx) => {
-	console.log('捕获到错误信息', err.status, ctx.status);
-	console.log(err)
+	console.log('捕获到错误信息\n', err)
 	ctx.body = {
 		code: err.status || 500,
 		message: err.message || '异常错误',

@@ -1,4 +1,4 @@
-const { getTable } = require('./getTable');
+const { instanceTable } = require('../method/instanceTable');
 
 async function userPrivate(userId) {
     let {
@@ -7,7 +7,7 @@ async function userPrivate(userId) {
         avatarsTable,
         accountsTable,
         labelsTable
-    } = await getTable();
+    } = await instanceTable();
     return {
         
     }

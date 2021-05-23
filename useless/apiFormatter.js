@@ -12,6 +12,4 @@ var apiFormatter = (ctx) => {
 		data: result
 	};
 };
-module.exports = {
-	apiFormatter
-};
+module.exports = apiFormatter;

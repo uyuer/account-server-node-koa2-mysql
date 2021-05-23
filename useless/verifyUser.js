@@ -1,4 +1,4 @@
-const { verifyUserStatus, getTable } = require('../method');
+const { verifyUserStatus, instanceTable } = require('../method');
 
 // 中间件
 // 校验用户是否存在
@@ -10,7 +10,7 @@ const verifyUser = async (ctx, next) => {
     console.log(user)
     // if (user) {
     //     let { id: userId } = user;
-    //     // let {}getTable()
+    //     // let {}instanceTable()
     //     console.log('真实用户:', user.username, 'id:', user.id)
     //     ctx.session.privates = user;
 

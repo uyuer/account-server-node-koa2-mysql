@@ -1,37 +1,22 @@
 const jsonwebtoken = require('jsonwebtoken');
-const dayjs = require('dayjs')
+const dayjs = require('dayjs');
+const fs = require('fs');
 
-const config = require('../config')
+const config = require('../config');
 const {
 	screeningFields, // 根据有效字段筛选出有效参数, 过滤一些用户上传的其他无关参数
 	screeningRules, // 筛选参数对应规则
 	verifyRules, // 校验是否符合规则
 	verifyParams, // 验证参数是否合法
-} = require("../method/verify");
-const usersRules = require("../rules/users");
+} = require("../useless/verify");
 const { sendEmailCode } = require('../lib/email')
 const { formatFetch, formatFetchAll } = require('../lib/utils');
 const Table = require('../lib/table.class');
-// var AES = require("crypto-js/aes");
 
-// // AES加密 加密用户网站密码
-// let ciphertext = CryptoJS.AES.encrypt('123456', '123456').toString();
-// let plaintext = CryptoJS.AES.decrypt(ciphertext, '123456').toString(CryptoJS.enc.Utf8);
-// console.log(ciphertext, plaintext)
+const { isArray } = require('../lib/utils')
+const { instanceTable, verifyUserStatus } = require('../lib/method');
+const usersRules = require("../rules/users");
 
-// // sha256加密 加密用户登录密码, 用户密码为密钥key
-// CryptoJS.SHA256('123456', '123456').toString()
-// let ins = await schema;
-
-async function getTable() {
-	let usersTable = await Table.build('users');
-	let avatarsTable = await Table.build('avatars');
-	let registerEmailTable = await Table.build('registeremail');
-	let accountsTable = await Table.build('accounts');
-	return {
-		usersTable, avatarsTable, registerEmailTable, accountsTable
-	}
-}
 
 // 用户注册
 exports.register = async (ctx) => {
@@ -44,7 +29,7 @@ exports.register = async (ctx) => {
 		ctx.throw(400, errors[0]);
 	}
 	// 初步校验通过, 执行操作---
-	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
 
 	let { username, password, repassword, male, email, code } = validParams;
 	// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
@@ -101,7 +86,7 @@ exports.sendcode = async (ctx) => {
 		ctx.throw(400, errors[0]);
 	}
 	// 初步校验通过, 执行操作---
-	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
 
 	const { email } = validParams;
 	const code = Math.random().toString().slice(2, 6); // 随机生成的验证码
@@ -153,7 +138,7 @@ exports.login = async (ctx) => {
 	let { password } = validParams;
 	let username = validParams.username || validParams.email;
 	// 初步校验通过, 执行操作---
-	let { usersTable, avatarsTable, registerEmailTable } = await getTable();
+	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
 	let keys = ['id', 'username', 'male', 'avatarId', 'email', 'status', 'createTime', 'updateTime'];
 	let userinfo = await usersTable.findOne(`${isEmail ? 'email' : 'username'}='${username}' and password='${password}'`, keys)
 	if (!userinfo) {

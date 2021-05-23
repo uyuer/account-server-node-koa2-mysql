@@ -1,4 +1,4 @@
-const { getTable } = require('./getTable');
+const { instanceTable } = require('./instanceTable');
 
 /**
  * 校验用户状态
@@ -8,7 +8,7 @@ const { getTable } = require('./getTable');
  * @description 当用户选择注销后, 将用户基础信息保存到注销用户表中用于统计信息, 删除用户表中的信息及用户其他数据信息
  */
 const verifyUserStatus = async (userId) => {
-    let { usersTable } = await getTable();
+    let { usersTable } = await instanceTable();
     let user = await usersTable.findOne(`id=${userId}`, ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']);
     // 检查用户是否存在
     if (!user) {

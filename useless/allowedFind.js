@@ -1,4 +1,4 @@
-const { getTable, verifyUserStatus } = require('./getTable');
+const { instanceTable, verifyUserStatus } = require('../lib/method');
 
 async function allowedFind(userId, tableName, ids) {
     // 用户userId对表tableName下的ids是否具有操作权
@@ -9,7 +9,7 @@ async function allowedFind(userId, tableName, ids) {
         avatarsTable,
         accountsTable,
         labelsTable
-    } = await getTable();
+    } = await instanceTable();
     let table = {
         'users': usersTable,
         'registerEmail': registerEmailTable,

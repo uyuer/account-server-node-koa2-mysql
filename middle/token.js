@@ -1,6 +1,7 @@
 const koajwt = require('koa-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const { SECRET } = require('../config');
+const { instanceTable } = require('../lib/method');
 
 // 收集token
 const gatherToken = async (ctx, next) => {
@@ -19,57 +20,58 @@ const authToken = async (ctx, next) => {
             const token = parts[1];
 
             if (/^Bearer$/i.test(scheme)) {
-                try {
-                    //jsonwebtoken.verify方法验证token是否有效
-                    jsonwebtoken.verify(token, SECRET, {
-                        complete: true
-                    }, function (err, decoded) {
-                        // console.log(err, decoded)
-                        if (!err) {
-                            ctx.session = { ...decoded.payload, isLogin: true }
+                //jsonwebtoken.verify方法验证token是否有效
+                jsonwebtoken.verify(token, SECRET, {
+                    complete: true
+                }, async (error, decoded) => {
+                    // console.log(error, decoded)
+                    if (!error) {
+                        let { userId } = decoded.payload;
+                        if (!userId) {
+                            return ctx.throw(401, '未登录')
                         }
-                        // return ctx.throw(401,'无效的token') // 无效代码
-                    });
-                } catch (error) {
-                    // TODO: 这个功能暂不考虑
-                    //token过期 生成新的token
-                    // const newToken = getToken(user);
-                    //将新token放入Authorization中返回给前端
-                    // ctx.res.setHeader('Authorization', newToken);
-                }
+                        return ctx.session.user = { ...decoded.payload, id: userId };
+                    }
+                    return ctx.app.emit('error', error, ctx)
+                });
             }
         }
     }
-    return next().catch(err => {
-        if (err.status === 401) {
-            console.log(err.status, '没有登录')
-            // ctx.throw(401, '没有登录')
-            ctx.status = 401;
-            ctx.body = 'Protected resource, use Authorization header to get access\n';
-        } else {
-            throw err;
-        }
+    return await next().catch(error => {
+        return ctx.app.emit('error', error, ctx)
     });
-    // let token = ctx.header.authorization;
-    // console.log(token)
-    // let payload = jsonwebtoken.verify(token.split(' ')[1], SECRET, function (err, decoded) {
-    //     console.log(err, decoded)
-    // });
-    // console.log(payload)
-    // return next().catch((err) => {
-    //     console.log(err.status)
-    //     if (err.status === 401) {
-    //         console.log('这里')
-    //         ctx.status = 401;
-    //         ctx.body = {
-    //             code: 401,
-    //             msg: err.message
-    //         }
-    //     } else {
-    //         throw err;
-    //     }
-    // })
 }
+
+// // 这种方式抛出错误状态为500
+// // 中间件对token进行验证
+// const authToken = async (ctx, next) => {
+//     let { authorization = '' } = ctx.header;
+//     if (!authorization) {
+//         return ctx.app.emit('error', new Error('没有登录'), ctx);
+//     }
+
+//     let parts = authorization.split(' ');
+//     if (parts.length != 2) {
+//         return ctx.app.emit('error', new Error('authorization format error'), ctx);
+//     }
+
+//     const scheme = parts[0];
+//     const token = parts[1];
+//     if (/^Bearer$/i.test(scheme)) {
+//         //jsonwebtoken.verify方法验证token是否有效
+//         jsonwebtoken.verify(token, SECRET, {
+//             complete: true
+//         }, function (error, decoded) {
+//             if (!error) {
+//                 return ctx.session = { ...decoded.payload, isLogin: true }
+//             }
+//             return ctx.app.emit('error', error, ctx)
+//         });
+//     } else {
+//         return ctx.app.emit('error', new Error('authorization type error'), ctx);
+//     }
+//     return await next();
+// }
 
 // 排除不需要验证的接口
 const unless = koajwt({ secret: SECRET }).unless({

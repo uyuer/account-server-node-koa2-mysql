@@ -3,7 +3,7 @@ let accountsRules = {
     id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
     userId: [{ required: true, message: "用户id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
     site: [{ required: false, message: "" }],
-    website: [{ required: true, message: "网址不可为空" }, { pattern: /^((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?)$/, message: "请输入正确的网址" }],
+    website: [{ required: true, message: "网址不可为空" }, { pattern: /^[a-zA-z]+:\/\/[^\s]*$/, message: "请输入正确的网址" }],
     introduction: [{ required: false, message: "" }],
     account: [{ required: true, message: "账号不可为空" }],
     password: [{ required: false, message: "" }],
