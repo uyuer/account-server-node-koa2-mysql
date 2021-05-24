@@ -60,12 +60,10 @@ app.use(middle.token.gatherToken);
 app.use(middle.token.authToken);
 app.use(middle.token.unless);
 
+// 部分接口忽略用户状态验证
+app.use(middle.userverifyUnless);
 // 定义了一些和ctx有关的全局方法
-// app.use(middle.userinfo)
-app.use(middle.arguments)
-// app.use(middle.valid)
-// app.use(middle.verifyParam)
-// app.use(middle.verifyUser)
+app.use(middle.custom)
 
 //添加格式化处理响应结果的中间件，在添加路由之前调用
 //仅对/api开头的url返回内容进行格式化处理
