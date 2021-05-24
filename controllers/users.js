@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path')
+const { isArray } = require('../lib/utils')
+const { instanceTable } = require('../lib/method');
 
 const {
 	screeningFields, // 根据有效字段筛选出有效参数, 过滤一些用户上传的其他无关参数
@@ -13,102 +15,62 @@ const { formatFetch, formatFetchAll } = require("../lib/utils");
 const config = require('./../config');
 const { avatarName } = require('../config/upload');
 const usersRules = require("../rules/users");
+const { upload } = require("../config")
 
 // 查找-指定ID查找用户信息
 const findOne = async (ctx) => {
 	console.log(`请求->用户->查询一条数据: users.findOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.query || {};
-	let fields = { id: '' };
-	// 校验参数并返回有效参数
-	let { errors, validParams } = verifyParams(fields, body, usersRules);
-	if (errors.length > 0) {
-		return ctx.throw(400, errors[0]);
+	let { id: userId } = ctx.session.user || {};
+	// ---分隔线---
+	let { usersTable, avatarsTable } = await instanceTable();
+	let where = `id=${userId}`;
+	let selects = ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']; // 查询全部
+	let userinfo = await usersTable.findOne(where, selects);
+	let { avatarId } = userinfo;
+	let avatarInfo = await avatarsTable.findOne(`id=${avatarId}`, ['fileName', 'isSystemCreate']);
+	if (!avatarInfo) {
+		return ctx.throw(500, '用户头像为空, 系统异常')
 	}
-	// 初步校验通过, 执行操作---
-	let { id } = validParams;
-	let ins = await schema;
-	let table = ins.getTable('users');
-	let userinfo = await table
-		.select('id', 'username', 'male', 'avatarId', 'email', 'active', 'status', 'createTime', 'updateTime')
-		.where(`id=:id`)
-		.bind('id', id)
-		.execute()
-		.then(s => formatFetch(s))
-	if (!userinfo) {
-		return ctx.throw(400, '用户不存在');
-	}
-	let avatarInfo = await ins.getTable('avatars')
-		.select('isSystemCreate', 'fileName', 'createTime')
-		.where(`id=:id`)
-		.bind('id', userinfo.avatarId)
-		.execute()
-		.then(s => formatFetch(s))
-	let { isSystemCreate, fileName, createTime } = avatarInfo;
+	let { isSystemCreate, fileName } = avatarInfo;
+	let { defaultAvatarName, avatarName } = upload;
+	// uploadsName upload静态文件目录, 不需要拼接这个目录, 直接接口+其下文件地址
+	let avatarFullPath = `${ctx.request.header.host}/${isSystemCreate ? defaultAvatarName : avatarName}/${fileName}`;
 
-	ctx.bodys = {
+	let result = {
 		...userinfo,
-		isSystemCreate,
-		avatarFileName: fileName,
-		avatarFullPath: fileName ? (ctx.request.header.host + '/' + avatarName + '/' + fileName) : null,
-		avatarCreateTime: createTime
-	};
+		...avatarInfo,
+		avatarFullPath,
+	}
+	ctx.bodys = result;
 };
 
 // 更新一条用户信息
 const updateOne = async (ctx) => {
 	console.log(`请求->用户->更新一条数据: users.updateOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.body || {};
-	let fields = { id: '', male: '', avatarId: '' }; // 校验字段
-	// 校验参数并返回有效参数
-	let { errors, validParams } = verifyParams(fields, body, usersRules);
-	if (errors.length > 0) {
-		return ctx.throw(400, errors[0]);
-	}
-	// 初步校验通过, 执行操作---
-	let { id, ...other } = validParams;
-	let ins = await schema;
-	let table = ins.getTable('users');
-	let info = await table.select('id', 'status').where(`id=:u`).bind('u', id).execute().then(s => formatFetch(s))
-	if (!info) {
-		return ctx.throw(400, '用户不存在');
-	} else {
-		let { status } = info;
-		if (status === '0') {
-			return ctx.throw(400, '用户被冻结');
-		}
-	}
-	let updater = Object.keys(other).reduce((total, currentValue) => {
-		total.set(currentValue, other[currentValue])
-		return total;
-	}, table.update().where('id=:id').bind('id', id))
-	let result = await updater.execute().then(s => {
-		let warningsCount = s.getWarningsCount();
-		let AffectedItemsCount = s.getAffectedItemsCount();
-		if (warningsCount === 0 && AffectedItemsCount === 1) {
-			return true;
-		}
-		return false;
+	let params = ctx.verifyParams({
+		male: [{ required: false, message: "" }, { pattern: /[012]/, message: "性别参数错误" }],
 	})
+	let { id: userId } = ctx.session.user || {};
+	// ---分隔线---
+	let { usersTable } = await instanceTable();
+	let where = `id=${userId}`;
+	// 校验是否存在于数据库中
+	let info = await usersTable.findOne(where);
+	if (!info) {
+		return ctx.throw(400, '数据不存在');
+	}
+	// 插入
+	let result = await usersTable.updateOne(where, params);
 	ctx.bodys = result;
 };
-
-// 删除用户
-// const deleteOneUser = async (ctx) => {
-
-// };
 
 // 用户头像上传
 // 参数: id; 用户id
 // 参数: file; 头像file
 const uploadProfilePicture = async (ctx) => {
 	console.log(`请求->用户->用户头像上传: uploadProfilePicture.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let body = ctx.request.body || {}; // 为空
-	let fields = { id: '' };
-	// 校验参数并返回有效参数
-	let { errors, validParams } = verifyParams(fields, body, usersRules);
-	if (errors.length > 0) {
-		return ctx.throw(400, errors[0]);
-	}
+	// try {
+	let { id: userId } = ctx.session.user || {};
 	const file = ctx.request.files.file;
 	if (!file) {
 		return ctx.throw(400, '用户头像不能为空');
@@ -121,36 +83,34 @@ const uploadProfilePicture = async (ctx) => {
 		fs.unlinkSync(filePath)
 		return ctx.throw(400, '头像只支持' + allowedType.toString() + '格式');
 	}
-	// 获取到上传文件名
+	// 获取到上传文件
 	let fileName = path.basename(filePath);
+	// 将头像移动到头像目录
+	let oldPath = filePath;
+	let newPath = path.resolve(upload.avatarPath, '2', fileName)
+	try {
+		fs.renameSync(oldPath, newPath);
+	} catch (error) {
+		fs.unlinkSync(oldPath)
+		return ctx.throw(500, error)
+	}
 
-	// 将用户id,文件名
-	let { id: userId } = validParams;
-	let keys = ['fileName'];
-	let values = [fileName];
-	let ins = await schema;
-	// 校验该用户是否存在
-	let userInfo = await ins.getTable('users').select('id', 'status').where(`id=:u`).bind('u', userId).execute().then(s => formatFetch(s))
-	if (!userInfo) {
-		return ctx.throw(400, '用户不存在');
+	// 将用户id,文件名存入数据库
+	let { usersTable, avatarsTable } = await instanceTable();
+	let values = { fileName };
+	let keys = Object.keys(values); // 数组
+	let avatarId = await avatarsTable.addOne(keys, values);
+	if (!avatarId) {
+		return ctx.throw(500, '系统异常')
 	} else {
-		let { status } = userInfo;
-		if (status === '0') {
-			return ctx.throw(400, '用户被冻结');
-		}
+		fs.unlinkSync(newPath)
 	}
-	// 用户存在, 保存上传记录
-	let uploadInfo = await ins.getTable('avatars').insert(keys).values(values).execute();
-	let avatarId = uploadInfo.getAutoIncrementValue();
-	if (!uploadInfo.getAffectedItemsCount() || !avatarId) {
-		return ctx.throw(400, '上传失败');
+	let where = `id=${userId}`;
+	let result = await usersTable.updateOne(where, { avatarId });
+	if (!result) {
+		fs.unlinkSync(newPath)
 	}
-	// 图片上传成功, 更新用户表记录
-	let userUpdateInfo = await ins.getTable('users').update().where('id=:id').bind('id', userId).set('avatarId', avatarId).execute();
-	if (!userUpdateInfo.getAffectedItemsCount()) {
-		return ctx.throw(400, '上传成功, 但更新失败');
-	}
-	ctx.bodys = true;
+	ctx.bodys = result;
 }
 module.exports = {
 	updateOne,

@@ -14,6 +14,9 @@ var formatter = (pattern) => {
             //继续抛，让外层中间件处理日志
             ctx.app.emit('error', error, ctx)
         }
+        // if (reg.test(ctx.originalUrl)) {
+        //     apiFormatter(ctx);
+        // }
 
     };
 };

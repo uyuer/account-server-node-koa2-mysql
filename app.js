@@ -29,7 +29,7 @@ app.use(
 			keepExtensions: true, // 保持文件的后缀
 			maxFieldsSize: 2 * 1024 * 1024, // 文件上传大小
 			// uploadDir: config.upload.avatarFullPath,
-			uploadDir: config.uploadTmp, // 设置文件上传目录
+			uploadDir: config.upload.tempFullPath, // 设置文件上传目录
 			// onFileBegin: (name, file) => { // 文件上传前的设置
 			// 	console.log(`name: ${name}`);
 			// 	console.log(file);
@@ -78,7 +78,8 @@ app.use(async (ctx, next) => {
 })
 
 app.on('error', (err, ctx) => {
-	console.log('捕获到错误信息\n', err)
+	console.log('捕获到错误信息\n', err.message)
+	ctx.status = err.status || 500;
 	ctx.body = {
 		code: err.status || 500,
 		message: err.message || '异常错误',

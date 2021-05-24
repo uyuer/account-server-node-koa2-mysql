@@ -30,6 +30,7 @@ const authToken = async (ctx, next) => {
                         if (!userId) {
                             return ctx.throw(401, '未登录')
                         }
+                        console.log(ctx.request.path, '12312312')
                         return ctx.session.user = { ...decoded.payload, id: userId };
                     }
                     return ctx.app.emit('error', error, ctx)
@@ -38,6 +39,7 @@ const authToken = async (ctx, next) => {
         }
     }
     return await next().catch(error => {
+        console.log(ctx.request.path, '12312312')
         return ctx.app.emit('error', error, ctx)
     });
 }
