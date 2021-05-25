@@ -24,14 +24,8 @@ const authToken = async (ctx, next) => {
                 jsonwebtoken.verify(token, SECRET, {
                     complete: true
                 }, async (error, decoded) => {
-                    // console.log(error, decoded)
                     if (!error) {
-                        let { userId } = decoded.payload;
-                        if (!userId) {
-                            return ctx.throw(401, '未登录')
-                        }
-                        console.log(ctx.request.path, '12312312')
-                        return ctx.session.user = { ...decoded.payload, id: userId };
+                        return ctx.session.user = decoded.payload;
                     }
                     return ctx.app.emit('error', error, ctx)
                 });
@@ -39,7 +33,6 @@ const authToken = async (ctx, next) => {
         }
     }
     return await next().catch(error => {
-        console.log(ctx.request.path, '12312312')
         return ctx.app.emit('error', error, ctx)
     });
 }

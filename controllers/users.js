@@ -20,7 +20,7 @@ const { upload } = require("../config")
 // 查找-指定ID查找用户信息
 const findOne = async (ctx) => {
 	console.log(`请求->用户->查询一条数据: users.findOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { usersTable, avatarsTable } = await instanceTable();
 	let where = `id=${userId}`;
@@ -50,7 +50,7 @@ const updateOne = async (ctx) => {
 	let params = ctx.verifyParams({
 		male: [{ required: false, message: "" }, { pattern: /[012]/, message: "性别参数错误" }],
 	})
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { usersTable } = await instanceTable();
 	let where = `id=${userId}`;
@@ -70,7 +70,7 @@ const updateOne = async (ctx) => {
 const uploadProfilePicture = async (ctx) => {
 	console.log(`请求->用户->用户头像上传: uploadProfilePicture.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	// try {
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	const file = ctx.request.files.file;
 	if (!file) {
 		return ctx.throw(400, '用户头像不能为空');

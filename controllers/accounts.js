@@ -18,7 +18,7 @@ const addOne = async (ctx) => {
 		remark: [{ required: false, message: "" }],
 		tags: [{ required: false, message: "" }], // 数组字符串
 	})
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { accountsTable } = await instanceTable();
 	let values = { ...params, userId };
@@ -42,7 +42,7 @@ const addMultiple = async (ctx) => {
 		remark: [{ required: false, message: "" }],
 		tags: [{ required: false, message: "" }], // 数组字符串
 	}])
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { accountsTable } = await instanceTable();
 	let values = params.map(i => ({ ...i, userId }))
@@ -58,7 +58,7 @@ const findOne = async (ctx) => {
 	let params = ctx.verifyParams({
 		id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
 	})
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { accountsTable } = await instanceTable();
 	// 这里使用了userId辅助精确删除, 但是当admin等管理员删除时会存在问题, 可能需要做一个权限的判断之类的
@@ -113,7 +113,7 @@ const updateOne = async (ctx) => {
 		remark: [{ required: false, message: "" }],
 		tags: [{ required: false, message: "" }], // 数组字符串
 	})
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { accountsTable } = await instanceTable();
 	let values = { ...params, userId };
@@ -144,7 +144,7 @@ const updateMultiple = async (ctx) => {
 		remark: [{ required: false, message: "" }],
 		tags: [{ required: false, message: "" }], // 数组字符串
 	}])
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { accountsTable } = await instanceTable();
 	let values = params.map(i => ({ ...i, userId }))
@@ -160,7 +160,7 @@ const deleteOne = async (ctx) => {
 	let params = ctx.verifyParams({
 		id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
 	})
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { accountsTable } = await instanceTable();
 	let values = { ...params, userId };
@@ -195,7 +195,7 @@ const deleteMultiple = async (ctx) => {
 			}
 		}],
 	})
-	let { id: userId } = ctx.session.user || {};
+	let { userId } = ctx.session.user || {};
 	// ---分隔线---
 	let { accountsTable } = await instanceTable();
 	let { ids } = params;
@@ -236,7 +236,7 @@ const importJSONFile = async (ctx) => {
 		return ctx.throw(400, error);
 	}
 	let { accountsTable } = await instanceTable();
-	let { id: userId } = ctx.session.user || {}; // 获取用户id, 组装数据
+	let { userId } = ctx.session.user || {}; // 获取用户id, 组装数据
 	let values = fileData.map(item => {
 		return { ...item, userId }
 	})
