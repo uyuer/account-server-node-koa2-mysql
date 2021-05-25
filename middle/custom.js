@@ -9,7 +9,7 @@ const custom = async (ctx, next) => {
     // let user = await usersTable.findOne(`id=87`, []);
     // console.log(user);
     // ctx.session.user = user;
-    
+
     // 获取参数
     ctx.request.params = {
         GET: ctx.request.query,
@@ -25,10 +25,10 @@ const custom = async (ctx, next) => {
         }
         if (isArray(fields)) {
             return body.map(item => {
-                return verifyFn(fields[0], item)
+                return verifyFn(ctx, fields[0], item)
             })
         } else {
-            return verifyFn(fields, body)
+            return verifyFn(ctx, fields, body)
         }
     }
     await next();

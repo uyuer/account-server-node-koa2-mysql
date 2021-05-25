@@ -201,7 +201,7 @@ const deleteMultiple = async (ctx) => {
 	let { ids } = params;
 	// 开始删除
 	// DELETE FROM accounts WHERE id IN (17,18) and userId = 87;
-	// let result = await accountsTable.deleteMultiple(`id IN (${ids}) and userId=${ctx.session.id}`);
+	// let result = await accountsTable.deleteMultiple(`id IN (${ids})`);
 	let result = await accountsTable.deleteOne(`userId=${userId} and id IN (${ids})`);
 	ctx.bodys = result;
 };

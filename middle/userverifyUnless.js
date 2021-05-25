@@ -1,5 +1,4 @@
 const { getType, isArray } = require("../lib/utils");
-const { verifyFn } = require("../lib/method")
 const { instanceTable } = require('../lib/method');
 
 // 给ctx添加方法
