@@ -60,8 +60,10 @@ app.use(middle.token.gatherToken);
 app.use(middle.token.authToken);
 app.use(middle.token.unless);
 
+// 解析token
+app.use(middle.authTokenUnless);
 // 部分接口忽略用户状态验证
-app.use(middle.userverifyUnless);
+app.use(middle.userVerifyUnless);
 // 定义了一些和ctx有关的全局方法
 app.use(middle.custom)
 

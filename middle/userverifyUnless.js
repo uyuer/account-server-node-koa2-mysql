@@ -2,7 +2,7 @@ const { getType, isArray } = require("../lib/utils");
 const { instanceTable } = require('../lib/method');
 
 // 给ctx添加方法
-const userverifyUnless = (params) => {
+const userVerifyUnless = (params) => {
     let { path } = params || {};
     return async (ctx, next) => {
         // 是否是 无需用户状态验证的路径[不是:true 是:false]
@@ -38,14 +38,14 @@ const userverifyUnless = (params) => {
                 ];
                 return ctx.throw(403, status[user.status])
             }
-            await next();
+            return await next();
         } else {
             console.log('无需验证用户状态, 跳过', ctx.request.path)
-            await next();
+            return await next();
         }
     }
 }
-module.exports = userverifyUnless({
+module.exports = userVerifyUnless({
     path: [
         /^\/api\/users\/register/,
         /^\/api\/users\/sendcode/,

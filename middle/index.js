@@ -2,7 +2,8 @@ const formatter = require('./formatter');
 const logger = require('./logger');
 const session = require('./session');
 const token = require('./token');
-const userverifyUnless = require('./userverifyUnless');
+const authTokenUnless = require('./authTokenUnless');
+const userVerifyUnless = require('./userVerifyUnless');
 const custom = require('./custom');
 
 module.exports = {
@@ -10,6 +11,7 @@ module.exports = {
     logger,
     session,
     token,
-    userverifyUnless,
+    authTokenUnless,
+    userVerifyUnless,
     custom,
 }

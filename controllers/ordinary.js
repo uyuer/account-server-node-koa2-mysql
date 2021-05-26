@@ -105,6 +105,7 @@ exports.sendcode = async (ctx) => {
 };
 // 用户登录
 exports.login = async (ctx) => {
+	// ctx.bodys = 123
 	// var ciphertext = AES.encrypt('adgjmptw123', 'adgjmptw123').toString();
 	console.log(`请求->用户->登录: login.connect; method: ${ctx.request.method}; url: ${ctx.request.url} `);
 	// TODO:是否记录用户操作记录
