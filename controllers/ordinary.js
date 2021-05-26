@@ -1,22 +1,9 @@
 const jsonwebtoken = require('jsonwebtoken');
 const dayjs = require('dayjs');
-const fs = require('fs');
 
-const config = require('../config');
-const {
-	screeningFields, // 根据有效字段筛选出有效参数, 过滤一些用户上传的其他无关参数
-	screeningRules, // 筛选参数对应规则
-	verifyRules, // 校验是否符合规则
-	verifyParams, // 验证参数是否合法
-} = require("../useless/verify");
 const { sendEmailCode } = require('../lib/email')
-const { formatFetch, formatFetchAll } = require('../lib/utils');
-const Table = require('../lib/table.class');
-
-const { isArray } = require('../lib/utils')
-const { instanceTable, verifyUserStatus } = require('../lib/method');
-const usersRules = require("../rules/users");
-
+const { instanceTable } = require('../lib/method');
+const config = require('../config');
 
 // 用户注册
 exports.register = async (ctx) => {
