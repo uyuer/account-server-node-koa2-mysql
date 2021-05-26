@@ -41,7 +41,7 @@ use accounts1;
  Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 19/05/2021 17:50:19
+ Date: 26/05/2021 18:02:48
 */
 
 SET NAMES utf8mb4;
@@ -67,14 +67,14 @@ CREATE TABLE `accounts`  (
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of accounts
 -- ----------------------------
 INSERT INTO `accounts` VALUES (3, 87, '百度', 'http://baidu.com', '搜索网址', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', '号码拖时间', '0', '百度账号, 这个账号在百度云知道等地方都有使用, 多个地方使用, 绑定了手机号, 多点字查看下超出部分', '[1,5]', '2021-02-23 11:42:12', '2021-05-19 16:30:53');
 INSERT INTO `accounts` VALUES (4, 87, '优酷', 'https://youku.com', '视频网址', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', '幽钥', '0', '视频网站', '[1,5]', '2021-02-23 14:13:34', '2021-05-19 16:30:53');
-INSERT INTO `accounts` VALUES (5, 87, '在线作图平台', 'https://www.processon.com', NULL, '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', '用户_123123', '0', '在线作图平台, 有些缺点, 总体很方便', '[1,5]', '2021-02-23 14:13:38', '2021-05-19 16:30:53');
+INSERT INTO `accounts` VALUES (5, 87, '在线作图平台', 'https://www.processon.com', NULL, '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', '用户_123123', '0', '在线作图平台, 有些缺点, 总体很方便', '[1,5]', '2021-02-23 14:13:38', '2021-05-21 14:18:34');
 INSERT INTO `accounts` VALUES (6, 87, '菜鸟教程', 'https://www.runoob.com', '一个学习', '1064926209@qq.com', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', '用户_12322', '0', '程序学习', '[1,5]', '2021-02-23 14:12:12', '2021-05-19 16:30:53');
 INSERT INTO `accounts` VALUES (7, 87, '知乎', 'https://www.zhihu.com', NULL, '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', NULL, NULL, '0', '逼乎', '[1,5]', '2021-02-23 14:13:44', '2021-05-19 16:30:53');
 INSERT INTO `accounts` VALUES (8, 87, '淘宝', 'https://www.taobao.com', NULL, '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', NULL, NULL, '0', '购物网站', '[1,5]', '2021-02-23 14:13:47', '2021-05-19 16:30:53');
@@ -120,6 +120,16 @@ INSERT INTO `accounts` VALUES (60, 87, 'v5-472-g jenkins', 'http://jenkins.uyue.
 INSERT INTO `accounts` VALUES (61, 87, 'AngularJS', 'http://angularjs.com', '前端框架', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'uyao', '0', '程序学习', '[1,5]', '2021-05-19 17:11:41', '2021-05-19 17:11:41');
 INSERT INTO `accounts` VALUES (62, 87, 'v5-472-g jenkins', 'http://jenkins.uyue.club', '前端自动化构建工具', 'admin', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'admin', '0', '笔记本上安装的jenkins', '[1,7]', '2021-05-19 17:12:50', '2021-05-19 17:12:50');
 INSERT INTO `accounts` VALUES (63, 87, 'AngularJS', 'http://angularjs.com', '前端框架', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'uyao', '0', '程序学习', '[1,5]', '2021-05-19 17:12:50', '2021-05-19 17:12:50');
+INSERT INTO `accounts` VALUES (64, 87, 'v5-472-g jenkins', 'http://jenkins.uyue.club', '前端自动化构建工具', 'admin', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'admin', '0', '笔记本上安装的jenkins', '[1,7]', '2021-05-20 11:30:22', '2021-05-20 11:30:22');
+INSERT INTO `accounts` VALUES (65, 87, 'AngularJS', 'http://angularjs.com', '前端框架', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'uyao', '0', '程序学习', '[1,5]', '2021-05-20 11:30:22', '2021-05-20 11:30:22');
+INSERT INTO `accounts` VALUES (66, 87, 'v5-472-g jenkins', 'http://jenkins.uyue.club', '前端自动化构建工具', 'admin', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'admin', '0', '笔记本上安装的jenkins', '[1,7]', '2021-05-20 11:32:05', '2021-05-20 11:32:05');
+INSERT INTO `accounts` VALUES (67, 87, 'AngularJS', 'http://angularjs.com', '前端框架', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'uyao', '0', '程序学习', '[1,5]', '2021-05-20 11:32:05', '2021-05-20 11:32:05');
+INSERT INTO `accounts` VALUES (68, 87, 'v5-472-g jenkins', 'http://jenkins.uyue.club', '前端自动化构建工具', 'admin', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'admin', '0', '笔记本上安装的jenkins', '[1,7]', '2021-05-20 11:32:37', '2021-05-20 11:32:37');
+INSERT INTO `accounts` VALUES (69, 87, 'AngularJS', 'http://angularjs.com', '前端框架', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com', 'uyao', '0', '程序学习', '[1,5]', '2021-05-20 11:32:37', '2021-05-20 11:32:37');
+INSERT INTO `accounts` VALUES (70, 87, '百度', 'http://baidu.com', '互联网搜索引擎', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com,271654537@qq.com', '号码拖时间', '0', '搜索入口', '[6,7]', '2021-05-21 15:07:50', '2021-05-21 15:07:50');
+INSERT INTO `accounts` VALUES (71, 87, '百度', 'http://baidu.com', '互联网搜索引擎', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com,271654537@qq.com', '号码拖时间', '0', '搜索入口', '[6,7]', '2021-05-21 15:07:55', '2021-05-21 15:07:55');
+INSERT INTO `accounts` VALUES (72, 87, '百度', 'http://baidu.com', '互联网搜索引擎', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com,271654537@qq.com', '号码拖时间', '0', '搜索入口', '[6,7]', '2021-05-21 15:08:14', '2021-05-21 15:08:14');
+INSERT INTO `accounts` VALUES (73, 87, '百度', 'http://baidu.com', '互联网搜索引擎', '13777072927', 'U2FsdGVkX1+Sl1pX2qX9PCw5zWKFUlE+LmbRxi4iQzs=', '1064926209@qq.com,271654537@qq.com', '号码拖时间', '0', '搜索入口', '[6,7]', '2021-05-21 15:08:23', '2021-05-21 15:08:23');
 
 -- ----------------------------
 -- Table structure for avatars
@@ -131,7 +141,7 @@ CREATE TABLE `avatars`  (
   `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of avatars
@@ -144,6 +154,13 @@ INSERT INTO `avatars` VALUES (5, '5.png', 1, '2021-03-16 17:14:02');
 INSERT INTO `avatars` VALUES (6, '6.png', 1, '2021-03-16 17:25:30');
 INSERT INTO `avatars` VALUES (7, 'upload_f1d823ae671a805b5fa5cacced648e79.jpg', 0, '2021-03-16 17:42:41');
 INSERT INTO `avatars` VALUES (8, 'upload_0c924114e38a634aa68679687917ee21.jpg', 0, '2021-03-16 17:47:25');
+INSERT INTO `avatars` VALUES (9, 'upload_9307e3e0738c6805833f8f3a10cfde00.jpg', 0, '2021-05-24 18:11:29');
+INSERT INTO `avatars` VALUES (10, 'upload_ca91f4a7d0ad255d44631eb62345cafd.jpg', 0, '2021-05-24 18:11:38');
+INSERT INTO `avatars` VALUES (11, 'upload_3a029b73c757817320ae8e957cb69cf9.jpg', 0, '2021-05-24 18:12:59');
+INSERT INTO `avatars` VALUES (12, 'upload_2cd60a2c1caf45cef1e901f3387697d4.jpg', 0, '2021-05-24 18:13:14');
+INSERT INTO `avatars` VALUES (13, 'upload_6dcbf2d2919326599711ca810b88aab9.jpg', 0, '2021-05-24 18:13:40');
+INSERT INTO `avatars` VALUES (14, 'upload_d19f081d7c648d3a5ac97d1a98a942bd.jpg', 0, '2021-05-24 18:14:08');
+INSERT INTO `avatars` VALUES (15, 'upload_79def8e2bfdc7fcc993f782186d1ae40.jpg', 0, '2021-05-24 18:15:30');
 
 -- ----------------------------
 -- Table structure for labels
@@ -153,26 +170,28 @@ CREATE TABLE `labels`  (
   `id` int(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `label` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '标签名(不能重复)',
   `creatorId` int(0) NOT NULL DEFAULT 1 COMMENT '创建者ID, 默认为系统管理员创建',
+  `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`id`, `label`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of labels
 -- ----------------------------
-INSERT INTO `labels` VALUES (1, '学习', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:37');
-INSERT INTO `labels` VALUES (2, '视频', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (3, '动漫', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (4, '游戏', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (5, '程序', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (6, '工具', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (7, '软件', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (8, '生活', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (9, '工作', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (10, '博客', 1, '2021-05-12 22:30:17', '2021-05-12 22:31:43');
-INSERT INTO `labels` VALUES (11, '电商', 1, '2021-05-12 22:30:17', '2021-05-12 22:32:40');
-INSERT INTO `labels` VALUES (12, '测试标签1', 1, '2021-05-12 23:22:24', '2021-05-13 09:57:07');
+INSERT INTO `labels` VALUES (1, '学习', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (2, '视频', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (3, '动漫', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (4, '游戏', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (5, '程序', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (6, '工具', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (7, '软件', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (8, '生活', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (9, '工作', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (10, '博客', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (11, '电商', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
+INSERT INTO `labels` VALUES (12, '新增标签', 80, 0, '2021-05-25 15:22:51', '2021-05-25 15:26:10');
+INSERT INTO `labels` VALUES (13, '测试编辑标签', 87, 0, '2021-05-25 15:22:51', '2021-05-25 15:26:10');
 
 -- ----------------------------
 -- Table structure for registeremail
@@ -186,7 +205,7 @@ CREATE TABLE `registeremail`  (
   `expiresTime` timestamp(0) NOT NULL COMMENT '过期时间(直观版)',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '当用户注册的时候\r\n用户输入邮箱->获取验证码\r\n表中没有同样的邮箱->无处理\r\n表中有同样的邮箱->\r\n(例子: \r\n当一个用户用testa@qq.com获取了验证码后, 另一个用户也用testa@qq.com获取验证码, 这时数据库中存在两个相同邮箱\r\n解决办法:\r\n先到先得, 无论有几个邮箱, 当用户包含验证码的完整注册信息提交后即可)\r\n\r\n当同一个用户获取两次或多次验证码(这时候没有超时)\r\n解决办法就是, 直接让该邮箱其他验证码失效, 生成新的验证码' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '当用户注册的时候\r\n用户输入邮箱->获取验证码\r\n表中没有同样的邮箱->无处理\r\n表中有同样的邮箱->\r\n(例子: \r\n当一个用户用testa@qq.com获取了验证码后, 另一个用户也用testa@qq.com获取验证码, 这时数据库中存在两个相同邮箱\r\n解决办法:\r\n先到先得, 无论有几个邮箱, 当用户包含验证码的完整注册信息提交后即可)\r\n\r\n当同一个用户获取两次或多次验证码(这时候没有超时)\r\n解决办法就是, 直接让该邮箱其他验证码失效, 生成新的验证码' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of registeremail
@@ -203,7 +222,7 @@ CREATE TABLE `users`  (
   `password` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码',
   `male` enum('0','1','2') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '性别[0:女,1:男,2:保密]',
   `avatarId` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '头像(系统随机设定一个默认, 可更换)',
-  `active` tinyint(1) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT '邮箱是否激活[0:未激活,1:激活]',
+  `active` tinyint(0) NOT NULL DEFAULT 1 COMMENT '邮箱是否激活[0:未激活,1:激活]',
   `status` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '状态[0:冻结,1:正常,2:注销,3:管理员操作冻结,4:管理员操作注销,5:账户异常时系统判断冻结]',
   `role` int(0) NOT NULL DEFAULT 0 COMMENT '角色[0:普通用户,1:系统管理员,2:二级管理员,3:...]',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
@@ -212,23 +231,24 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `id`(`id`) USING BTREE COMMENT 'id',
   UNIQUE INDEX `username`(`username`) USING BTREE COMMENT '用户名唯一',
   UNIQUE INDEX `email`(`email`) USING BTREE COMMENT '邮箱唯一'
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 97 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, '1064926209@qq.com', 'admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', 0, '2021-02-03 15:59:59', '2021-05-12 22:13:41');
-INSERT INTO `users` VALUES (77, '1064926204@qq.com', 'test4', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '0', 0, '2021-02-04 16:09:14', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (79, '1064926202@qq.com', 'test2', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', 0, '2021-02-05 11:46:53', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (81, '1064926203@qq.com', 'test3', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', 0, '2021-02-05 15:01:21', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (82, '1064926205@qq.com', 'test5', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', NULL, 0, '1', 0, '2021-02-05 15:26:27', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (87, '1064926206@qq.com', 'test6', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '8', 0, '1', 0, '2021-02-05 15:43:52', '2021-04-25 22:26:46');
-INSERT INTO `users` VALUES (88, 'uyao1@qq.com', 'uyao1', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '6', 0, '1', 0, '2021-03-16 17:24:47', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (89, '1064926000@qq.com', 'test000', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 0, '1', 0, '2021-03-31 21:17:09', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (90, '1064926001@qq.com', 'test001', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '1', 0, '1', 0, '2021-03-31 21:30:31', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (91, '1064926002@qq.com', 'test002', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 0, '1', 0, '2021-03-31 21:32:12', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (92, '1064926003@qq.com', 'test003', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 0, '1', 0, '2021-03-31 21:34:15', '2021-04-25 22:26:50');
-INSERT INTO `users` VALUES (93, '1064926004@qq.com', 'test004', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '2', 0, '1', 0, '2021-04-01 15:29:45', '2021-04-01 15:45:40');
-INSERT INTO `users` VALUES (94, '271654537@qq.com', 'test005', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 0, '1', 0, '2021-04-09 23:23:26', '2021-04-09 23:23:26');
+INSERT INTO `users` VALUES (1, '1064926209@qq.com', 'admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '1', 1, '1', 1, '2021-02-03 15:59:59', '2021-05-24 16:06:24');
+INSERT INTO `users` VALUES (77, '1064926204@qq.com', 'test4', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '2', 1, '0', 0, '2021-02-04 16:09:14', '2021-05-24 16:06:24');
+INSERT INTO `users` VALUES (79, '1064926202@qq.com', 'test2', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '3', 1, '1', 0, '2021-02-05 11:46:53', '2021-05-24 16:06:25');
+INSERT INTO `users` VALUES (81, '1064926203@qq.com', 'test3', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '4', 1, '1', 0, '2021-02-05 15:01:21', '2021-05-24 16:06:26');
+INSERT INTO `users` VALUES (82, '1064926205@qq.com', 'test5', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 1, '1', 0, '2021-02-05 15:26:27', '2021-05-24 16:06:27');
+INSERT INTO `users` VALUES (87, '1064926206@qq.com', 'test6', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '15', 1, '1', 1, '2021-02-05 15:43:52', '2021-05-24 18:15:30');
+INSERT INTO `users` VALUES (88, 'uyao1@qq.com', 'uyao1', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '6', 1, '1', 0, '2021-03-16 17:24:47', '2021-05-20 13:39:52');
+INSERT INTO `users` VALUES (89, '1064926000@qq.com', 'test000', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 1, '1', 0, '2021-03-31 21:17:09', '2021-05-20 13:39:52');
+INSERT INTO `users` VALUES (90, '1064926001@qq.com', 'test001', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '1', 1, '1', 0, '2021-03-31 21:30:31', '2021-05-20 13:39:52');
+INSERT INTO `users` VALUES (91, '1064926002@qq.com', 'test002', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 1, '1', 0, '2021-03-31 21:32:12', '2021-05-20 13:39:52');
+INSERT INTO `users` VALUES (92, '1064926003@qq.com', 'test003', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 1, '1', 0, '2021-03-31 21:34:15', '2021-05-20 13:39:52');
+INSERT INTO `users` VALUES (93, '1064926004@qq.com', 'test004', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '2', 1, '1', 0, '2021-04-01 15:29:45', '2021-05-20 13:39:52');
+INSERT INTO `users` VALUES (94, '271654537@qq.com', 'test005', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 1, '1', 0, '2021-04-09 23:23:26', '2021-05-20 13:39:52');
+INSERT INTO `users` VALUES (97, '1064926207@qq.com', 'test7', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '4', 1, '1', 0, '2021-05-25 10:55:22', '2021-05-25 10:55:22');
 
 SET FOREIGN_KEY_CHECKS = 1;
