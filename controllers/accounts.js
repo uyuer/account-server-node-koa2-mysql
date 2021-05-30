@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { isArray } = require('../lib/utils')
-const { instanceTable } = require('../lib/method');
+const { instanceTable, formatStatus } = require('../lib/method');
 
 // 插入
 // 添加一条数据
@@ -66,7 +66,8 @@ const findOne = async (ctx) => {
 	let where = `id=${id} and userId=${userId}`;
 	let selects = []; // 查询全部
 	let result = await accountsTable.findOne(where, selects);
-	ctx.bodys = result;
+	let statusText = formatStatus(result.status);
+	ctx.bodys = { ...result, statusText };
 };
 // 查找-多条数据(根据userId找到该用户下的账户数据, 可分页)
 const findMultiple = async (ctx) => {
@@ -83,7 +84,10 @@ const findMultiple = async (ctx) => {
 	let where = `userId=${userId}`;
 	let selects = [];
 	let result = await accountsTable.findMultiple(where, selects, pageNum, pageSize);
-	ctx.bodys = result;
+	let fromatResult = result.map(item => {
+		return { ...item, statusText: formatStatus(item.status) }
+	})
+	ctx.bodys = fromatResult;
 };
 // 查找-全部数据(根据userId找到该用户下的全部账户数据)
 const findAll = async (ctx) => {
@@ -93,7 +97,10 @@ const findAll = async (ctx) => {
 	let { accountsTable } = await instanceTable();
 	let { userId } = user;
 	let result = await accountsTable.findAll(`userId=${userId}`);
-	ctx.bodys = result
+	let fromatResult = result.map(item => {
+		return { ...item, statusText: formatStatus(item.status) }
+	})
+	ctx.bodys = fromatResult;
 };
 
 // 更新
@@ -209,6 +216,7 @@ const deleteMultiple = async (ctx) => {
 // 导入json文件
 const importJSONFile = async (ctx) => {
 	console.log(`请求->用户->JSON文件上传: accounts.importJSONFile; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+	const maxSize = 0.5 * 1024 * 1024;
 	const file = ctx.request.files.file;
 	if (!file) {
 		return ctx.throw(400, '导入文件不能为空');
@@ -220,6 +228,9 @@ const importJSONFile = async (ctx) => {
 	if (!allowedType.find(t => t === type)) {
 		fs.unlinkSync(filePath)
 		return ctx.throw(400, '只支持导入文件为' + allowedType.toString() + '格式');
+	}
+	if (file.size > maxSize) {
+		return ctx.throw(400, '上传文件过大,仅支持' + (maxSize / 1024 / 1024) + 'M以内的文件');
 	}
 	let str = fs.readFileSync(filePath);
 	let fileData = [];

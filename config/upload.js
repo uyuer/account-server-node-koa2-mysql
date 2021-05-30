@@ -1,6 +1,8 @@
 const path = require("path");
 const { confirmPath } = require('./../lib/utils');
 
+const maxFieldsSize = 1 * 1024 * 1024; // 文件上传限制大小
+
 // 临时存放文件夹
 const tempName = 'temp';
 const tempFullPath = path.resolve(".", tempName);
@@ -36,6 +38,7 @@ const initUploads = () => {
 }
 
 module.exports = {
+    maxFieldsSize,
     tempName,
     tempFullPath,
     initTemp,

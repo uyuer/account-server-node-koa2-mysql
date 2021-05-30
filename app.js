@@ -27,7 +27,7 @@ app.use(
 		// encoding:'gzip',
 		formidable: {
 			keepExtensions: true, // 保持文件的后缀
-			maxFieldsSize: 2 * 1024 * 1024, // 文件上传大小
+			maxFieldsSize: config.upload.maxFieldsSize, // 文件上传大小
 			// uploadDir: config.upload.avatarFullPath,
 			uploadDir: config.upload.tempFullPath, // 设置文件上传目录
 			// onFileBegin: (name, file) => { // 文件上传前的设置
