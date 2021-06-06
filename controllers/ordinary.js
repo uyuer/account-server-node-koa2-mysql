@@ -11,6 +11,10 @@ exports.register = async (ctx) => {
 	let params = ctx.verifyParams({
 		username: [{ required: true, message: "用户名不可为空" }, { pattern: /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/, message: "用户名由2~20位中文、英文、数字和下划线字符组成" }],
 		password: [{ required: true, message: "密码不可为空" }],
+		repassword: [{ required: true, message: "重复密码不可为空" }],
+		male: [{ required: false, message: "" }, { pattern: /[012]/, message: "性别参数错误" }],
+		email: [{ required: true, message: "邮箱不可为空", }, { pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/, message: "邮箱格式错误" }],
+		code: [{ required: true, message: "验证码不可为空" }, { pattern: /^\d{4}$/, message: "验证码输入错误" }]
 	})
 	// ---分隔线---
 	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
@@ -27,6 +31,9 @@ exports.register = async (ctx) => {
 	if (usernameBeUsed) {
 		return ctx.throw(400, '此用户名已被使用');
 	}
+	console.log(password)
+	console.log(repassword)
+	console.log(password !== repassword)
 	// 校验用户两次输入密码是否一致
 	if (password !== repassword) {
 		return ctx.throw(400, '两次输入密码不一致');
