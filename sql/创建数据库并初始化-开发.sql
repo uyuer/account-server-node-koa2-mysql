@@ -31,17 +31,17 @@ use accounts1;
 /*
  Navicat Premium Data Transfer
 
- Source Server         : root
+ Source Server         : 本地用户root
  Source Server Type    : MySQL
- Source Server Version : 80021
+ Source Server Version : 80023
  Source Host           : localhost:3306
  Source Schema         : accounts1
 
  Target Server Type    : MySQL
- Target Server Version : 80021
+ Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 24/06/2021 00:48:55
+ Date: 24/06/2021 18:05:27
 */
 
 SET NAMES utf8mb4;
@@ -121,7 +121,7 @@ CREATE TABLE `avatars`  (
   `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of avatars
@@ -143,15 +143,33 @@ INSERT INTO `avatars` VALUES (14, 'upload_d19f081d7c648d3a5ac97d1a98a942bd.jpg',
 INSERT INTO `avatars` VALUES (15, 'upload_79def8e2bfdc7fcc993f782186d1ae40.jpg', 0, '2021-05-24 18:15:30');
 
 -- ----------------------------
--- Table structure for cost
+-- Table structure for cost_book
 -- ----------------------------
-DROP TABLE IF EXISTS `cost`;
-CREATE TABLE `cost`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '账号id',
+DROP TABLE IF EXISTS `cost_book`;
+CREATE TABLE `cost_book`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '账簿名',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '备注',
   `userId` int(0) NOT NULL COMMENT '所属用户id',
-  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '支出/收入',
-  `date` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '账单日期',
-  `amount` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '金额',
+  `createTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
+  `updateTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of cost_book
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for cost_details
+-- ----------------------------
+DROP TABLE IF EXISTS `cost_details`;
+CREATE TABLE `cost_details`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '账号id',
+  `bookId` int(0) NOT NULL COMMENT '所属用户id',
+  `type` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '支出/收入',
+  `date` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '账单日期',
+  `amount` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '金额',
   `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类别',
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
@@ -160,7 +178,7 @@ CREATE TABLE `cost`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of cost
+-- Records of cost_details
 -- ----------------------------
 
 -- ----------------------------
@@ -269,7 +287,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `id`(`id`) USING BTREE COMMENT 'id',
   UNIQUE INDEX `username`(`username`) USING BTREE COMMENT '用户名唯一',
   UNIQUE INDEX `email`(`email`) USING BTREE COMMENT '邮箱唯一'
-) ENGINE = InnoDB AUTO_INCREMENT = 97 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 98 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
