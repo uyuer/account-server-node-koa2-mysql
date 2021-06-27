@@ -31,17 +31,17 @@ use accounts1;
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 本地用户root
+ Source Server         : root
  Source Server Type    : MySQL
- Source Server Version : 80023
+ Source Server Version : 80021
  Source Host           : localhost:3306
  Source Schema         : accounts1
 
  Target Server Type    : MySQL
- Target Server Version : 80023
+ Target Server Version : 80021
  File Encoding         : 65001
 
- Date: 24/06/2021 18:05:27
+ Date: 27/06/2021 08:48:51
 */
 
 SET NAMES utf8mb4;
@@ -143,82 +143,6 @@ INSERT INTO `avatars` VALUES (14, 'upload_d19f081d7c648d3a5ac97d1a98a942bd.jpg',
 INSERT INTO `avatars` VALUES (15, 'upload_79def8e2bfdc7fcc993f782186d1ae40.jpg', 0, '2021-05-24 18:15:30');
 
 -- ----------------------------
--- Table structure for cost_book
--- ----------------------------
-DROP TABLE IF EXISTS `cost_book`;
-CREATE TABLE `cost_book`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '账簿名',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '备注',
-  `userId` int(0) NOT NULL COMMENT '所属用户id',
-  `createTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
-  `updateTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of cost_book
--- ----------------------------
-
--- ----------------------------
--- Table structure for cost_details
--- ----------------------------
-DROP TABLE IF EXISTS `cost_details`;
-CREATE TABLE `cost_details`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '账号id',
-  `bookId` int(0) NOT NULL COMMENT '所属用户id',
-  `type` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '支出/收入',
-  `date` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '账单日期',
-  `amount` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '金额',
-  `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类别',
-  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
-  `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of cost_details
--- ----------------------------
-
--- ----------------------------
--- Table structure for cost_labels
--- ----------------------------
-DROP TABLE IF EXISTS `cost_labels`;
-CREATE TABLE `cost_labels`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `label` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '标签名(不能重复)',
-  `creatorId` int(0) NOT NULL DEFAULT 1 COMMENT '创建者ID, 默认为系统管理员创建',
-  `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
-  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
-  `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of cost_labels
--- ----------------------------
-INSERT INTO `cost_labels` VALUES (1, '餐饮', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:08');
-INSERT INTO `cost_labels` VALUES (2, '交通', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:12');
-INSERT INTO `cost_labels` VALUES (3, '住房', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:28');
-INSERT INTO `cost_labels` VALUES (4, '美容', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:35');
-INSERT INTO `cost_labels` VALUES (5, '服饰', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:43');
-INSERT INTO `cost_labels` VALUES (6, '运动', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:54');
-INSERT INTO `cost_labels` VALUES (7, '旅行', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:01');
-INSERT INTO `cost_labels` VALUES (8, '娱乐', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:08');
-INSERT INTO `cost_labels` VALUES (9, '生活', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:16');
-INSERT INTO `cost_labels` VALUES (10, '医疗', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:20');
-INSERT INTO `cost_labels` VALUES (11, '通讯', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:27');
-INSERT INTO `cost_labels` VALUES (12, '学习', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:33');
-INSERT INTO `cost_labels` VALUES (13, '礼物', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:37');
-INSERT INTO `cost_labels` VALUES (14, '母婴', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:44');
-INSERT INTO `cost_labels` VALUES (15, '数码', 1, 1, '2021-06-19 00:12:59', '2021-06-19 00:25:37');
-INSERT INTO `cost_labels` VALUES (16, '零食', 1, 1, '2021-06-19 00:13:26', '2021-06-19 00:25:37');
-INSERT INTO `cost_labels` VALUES (17, '购物', 1, 1, '2021-06-19 00:13:52', '2021-06-19 00:25:37');
-INSERT INTO `cost_labels` VALUES (18, '水果', 1, 1, '2021-06-19 00:14:01', '2021-06-19 00:25:37');
-INSERT INTO `cost_labels` VALUES (19, '其他支出', 1, 1, '2021-06-19 00:24:38', '2021-06-19 00:27:26');
-
--- ----------------------------
 -- Table structure for labels
 -- ----------------------------
 DROP TABLE IF EXISTS `labels`;
@@ -248,6 +172,82 @@ INSERT INTO `labels` VALUES (10, '博客', 1, 1, '2021-05-12 22:30:17', '2021-05
 INSERT INTO `labels` VALUES (11, '电商', 1, 1, '2021-05-12 22:30:17', '2021-05-25 14:26:22');
 INSERT INTO `labels` VALUES (12, '新增标签', 80, 0, '2021-05-25 15:22:51', '2021-05-25 15:26:10');
 INSERT INTO `labels` VALUES (13, '测试编辑标签', 87, 0, '2021-05-25 15:22:51', '2021-05-25 15:26:10');
+
+-- ----------------------------
+-- Table structure for ledger_books
+-- ----------------------------
+DROP TABLE IF EXISTS `ledger_books`;
+CREATE TABLE `ledger_books`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `userId` int(0) NOT NULL COMMENT '所属用户id',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '账簿名',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '备注',
+  `createTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
+  `updateTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of ledger_books
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for ledger_details
+-- ----------------------------
+DROP TABLE IF EXISTS `ledger_details`;
+CREATE TABLE `ledger_details`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '账号id',
+  `bookId` int(0) NOT NULL COMMENT '所属用户id',
+  `type` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '支出/收入',
+  `date` date NOT NULL COMMENT '账单日期',
+  `amount` float UNSIGNED ZEROFILL NOT NULL COMMENT '金额',
+  `labelId` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类别ID',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
+  `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of ledger_details
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for ledger_labels
+-- ----------------------------
+DROP TABLE IF EXISTS `ledger_labels`;
+CREATE TABLE `ledger_labels`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `label` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '标签名(不能重复)',
+  `creatorId` int(0) NOT NULL DEFAULT 1 COMMENT '创建者ID, 默认为系统管理员创建',
+  `isSystemCreate` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是系统创建[1:true系统创建,0:false用户创建]; 默认为: 0',
+  `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
+  `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of ledger_labels
+-- ----------------------------
+INSERT INTO `ledger_labels` VALUES (1, '餐饮', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:08');
+INSERT INTO `ledger_labels` VALUES (2, '交通', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:12');
+INSERT INTO `ledger_labels` VALUES (3, '住房', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:28');
+INSERT INTO `ledger_labels` VALUES (4, '美容', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:35');
+INSERT INTO `ledger_labels` VALUES (5, '服饰', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:43');
+INSERT INTO `ledger_labels` VALUES (6, '运动', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:54');
+INSERT INTO `ledger_labels` VALUES (7, '旅行', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:01');
+INSERT INTO `ledger_labels` VALUES (8, '娱乐', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:08');
+INSERT INTO `ledger_labels` VALUES (9, '生活', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:16');
+INSERT INTO `ledger_labels` VALUES (10, '医疗', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:20');
+INSERT INTO `ledger_labels` VALUES (11, '通讯', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:27');
+INSERT INTO `ledger_labels` VALUES (12, '学习', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:33');
+INSERT INTO `ledger_labels` VALUES (13, '礼物', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:37');
+INSERT INTO `ledger_labels` VALUES (14, '母婴', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:44');
+INSERT INTO `ledger_labels` VALUES (15, '数码', 1, 1, '2021-06-19 00:12:59', '2021-06-19 00:25:37');
+INSERT INTO `ledger_labels` VALUES (16, '零食', 1, 1, '2021-06-19 00:13:26', '2021-06-19 00:25:37');
+INSERT INTO `ledger_labels` VALUES (17, '购物', 1, 1, '2021-06-19 00:13:52', '2021-06-19 00:25:37');
+INSERT INTO `ledger_labels` VALUES (18, '水果', 1, 1, '2021-06-19 00:14:01', '2021-06-19 00:25:37');
+INSERT INTO `ledger_labels` VALUES (19, '其他支出', 1, 1, '2021-06-19 00:24:38', '2021-06-19 00:27:26');
 
 -- ----------------------------
 -- Table structure for registeremail
