@@ -11,7 +11,7 @@
  Target Server Version : 80021
  File Encoding         : 65001
 
- Date: 27/06/2021 08:48:51
+ Date: 27/06/2021 23:32:20
 */
 
 SET NAMES utf8mb4;
@@ -144,10 +144,10 @@ INSERT INTO `labels` VALUES (12, '新增标签', 80, 0, '2021-05-25 15:22:51', '
 INSERT INTO `labels` VALUES (13, '测试编辑标签', 87, 0, '2021-05-25 15:22:51', '2021-05-25 15:26:10');
 
 -- ----------------------------
--- Table structure for ledger_books
+-- Table structure for ledgers_books
 -- ----------------------------
-DROP TABLE IF EXISTS `ledger_books`;
-CREATE TABLE `ledger_books`  (
+DROP TABLE IF EXISTS `ledgers_books`;
+CREATE TABLE `ledgers_books`  (
   `id` int(0) NOT NULL AUTO_INCREMENT,
   `userId` int(0) NOT NULL COMMENT '所属用户id',
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '账簿名',
@@ -155,23 +155,27 @@ CREATE TABLE `ledger_books`  (
   `createTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `updateTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of ledger_books
+-- Records of ledgers_books
 -- ----------------------------
+INSERT INTO `ledgers_books` VALUES (1, 87, '个人账本', '用于个人支出记录', '2021-06-27 09:38:56', '2021-06-27 09:38:56');
+INSERT INTO `ledgers_books` VALUES (2, 87, '个人账本修改', '用户记录个人支出', '2021-06-27 09:41:30', '2021-06-27 10:02:48');
+INSERT INTO `ledgers_books` VALUES (4, 87, '个人账本删除测试', '用于个人支出记录', '2021-06-27 10:32:46', '2021-06-27 10:32:46');
 
 -- ----------------------------
--- Table structure for ledger_details
+-- Table structure for ledgers_details
 -- ----------------------------
-DROP TABLE IF EXISTS `ledger_details`;
-CREATE TABLE `ledger_details`  (
+DROP TABLE IF EXISTS `ledgers_details`;
+CREATE TABLE `ledgers_details`  (
   `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '账号id',
-  `bookId` int(0) NOT NULL COMMENT '所属用户id',
+  `bookId` int(0) NOT NULL COMMENT '所属账簿id',
+  `userId` int(0) NOT NULL COMMENT '所属用户id',
   `type` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '支出/收入',
   `date` date NOT NULL COMMENT '账单日期',
   `amount` float UNSIGNED ZEROFILL NOT NULL COMMENT '金额',
-  `labelId` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类别ID',
+  `labelId` int(0) NOT NULL COMMENT '类别ID',
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
@@ -179,14 +183,15 @@ CREATE TABLE `ledger_details`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of ledger_details
+-- Records of ledgers_details
 -- ----------------------------
+INSERT INTO `ledgers_details` VALUES (1, 1, 87, '0', '2021-06-01', 0000000034.5, 1, '早餐', '2021-06-27 16:53:34', '2021-06-27 16:53:34');
 
 -- ----------------------------
--- Table structure for ledger_labels
+-- Table structure for ledgers_labels
 -- ----------------------------
-DROP TABLE IF EXISTS `ledger_labels`;
-CREATE TABLE `ledger_labels`  (
+DROP TABLE IF EXISTS `ledgers_labels`;
+CREATE TABLE `ledgers_labels`  (
   `id` int(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `label` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '标签名(不能重复)',
   `creatorId` int(0) NOT NULL DEFAULT 1 COMMENT '创建者ID, 默认为系统管理员创建',
@@ -197,27 +202,27 @@ CREATE TABLE `ledger_labels`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of ledger_labels
+-- Records of ledgers_labels
 -- ----------------------------
-INSERT INTO `ledger_labels` VALUES (1, '餐饮', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:08');
-INSERT INTO `ledger_labels` VALUES (2, '交通', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:12');
-INSERT INTO `ledger_labels` VALUES (3, '住房', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:28');
-INSERT INTO `ledger_labels` VALUES (4, '美容', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:35');
-INSERT INTO `ledger_labels` VALUES (5, '服饰', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:43');
-INSERT INTO `ledger_labels` VALUES (6, '运动', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:54');
-INSERT INTO `ledger_labels` VALUES (7, '旅行', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:01');
-INSERT INTO `ledger_labels` VALUES (8, '娱乐', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:08');
-INSERT INTO `ledger_labels` VALUES (9, '生活', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:16');
-INSERT INTO `ledger_labels` VALUES (10, '医疗', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:20');
-INSERT INTO `ledger_labels` VALUES (11, '通讯', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:27');
-INSERT INTO `ledger_labels` VALUES (12, '学习', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:33');
-INSERT INTO `ledger_labels` VALUES (13, '礼物', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:37');
-INSERT INTO `ledger_labels` VALUES (14, '母婴', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:44');
-INSERT INTO `ledger_labels` VALUES (15, '数码', 1, 1, '2021-06-19 00:12:59', '2021-06-19 00:25:37');
-INSERT INTO `ledger_labels` VALUES (16, '零食', 1, 1, '2021-06-19 00:13:26', '2021-06-19 00:25:37');
-INSERT INTO `ledger_labels` VALUES (17, '购物', 1, 1, '2021-06-19 00:13:52', '2021-06-19 00:25:37');
-INSERT INTO `ledger_labels` VALUES (18, '水果', 1, 1, '2021-06-19 00:14:01', '2021-06-19 00:25:37');
-INSERT INTO `ledger_labels` VALUES (19, '其他支出', 1, 1, '2021-06-19 00:24:38', '2021-06-19 00:27:26');
+INSERT INTO `ledgers_labels` VALUES (1, '餐饮', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:08');
+INSERT INTO `ledgers_labels` VALUES (2, '交通', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:12');
+INSERT INTO `ledgers_labels` VALUES (3, '住房', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:28');
+INSERT INTO `ledgers_labels` VALUES (4, '美容', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:35');
+INSERT INTO `ledgers_labels` VALUES (5, '服饰', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:43');
+INSERT INTO `ledgers_labels` VALUES (6, '运动', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:10:54');
+INSERT INTO `ledgers_labels` VALUES (7, '旅行', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:01');
+INSERT INTO `ledgers_labels` VALUES (8, '娱乐', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:08');
+INSERT INTO `ledgers_labels` VALUES (9, '生活', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:16');
+INSERT INTO `ledgers_labels` VALUES (10, '医疗', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:20');
+INSERT INTO `ledgers_labels` VALUES (11, '通讯', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:27');
+INSERT INTO `ledgers_labels` VALUES (12, '学习', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:33');
+INSERT INTO `ledgers_labels` VALUES (13, '礼物', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:37');
+INSERT INTO `ledgers_labels` VALUES (14, '母婴', 1, 1, '2021-05-12 22:30:17', '2021-06-19 00:11:44');
+INSERT INTO `ledgers_labels` VALUES (15, '数码', 1, 1, '2021-06-19 00:12:59', '2021-06-19 00:25:37');
+INSERT INTO `ledgers_labels` VALUES (16, '零食', 1, 1, '2021-06-19 00:13:26', '2021-06-19 00:25:37');
+INSERT INTO `ledgers_labels` VALUES (17, '购物', 1, 1, '2021-06-19 00:13:52', '2021-06-19 00:25:37');
+INSERT INTO `ledgers_labels` VALUES (18, '水果', 1, 1, '2021-06-19 00:14:01', '2021-06-19 00:25:37');
+INSERT INTO `ledgers_labels` VALUES (19, '其他支出', 1, 1, '2021-06-19 00:24:38', '2021-06-19 00:27:26');
 
 -- ----------------------------
 -- Table structure for registeremail
