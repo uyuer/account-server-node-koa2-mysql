@@ -3,9 +3,9 @@ const controller = require('./../controllers');
 
 router.post('/books/addOne', controller.ledgers.books.addOne)
 
-router.get('/books/findAll', controller.ledgers.books.findAll) // 查找用户全部账户数据
+router.get('/books/findAll', controller.ledgers.books.findAll)
 
-router.get('/books/findMultiple', controller.ledgers.books.findMultiple) // 查找多条数据
+router.get('/books/findMultiple', controller.ledgers.books.findMultiple)
 
 router.get('/books/findOne', controller.ledgers.books.findOne)
 
@@ -15,11 +15,9 @@ router.post('/books/deleteOne', controller.ledgers.books.deleteOne)
 
 router.post('/details/addOne', controller.ledgers.details.addOne)
 
-router.get('/details/findAll', controller.ledgers.details.findAll) // 查找用户全部账户数据
+// router.get('/details/findOne', controller.ledgers.details.findOne)
 
-router.get('/details/findMultiple', controller.ledgers.details.findMultiple) // 查找多条数据
-
-router.get('/details/findOne', controller.ledgers.details.findOne)
+router.get('/details/findAll', controller.ledgers.details.findAll)
 
 router.post('/details/updateOne', controller.ledgers.details.updateOne)
 
