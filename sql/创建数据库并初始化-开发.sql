@@ -31,17 +31,17 @@ use accounts1;
 /*
  Navicat Premium Data Transfer
 
- Source Server         : root
+ Source Server         : 本地用户root
  Source Server Type    : MySQL
- Source Server Version : 80021
+ Source Server Version : 80023
  Source Host           : localhost:3306
  Source Schema         : accounts1
 
  Target Server Type    : MySQL
- Target Server Version : 80021
+ Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 27/06/2021 23:32:20
+ Date: 28/06/2021 18:01:23
 */
 
 SET NAMES utf8mb4;
@@ -185,14 +185,14 @@ CREATE TABLE `ledgers_books`  (
   `createTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `updateTime` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ledgers_books
 -- ----------------------------
 INSERT INTO `ledgers_books` VALUES (1, 87, '个人账本', '用于个人支出记录', '2021-06-27 09:38:56', '2021-06-27 09:38:56');
-INSERT INTO `ledgers_books` VALUES (2, 87, '个人账本修改', '用户记录个人支出', '2021-06-27 09:41:30', '2021-06-27 10:02:48');
-INSERT INTO `ledgers_books` VALUES (4, 87, '个人账本删除测试', '用于个人支出记录', '2021-06-27 10:32:46', '2021-06-27 10:32:46');
+INSERT INTO `ledgers_books` VALUES (2, 87, '个人账本删除测试2', '用于个人支出记录2', '2021-06-27 09:41:30', '2021-06-28 16:26:59');
+INSERT INTO `ledgers_books` VALUES (5, 87, '个人账本删除测试', '用于个人支出记录', '2021-06-28 16:25:20', '2021-06-28 16:25:20');
 
 -- ----------------------------
 -- Table structure for ledgers_details
@@ -210,12 +210,15 @@ CREATE TABLE `ledgers_details`  (
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ledgers_details
 -- ----------------------------
 INSERT INTO `ledgers_details` VALUES (1, 1, 87, '0', '2021-06-01', 0000000034.5, 1, '早餐', '2021-06-27 16:53:34', '2021-06-27 16:53:34');
+INSERT INTO `ledgers_details` VALUES (2, 1, 87, '0', '2021-06-21', 0000000023.5, 1, '早餐', '2021-06-28 11:41:00', '2021-06-28 11:41:00');
+INSERT INTO `ledgers_details` VALUES (3, 1, 87, '0', '2021-05-22', 0000000023.5, 1, '早餐修改', '2021-06-28 16:02:35', '2021-06-28 16:21:26');
+INSERT INTO `ledgers_details` VALUES (5, 1, 89, '0', '2021-05-21', 0000000023.5, 1, '早餐', '2021-06-28 16:23:48', '2021-06-28 16:40:25');
 
 -- ----------------------------
 -- Table structure for ledgers_labels
@@ -311,5 +314,11 @@ INSERT INTO `users` VALUES (92, '1064926003@qq.com', 'test003', '8d969eef6ecad3c
 INSERT INTO `users` VALUES (93, '1064926004@qq.com', 'test004', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '2', 1, '1', 0, '2021-04-01 15:29:45', '2021-05-20 13:39:52');
 INSERT INTO `users` VALUES (94, '271654537@qq.com', 'test005', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '5', 1, '1', 0, '2021-04-09 23:23:26', '2021-05-20 13:39:52');
 INSERT INTO `users` VALUES (97, '1064926207@qq.com', 'test7', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '2', '4', 1, '1', 0, '2021-05-25 10:55:22', '2021-05-25 10:55:22');
+
+-- ----------------------------
+-- View structure for ledgers_view
+-- ----------------------------
+DROP VIEW IF EXISTS `ledgers_view`;
+CREATE ALGORITHM = UNDEFINED SQL SECURITY DEFINER VIEW `ledgers_view` AS select `ledgers_details`.`id` AS `id`,`ledgers_details`.`bookId` AS `bookId`,`ledgers_details`.`userId` AS `userId`,`ledgers_details`.`type` AS `type`,`ledgers_details`.`date` AS `date`,`ledgers_details`.`amount` AS `amount`,`ledgers_details`.`labelId` AS `labelId`,`ledgers_details`.`remark` AS `remark`,`ledgers_details`.`createTime` AS `createTime`,`ledgers_details`.`updateTime` AS `updateTime`,`ledgers_books`.`name` AS `bookName`,`ledgers_labels`.`id` AS `labelsId`,`ledgers_labels`.`label` AS `label`,`ledgers_labels`.`isSystemCreate` AS `labelsIsSystemCreate` from ((`ledgers_books` join `ledgers_details` on((`ledgers_books`.`id` = `ledgers_details`.`bookId`))) join `ledgers_labels` on((`ledgers_details`.`labelId` = `ledgers_labels`.`id`)));
 
 SET FOREIGN_KEY_CHECKS = 1;
