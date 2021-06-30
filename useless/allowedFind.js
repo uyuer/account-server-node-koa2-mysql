@@ -7,15 +7,15 @@ async function allowedFind(userId, tableName, ids) {
         usersTable,
         registerEmailTable,
         avatarsTable,
-        accountsTable,
-        labelsTable
+        accountsDetailsTable,
+        accountsLabelsTable
     } = await instanceTable();
     let table = {
         'users': usersTable,
         'registerEmail': registerEmailTable,
         'avatars': avatarsTable,
-        'accounts': accountsTable,
-        'labels': labelsTable,
+        'accountsDetails': accountsDetailsTable,
+        'accountsLabels': accountsLabelsTable,
     }[tableName];
     let result = await table().findAll(`userId=${userId}`, ['id']);
     let idsArr = result.map(i => i.id);

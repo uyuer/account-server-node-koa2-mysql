@@ -1,13 +1,17 @@
 const { instanceTable } = require('./../../lib/method');
 const pathName = '账单详情';
 const pathRoute = 'ledgers.labels';
+const rules = {
+	id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "数据id格式错误" }],
+	label: [{ required: true, message: "标签不可为空" }],
+}
 
 module.exports = {
 	// 添加一条数据
 	addOne: async (ctx) => {
 		console.log(`请求->${pathName}->添加一条数据: ${pathRoute}.addOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 		let params = ctx.verifyParams({
-			label: [{ required: true, message: "标签不可为空" }],
+			label: rules.label,
 		})
 		let { userId } = ctx.session.user || {};
 		let { ledgersLabelsTable } = await instanceTable();
@@ -26,9 +30,9 @@ module.exports = {
 		let result = await ledgersLabelsTable.addOne(keys, values)
 		ctx.bodys = result;
 	},
-	// 查找全部数据
+	// 查询全部数据
 	findAll: async (ctx) => {
-		console.log(`请求->${pathName}->查询用户全部账本数据: ${pathRoute}.findAll; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+		console.log(`请求->${pathName}->查询全部数据: ${pathRoute}.findAll; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 		let { userId } = ctx.session.user || {};
 		let { ledgersLabelsTable } = await instanceTable();
 		let result = await ledgersLabelsTable.findAll(`isSystemCreate=1 or creatorId=${userId}`, ['id', 'label', 'isSystemCreate', 'createTime', 'updateTime'])
@@ -36,10 +40,10 @@ module.exports = {
 	},
 	// 更新一条数据
 	updateOne: async (ctx) => {
-		console.log(`请求->${pathName}->更新: ${pathRoute}.updateOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+		console.log(`请求->${pathName}->更新一条数据: ${pathRoute}.updateOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 		let params = ctx.verifyParams({
-			id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
-			label: [{ required: true, message: "标签不可为空" }],
+			id: rules.id,
+			label: rules.label,
 		})
 		let { userId } = ctx.session.user || {};
 		let { ledgersLabelsTable } = await instanceTable();
@@ -57,7 +61,7 @@ module.exports = {
 	deleteOne: async (ctx) => {
 		console.log(`请求->${pathName}->删除一条数据: ${pathRoute}.deleteOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 		let params = ctx.verifyParams({
-			id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "用户id格式错误" }],
+			id: rules.id,
 		})
 		let { userId } = ctx.session.user || {};
 		let { ledgersLabelsTable } = await instanceTable();

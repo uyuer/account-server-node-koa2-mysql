@@ -4,14 +4,14 @@ async function getTable() {
     let usersTable = await Table.build('users');
     let registerEmailTable = await Table.build('registeremail');
     let avatarsTable = await Table.build('avatars');
-    let accountsTable = await Table.build('accounts');
-    let labelsTable = await Table.build('labels');
+    let accountsDetailsTable = await Table.build('accounts_details');
+    let accountsLabelsTable = await Table.build('accounts_labels');
     return {
         usersTable,
         registerEmailTable,
         avatarsTable,
-        accountsTable,
-        labelsTable
+        accountsDetailsTable,
+        accountsLabelsTable
     }
 }
 

@@ -1,6 +1,6 @@
 const { formatFetchAll } = require('./../../lib/utils')
 const { instanceTable } = require('./../../lib/method');
-const pathName = '账单详情1';
+const pathName = '账单详情';
 const pathRoute = 'ledgers.details';
 const rules = {
 	id: [{ required: true, message: "数据id不可为空" }, { pattern: /^[1-9]\d*$/, message: "数据id格式错误" }],

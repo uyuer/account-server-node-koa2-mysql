@@ -1,24 +1,19 @@
 const router = require('koa-router')()
 const controller = require('./../controllers');
 
-router.post('/addOne', controller.accounts.addOne)
+router.post('/details/addOne', controller.accounts.details.addOne)
+router.post('/details/addMultiple', controller.accounts.details.addMultiple)
+router.get('/details/findAll', controller.accounts.details.findAll)
+router.get('/details/findMultiple', controller.accounts.details.findMultiple)
+router.get('/details/findOne', controller.accounts.details.findOne)
+router.post('/details/updateOne', controller.accounts.details.updateOne)
+router.post('/details/updateMultiple', controller.accounts.details.updateMultiple)
+router.post('/details/deleteOne', controller.accounts.details.deleteOne)
+router.post('/details/deleteMultiple', controller.accounts.details.deleteMultiple)
+router.post('/details/importJSONFile', controller.accounts.details.importJSONFile)
 
-router.post('/addMultiple', controller.accounts.addMultiple)
-
-router.get('/findAll', controller.accounts.findAll) // 查找用户全部账户数据
-
-router.get('/findMultiple', controller.accounts.findMultiple) // 查找多条数据
-
-router.get('/findOne', controller.accounts.findOne)
-
-router.post('/updateOne', controller.accounts.updateOne)
-
-router.post('/updateMultiple', controller.accounts.updateMultiple)
-
-router.post('/deleteOne', controller.accounts.deleteOne)
-
-router.post('/deleteMultiple', controller.accounts.deleteMultiple)
-
-router.post('/importJSONFile', controller.accounts.importJSONFile)
+router.post('/labels/addOne', controller.accounts.labels.addOne)
+router.post('/labels/updateOne', controller.accounts.labels.updateOne)
+router.get('/labels/findAll', controller.accounts.labels.findAll)
 
 module.exports = router

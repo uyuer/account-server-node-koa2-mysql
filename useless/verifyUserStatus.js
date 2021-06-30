@@ -28,7 +28,7 @@ const verifyUserStatus = async (userId) => {
     // // 校验用户合法性
 	// // console.log(ctx.verifyUserStatus)
 	// let user = await verifyUserStatus(userId);
-	// let accounts = await accountsTable.findAll(`userId=${user.id}`, ['id']);
+	// let accounts = await accountsDetailsTable.findAll(`userId=${user.id}`, ['id']);
 	// let possess = accounts.map(i => i.id).includes(Number(validParams.id)); // 用户拥有数据
 	// if (user.role <= 0 && !possess) {
 	// 	ctx.throw(403, '没有权限操作')

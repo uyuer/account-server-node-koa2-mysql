@@ -5,8 +5,8 @@ async function userPrivate(userId) {
         usersTable,
         registerEmailTable,
         avatarsTable,
-        accountsTable,
-        labelsTable
+        accountsDetailsTable,
+        accountsLabelsTable
     } = await instanceTable();
     return {
         
