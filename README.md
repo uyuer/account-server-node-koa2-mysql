@@ -90,3 +90,16 @@ console.log(ciphertext, plaintext)
 CryptoJS.SHA256('123456', '123456').toString()
 let ins = await schema;
 ```
+
+```
+// 读取文件
+let res = fs.readFileSync(filePath);
+console.log(Buffer.isBuffer(res))
+console.log(res.toJSON())
+ctx.bodys = {
+	name: '头像上传',
+	res: res.toJSON(),
+}
+fs.renameSync(path, avatarFullPath + '/' + 'a.png') // 重命名弃用
+```
+
