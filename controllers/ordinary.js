@@ -121,11 +121,11 @@ exports.login = async (ctx) => {
 	let body = ctx.request.body || {};
 	let patt = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
 	let isEmail = patt.test(body.username); // 判断是否是邮箱
-	let rules = {
+	let rule = {
 		username: isEmail ? rules.email : rules.username,
 		password: rules.password,
 	}
-	let params = ctx.verifyParams(rules);
+	let params = ctx.verifyParams(rule);
 	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
 	let { username, password } = params;
 	let user = await usersTable.findOne(`${isEmail ? 'email' : 'username'}='${username}' and password='${password}'`, ['id', 'email', 'username', 'createTime', 'updateTime']);

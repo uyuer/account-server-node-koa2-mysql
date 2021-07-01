@@ -6,9 +6,9 @@ const controller = require('./../controllers');
 // ]
 
 router.post('/books/addOne', controller.ledgers.books.addOne)
+router.get('/books/findOne', controller.ledgers.books.findOne)
 router.get('/books/findAll', controller.ledgers.books.findAll)
 router.get('/books/findMultiple', controller.ledgers.books.findMultiple)
-router.get('/books/findOne', controller.ledgers.books.findOne)
 router.post('/books/updateOne', controller.ledgers.books.updateOne)
 router.post('/books/deleteOne', controller.ledgers.books.deleteOne)
 

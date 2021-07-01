@@ -83,7 +83,7 @@ module.exports = {
 		let { bookId, start, end } = params;
 		let result = await tableIns
 			.getSession()
-			.sql(`select * from ${dbName}.ledgers_view where bookId=${bookId} and userId=${userId} and date>='${start}' and date<='${end}'`)
+			.sql(`select * from ${dbName}.ledgers_view where bookId=${bookId} and userId=${userId} and date>='${start}' and date<='${end}' order by date DESC`)
 			.execute()
 			.then(s => formatFetchAll(s))
 		ctx.bodys = result;
