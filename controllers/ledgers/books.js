@@ -60,7 +60,7 @@ module.exports = {
 		// 未来待办: 这里本该使用sql语句一次性查询完成账本的收入支出统计功能(同一个账本下type有'收入','支出'两种类型),因为我还不会编写复杂的SQL语句而暂时这样处理
 		let { pageNum, pageSize } = params;
 		let result = await ledgersBooksTable.findMultiple(`userId=${userId}`, [], pageNum, pageSize);
-		let details = await ledgersDetailsTable.findAll('id>0', ['bookId', 'amount', 'type']);
+		let details = await ledgersDetailsTable.findAll(`userId=${userId}`, ['bookId', 'amount', 'type']);
 		let statistics = (details || []).reduce((total, currentValue) => {
 			let { bookId, amount, type } = currentValue;
 			if (!total[bookId]) {
@@ -85,7 +85,7 @@ module.exports = {
 		let { ledgersBooksTable, ledgersDetailsTable } = await instanceTable();
 		// 未来待办: 这里本该使用sql语句一次性查询完成账本的收入支出统计功能(同一个账本下type有'收入','支出'两种类型),因为我还不会编写复杂的SQL语句而暂时这样处理
 		let result = await ledgersBooksTable.findAll(`userId=${userId}`);
-		let details = await ledgersDetailsTable.findAll('id>0', ['bookId', 'amount', 'type']);
+		let details = await ledgersDetailsTable.findAll(`userId=${userId}`, ['id', 'bookId', 'amount', 'type']);
 		let statistics = (details || []).reduce((total, currentValue) => {
 			let { bookId, amount, type } = currentValue;
 			if (!total[bookId]) {
