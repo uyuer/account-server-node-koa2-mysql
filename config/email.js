@@ -1,4 +1,4 @@
-require('dotenv').config('./env');
+// require('dotenv').config('./env');
 
 const {
     E_MAIL,
