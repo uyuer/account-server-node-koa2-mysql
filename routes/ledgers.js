@@ -18,6 +18,7 @@ router.get('/details/findAll', controller.ledgers.details.findAll)
 router.post('/details/updateOne', controller.ledgers.details.updateOne)
 router.post('/details/updateMultiple', controller.ledgers.details.updateMultiple)
 router.post('/details/deleteOne', controller.ledgers.details.deleteOne)
+router.post('/details/importFile', controller.ledgers.details.importFile)
 // router.post('/books/deleteMultiple', controller.ledgers.books.deleteMultiple)
 
 router.post('/labels/addOne', controller.ledgers.labels.addOne)

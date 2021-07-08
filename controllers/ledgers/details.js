@@ -1,3 +1,6 @@
+const fs = require('fs');
+const Excel = require('exceljs');
+const moment = require('moment');
 const { formatFetchAll } = require('./../../lib/utils')
 const { instanceTable } = require('./../../lib/method');
 const pathName = '账单详情';
@@ -149,4 +152,79 @@ module.exports = {
 		let result = await ledgersDetailsTable.deleteOne(where);
 		ctx.bodys = result;
 	},
+
+	// 解析女生记账软件app中导出的csv文件, 将数据保存在本地的数据库中, 女生记账~拜拜了
+	importFile: async (ctx) => {
+		console.log(`请求->${pathName}->CSV文件上传: ${pathRoute}.importFile; method: ${ctx.request.method}; url: ${ctx.request.url} `)
+		let params = ctx.verifyParams({
+			bookId: rules.bookId,
+		})
+		const maxSize = 0.5 * 1024 * 1024;
+		const file = ctx.request.files.file;
+		if (!file) {
+			return ctx.throw(400, '导入文件不能为空');
+		}
+		const { path: filePath, name, type, lastModifiedDate } = file;
+		// 检查上传文件是否合法, 如果非法则删除文件
+		let allowedType = ['text/csv']
+		if (!allowedType.find(t => t === type)) {
+			fs.unlinkSync(filePath)
+			return ctx.throw(400, '只支持导入文件为' + allowedType.toString() + '格式');
+		}
+		if (file.size > maxSize) {
+			return ctx.throw(400, '上传文件过大,仅支持' + (maxSize / 1024 / 1024) + 'M以内的文件');
+		}
+		let { userId } = ctx.session.user || {};
+		let { ledgersLabelsTable, ledgersDetailsTable } = await instanceTable();
+		let { bookId } = params;
+		let labelsResult = await ledgersLabelsTable.findAll(`isSystemCreate=1 or creatorId=${userId}`, ['id', 'label', 'isSystemCreate', 'createTime', 'updateTime']);
+		console.log(labelsResult)
+		let labels = labelsResult.reduce((total, currentValue) => {
+			total[currentValue.label] = currentValue.id
+			return total;
+		}, {})
+		const workbook = new Excel.Workbook();
+		const values = []
+		const options = {
+			map(value, index) {
+				let arr = value.split(',');
+				let p = {
+					date: '',
+					type: '',
+					amount: '',
+					labelId: '',
+					remark: '',
+					userId: '',
+					bookId: '',
+				}
+				let obj = Object.keys(p).reduce((total, currentValue, index) => {
+					let key = currentValue;
+					let value = arr[index];
+					console.log(value)
+					switch (key) {
+						case 'date':
+							let str = value.replace(/[年月日]/g, '-');
+							value = moment(str.substring(0, str.length - 1)).format('YYYY-MM-DD'); break;
+						case 'type': value = value === '支出' ? '0' : '1'; break;
+						case 'amount': value = Number(value); break;
+						case 'labelId': value = labels[value]; break;
+						case 'userId': value = userId; break;
+						case 'bookId': value = bookId; break;
+					}
+					total[key] = value;
+					return total;
+				}, {});
+				values.push(obj)
+			},
+			parserOptions: {
+				delimiter: '\t',
+				quote: true,
+			},
+		};
+		const worksheet = await workbook.csv.readFile(filePath, options);
+		let keys = Object.keys(values[0]);
+		let result = await ledgersDetailsTable.addMultiple(keys, values);
+		ctx.bodys = true;
+	}
+
 }
