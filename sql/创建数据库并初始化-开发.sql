@@ -1,3 +1,7 @@
+-- 初始化sql
+-- 需要创建系统管理员:
+-- INSERT INTO `users` VALUES (1, 'xxxxx@email.com(用户邮箱)', 'admin(用户名)', 'xxxxxxx(用户密码,使用sha256加密)', '2(性别)', '1(头像)', 1(邮箱是否激活), '1(账户状态)', 1(角色), 'YYYY-MM-DD HH:mm:ss(当前时间)', 'YYYY-MM-DD HH:mm:ss(当前时间)');
+
 -- 删除用户
 use mysql;
 select User,Host from user WHERE User='accounts1Admin' and Host='%';
@@ -6,11 +10,9 @@ flush privileges;
 -- 删除数据库
 DROP DATABASE accounts1;
 
--- 创建数据库
-create DATABASE accounts1;
 -- 创建用户
 use mysql;
-create user 'accounts1Admin'@'%' IDENTIFIED by 'adgjmptw123';
+create user 'accounts1Admin'@'%' IDENTIFIED by '12345678';
 -- 授权用户
 grant SELECT,
 	INSERT,
@@ -25,9 +27,10 @@ grant SELECT,
 FLUSH PRIVILEGES;
 SHOW GRANTS for accounts1Admin;
 
--- 分隔线分隔线分割线分隔线分隔线分割线分隔线分隔线分割线分隔线分隔线分割线分隔线分隔线分割线
+-- 创建数据库
+create DATABASE accounts1;
+-- 创建表
 use accounts1;
--- 创建用户表
 /*
  Navicat Premium Data Transfer
 

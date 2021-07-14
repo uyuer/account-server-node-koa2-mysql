@@ -11,7 +11,7 @@
  Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 01/07/2021 18:15:09
+ Date: 14/07/2021 18:03:20
 */
 
 SET NAMES utf8mb4;
@@ -181,25 +181,20 @@ CREATE TABLE `ledgers_details`  (
   `createTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '本条数据创建时间',
   `updateTime` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '本条数据更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ledgers_details
 -- ----------------------------
-INSERT INTO `ledgers_details` VALUES (1, 1, 87, '0', '2021-06-01', 00010.00, 1, '早餐', '2021-06-27 16:53:34', '2021-07-01 17:05:12');
-INSERT INTO `ledgers_details` VALUES (2, 1, 87, '0', '2021-06-21', 00020.00, 1, '早餐', '2021-06-28 11:41:00', '2021-07-01 17:05:20');
-INSERT INTO `ledgers_details` VALUES (3, 1, 87, '0', '2021-05-22', 00030.00, 1, '早餐修改', '2021-06-28 16:02:35', '2021-07-01 17:05:26');
-INSERT INTO `ledgers_details` VALUES (5, 1, 89, '0', '2021-05-21', 00005.00, 1, '早餐', '2021-06-28 16:23:48', '2021-07-01 17:05:32');
-INSERT INTO `ledgers_details` VALUES (6, 1, 87, '0', '2021-05-21', 00005.00, 1, '早餐', '2021-06-29 17:57:47', '2021-07-01 17:05:39');
-INSERT INTO `ledgers_details` VALUES (7, 1, 87, '1', '2021-05-21', 00008.00, 20, '收入', '2021-06-29 17:58:39', '2021-07-01 17:05:57');
-INSERT INTO `ledgers_details` VALUES (8, 1, 87, '1', '2021-05-21', 00012.00, 20, '收入', '2021-06-29 17:58:50', '2021-07-01 17:06:08');
-INSERT INTO `ledgers_details` VALUES (9, 1, 87, '0', '2021-06-21', 00035.00, 2, '早餐备注批量修改', '2021-06-29 18:10:15', '2021-07-01 17:06:25');
-INSERT INTO `ledgers_details` VALUES (10, 2, 87, '0', '2021-06-21', 00035.00, 2, '午餐备注批量修改', '2021-06-29 18:10:15', '2021-07-01 17:06:28');
-INSERT INTO `ledgers_details` VALUES (11, 1, 87, '0', '2021-05-11', 00100.00, 2, '地铁重置', '2021-07-01 16:55:04', '2021-07-01 16:55:04');
-INSERT INTO `ledgers_details` VALUES (12, 1, 87, '0', '2021-05-11', 00100.00, 17, '买东西', '2021-07-01 16:55:36', '2021-07-01 16:55:36');
-INSERT INTO `ledgers_details` VALUES (13, 1, 87, '0', '2021-05-11', 00010.00, 13, '买东西2', '2021-07-01 16:55:45', '2021-07-01 16:55:45');
-INSERT INTO `ledgers_details` VALUES (14, 1, 87, '0', '2021-05-11', 00010.00, 13, '买东西4', '2021-07-01 16:55:48', '2021-07-01 16:55:48');
-INSERT INTO `ledgers_details` VALUES (15, 1, 87, '0', '2021-05-19', 00020.00, 18, '西瓜', '2021-07-01 16:56:15', '2021-07-01 16:56:15');
+INSERT INTO `ledgers_details` VALUES (1, 1, 87, '0', '2021-06-01', 00034.50, 1, '早餐', '2021-06-27 16:53:34', '2021-06-30 14:47:58');
+INSERT INTO `ledgers_details` VALUES (2, 1, 87, '0', '2021-06-21', 00005.50, 1, '早餐', '2021-06-28 11:41:00', '2021-06-30 14:49:19');
+INSERT INTO `ledgers_details` VALUES (3, 1, 87, '0', '2021-05-22', 00064.50, 1, '早餐修改', '2021-06-28 16:02:35', '2021-06-30 14:49:20');
+INSERT INTO `ledgers_details` VALUES (5, 1, 89, '0', '2021-05-21', 00032.30, 1, '早餐', '2021-06-28 16:23:48', '2021-06-30 14:49:20');
+INSERT INTO `ledgers_details` VALUES (6, 1, 87, '0', '2021-05-21', 00024.50, 1, '早餐', '2021-06-29 17:57:47', '2021-06-30 14:49:20');
+INSERT INTO `ledgers_details` VALUES (7, 1, 87, '1', '2021-05-21', 00008.00, 1, '早餐', '2021-06-29 17:58:39', '2021-06-30 14:49:20');
+INSERT INTO `ledgers_details` VALUES (8, 1, 87, '1', '2021-05-21', 00034.50, 1, '早餐', '2021-06-29 17:58:50', '2021-06-30 14:49:21');
+INSERT INTO `ledgers_details` VALUES (9, 1, 87, '0', '2021-06-21', 00034.50, 2, '早餐备注批量修改', '2021-06-29 18:10:15', '2021-06-30 14:49:21');
+INSERT INTO `ledgers_details` VALUES (10, 2, 87, '0', '2021-06-21', 00034.50, 2, '午餐备注批量修改', '2021-06-29 18:10:15', '2021-06-30 14:49:21');
 
 -- ----------------------------
 -- Table structure for ledgers_labels
@@ -236,8 +231,8 @@ INSERT INTO `ledgers_labels` VALUES (15, '数码', 1, 1, '2021-06-19 00:12:59', 
 INSERT INTO `ledgers_labels` VALUES (16, '零食', 1, 1, '2021-06-19 00:13:26', '2021-06-19 00:25:37');
 INSERT INTO `ledgers_labels` VALUES (17, '购物', 1, 1, '2021-06-19 00:13:52', '2021-06-19 00:25:37');
 INSERT INTO `ledgers_labels` VALUES (18, '水果', 1, 1, '2021-06-19 00:14:01', '2021-06-19 00:25:37');
-INSERT INTO `ledgers_labels` VALUES (19, '其他', 1, 1, '2021-06-19 00:24:38', '2021-07-01 17:02:32');
-INSERT INTO `ledgers_labels` VALUES (20, '工资', 1, 1, '2021-06-29 09:24:14', '2021-07-01 17:02:45');
+INSERT INTO `ledgers_labels` VALUES (19, '其他支出', 1, 1, '2021-06-19 00:24:38', '2021-06-19 00:27:26');
+INSERT INTO `ledgers_labels` VALUES (20, '测试编辑标签', 87, 0, '2021-06-29 09:24:14', '2021-06-29 09:32:08');
 
 -- ----------------------------
 -- Table structure for registeremail
