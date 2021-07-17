@@ -1,4 +1,7 @@
 const { instanceTable, formatStatus } = require('./../../lib/method');
+const config = require("../../config")
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
+
 const pathName = '账本';
 const pathRoute = 'ledgers.books';
 const rules = {
@@ -19,7 +22,7 @@ module.exports = {
 			remark: rules.remark,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersBooksTable } = await instanceTable();
+		let { ledgersBooksTable } = await instanceTable(LEDGERS_BOOKS_TABLE);
 		let values = { ...params, userId };
 		let keys = Object.keys(values);
 		let result = await ledgersBooksTable.addOne(keys, values);
@@ -32,7 +35,7 @@ module.exports = {
 			id: rules.id,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersBooksTable, ledgersDetailsTable } = await instanceTable();
+		let { ledgersBooksTable, ledgersDetailsTable } = await instanceTable(LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE);
 		let { id } = params;
 		// 未来待办: 这里本该使用sql语句一次性查询完成账本的收入支出统计功能(同一个账本下type有'收入','支出'两种类型),因为我还不会编写复杂的SQL语句而暂时这样处理
 		let where = `id=${id} and userId=${userId}`;
@@ -56,7 +59,7 @@ module.exports = {
 			pageSize: rules.pageSize,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersBooksTable, ledgersDetailsTable } = await instanceTable();
+		let { ledgersBooksTable, ledgersDetailsTable } = await instanceTable(LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE);
 		// 未来待办: 这里本该使用sql语句一次性查询完成账本的收入支出统计功能(同一个账本下type有'收入','支出'两种类型),因为我还不会编写复杂的SQL语句而暂时这样处理
 		let { pageNum, pageSize } = params;
 		let result = await ledgersBooksTable.findMultiple(`userId=${userId}`, [], pageNum, pageSize);
@@ -82,7 +85,7 @@ module.exports = {
 	findAll: async (ctx) => {
 		console.log(`请求->${pathName}->查询全部数据: ${pathRoute}.findAll; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 		let { userId } = ctx.session.user || {};
-		let { ledgersBooksTable, ledgersDetailsTable } = await instanceTable();
+		let { ledgersBooksTable, ledgersDetailsTable } = await instanceTable(LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE);
 		// 未来待办: 这里本该使用sql语句一次性查询完成账本的收入支出统计功能(同一个账本下type有'收入','支出'两种类型),因为我还不会编写复杂的SQL语句而暂时这样处理
 		let result = await ledgersBooksTable.findAll(`userId=${userId}`);
 		let details = await ledgersDetailsTable.findAll(`userId=${userId}`, ['id', 'bookId', 'amount', 'type']);
@@ -112,7 +115,7 @@ module.exports = {
 			remark: rules.remark,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersBooksTable } = await instanceTable();
+		let { ledgersBooksTable } = await instanceTable(LEDGERS_BOOKS_TABLE);
 		let values = { ...params, userId };
 		let { id } = values;
 		let where = `id=${id} and userId=${userId}`;
@@ -130,7 +133,7 @@ module.exports = {
 			id: rules.id,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersBooksTable } = await instanceTable();
+		let { ledgersBooksTable } = await instanceTable(LEDGERS_BOOKS_TABLE);
 		let values = { ...params, userId };
 		let { id } = values;
 		let where = `id=${id} and userId=${userId}`;

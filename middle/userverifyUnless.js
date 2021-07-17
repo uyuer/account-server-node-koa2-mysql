@@ -1,5 +1,7 @@
 const { getType, isArray } = require("../lib/utils");
 const { instanceTable } = require('../lib/method');
+const config = require("../config")
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
 
 // 给ctx添加方法
 const userVerifyUnless = (params) => {
@@ -17,7 +19,7 @@ const userVerifyUnless = (params) => {
         if (result) {
             let { userId } = ctx.session.user || {};
             console.log('需要验证用户状态', userId, ctx.request.path);
-            let { usersTable } = await instanceTable();
+            let { usersTable } = await instanceTable(USERS_TABLE);
             let user = await usersTable.findOne(`id=${userId}`, ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']);
             // 检查用户是否存在
             if (!user) {

@@ -1,6 +1,8 @@
 const fs = require('fs');
 const { isArray } = require('../../lib/utils')
 const { instanceTable, formatStatus } = require('../../lib/method');
+const config = require("../../config")
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
 
 const pathName = '账户';
 const pathRoute = 'accounts.details';
@@ -52,7 +54,7 @@ const addOne = async (ctx) => {
 		tags: rules.tags,
 	})
 	let { userId } = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let values = { ...params, userId };
 	let keys = Object.keys(values);
 	let result = await accountsDetailsTable.addOne(keys, values);
@@ -75,7 +77,7 @@ const addMultiple = async (ctx) => {
 		tags: rules.tags,
 	}])
 	let { userId } = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let values = params.map(i => ({ ...i, userId }))
 	let keys = Object.keys(values[0]);
 	let result = await accountsDetailsTable.addMultiple(keys, values);
@@ -89,7 +91,7 @@ const findOne = async (ctx) => {
 		id: rules.id,
 	})
 	let { userId } = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let { id } = params;
 	let where = `id=${id} and userId=${userId}`;
 	let selects = []; // 查询全部
@@ -105,7 +107,7 @@ const findMultiple = async (ctx) => {
 		pageSize: rules.pageSize,
 	})
 	let user = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let { userId } = user;
 	let { pageNum, pageSize } = params;
 	let where = `userId=${userId}`;
@@ -120,7 +122,7 @@ const findMultiple = async (ctx) => {
 const findAll = async (ctx) => {
 	console.log(`请求->${pathName}->查询全部数据: ${pathRoute}.findAll; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let user = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let { userId } = user;
 	let result = await accountsDetailsTable.findAll(`userId=${userId}`);
 	let fromatResult = result.map(item => {
@@ -146,7 +148,7 @@ const updateOne = async (ctx) => {
 		tags: rules.tags,
 	})
 	let { userId } = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let values = { ...params, userId };
 	let { id } = values;
 	let where = `id=${id} and userId=${userId}`;
@@ -174,7 +176,7 @@ const updateMultiple = async (ctx) => {
 		tags: rules.tags,
 	}])
 	let { userId } = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let values = params.map(i => ({ ...i, userId }))
 	let where = `userId=${userId} and`;
 	let result = await accountsDetailsTable.updateMultiple('id', where, values);
@@ -188,7 +190,7 @@ const deleteOne = async (ctx) => {
 		id: rules.id,
 	})
 	let { userId } = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let values = { ...params, userId };
 	let { id } = values;
 	let where = `id=${id} and userId=${userId}`;
@@ -206,7 +208,7 @@ const deleteMultiple = async (ctx) => {
 		ids: rules.ids,
 	})
 	let { userId } = ctx.session.user || {};
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let { ids } = params;
 	// DELETE FROM accounts WHERE id IN (17,18) and userId = 87;
 	// let result = await accountsDetailsTable.deleteMultiple(`id IN (${ids})`);
@@ -246,7 +248,7 @@ const importJSONFile = async (ctx) => {
 	} catch (error) {
 		return ctx.throw(400, error);
 	}
-	let { accountsDetailsTable } = await instanceTable();
+	let { accountsDetailsTable } = await instanceTable(ACCOUNTS_DETAILS_TABLE);
 	let { userId } = ctx.session.user || {};
 	let values = fileData.map(item => {
 		return { ...item, userId }

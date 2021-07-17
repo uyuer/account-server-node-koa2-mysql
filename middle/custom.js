@@ -5,7 +5,7 @@ const { instanceTable } = require('../lib/method');
 // 给ctx添加方法
 const custom = async (ctx, next) => {
     // // 这里获取用户信息
-    // let { usersTable } = await instanceTable();
+    // let { usersTable } = await instanceTable(USERS_TABLE);
     // let user = await usersTable.findOne(`id=87`, []);
     // console.log(user);
     // ctx.session.user = user;

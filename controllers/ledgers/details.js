@@ -3,6 +3,9 @@ const Excel = require('exceljs');
 const moment = require('moment');
 const { formatFetchAll } = require('./../../lib/utils')
 const { instanceTable } = require('./../../lib/method');
+const config = require("../../config")
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
+
 const pathName = '账单详情';
 const pathRoute = 'ledgers.details';
 const rules = {
@@ -31,7 +34,7 @@ module.exports = {
 			remark: rules.remark,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersDetailsTable } = await instanceTable();
+		let { ledgersDetailsTable } = await instanceTable(LEDGERS_DETAILS_TABLE);
 		let values = { ...params, userId };
 		let keys = Object.keys(values);
 		let result = await ledgersDetailsTable.addOne(keys, values);
@@ -49,7 +52,7 @@ module.exports = {
 			remark: rules.remark,
 		}])
 		let { userId } = ctx.session.user || {};
-		let { ledgersDetailsTable } = await instanceTable();
+		let { ledgersDetailsTable } = await instanceTable(LEDGERS_DETAILS_TABLE);
 		let values = params.map(i => ({ ...i, userId }))
 		let keys = Object.keys(values[0]);
 		let result = await ledgersDetailsTable.addMultiple(keys, values);
@@ -81,7 +84,7 @@ module.exports = {
 			end: rules.end,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersDetailsTable } = await instanceTable();
+		let { ledgersDetailsTable } = await instanceTable(LEDGERS_DETAILS_TABLE);
 		let { tableIns, dbName } = ledgersDetailsTable;
 		let { bookId, start, end } = params;
 		let result = await tableIns
@@ -104,7 +107,7 @@ module.exports = {
 			remark: rules.remark,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersDetailsTable } = await instanceTable();
+		let { ledgersDetailsTable } = await instanceTable(LEDGERS_DETAILS_TABLE);
 		let { id, ...values } = params;
 		let where = `id=${id} and userId=${userId}`;
 		let info = await ledgersDetailsTable.findOne(where);
@@ -128,7 +131,7 @@ module.exports = {
 		}])
 		let { userId } = ctx.session.user || {};
 		// ---分隔线---
-		let { ledgersDetailsTable } = await instanceTable();
+		let { ledgersDetailsTable } = await instanceTable(LEDGERS_DETAILS_TABLE);
 		let values = params.map(i => ({ ...i, userId }))
 		let where = `userId=${userId} and`; // id校验, 不能让用户乱传id和userId
 		let result = await ledgersDetailsTable.updateMultiple('id', where, values);
@@ -142,7 +145,7 @@ module.exports = {
 			bookId: rules.bookId,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersDetailsTable } = await instanceTable();
+		let { ledgersDetailsTable } = await instanceTable(LEDGERS_DETAILS_TABLE);
 		let { id, bookId } = params;
 		let where = `id=${id} and bookId=${bookId} and userId=${userId}`;
 		let info = await ledgersDetailsTable.findOne(where);
@@ -175,7 +178,7 @@ module.exports = {
 			return ctx.throw(400, '上传文件过大,仅支持' + (maxSize / 1024 / 1024) + 'M以内的文件');
 		}
 		let { userId } = ctx.session.user || {};
-		let { ledgersLabelsTable, ledgersDetailsTable } = await instanceTable();
+		let { ledgersLabelsTable, ledgersDetailsTable } = await instanceTable(LEDGERS_LABELS_TABLE, LEDGERS_DETAILS_TABLE);
 		let { bookId } = params;
 		let labelsResult = await ledgersLabelsTable.findAll(`isSystemCreate=1 or creatorId=${userId}`, ['id', 'label', 'isSystemCreate', 'createTime', 'updateTime']);
 		console.log(labelsResult)

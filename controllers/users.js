@@ -1,13 +1,15 @@
 const fs = require('fs');
 const path = require('path')
 const { instanceTable } = require('../lib/method');
-const { upload } = require("../config")
+const config = require("../config")
+const { upload } = config;
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
 
 // 查找-指定ID查找用户信息
 const findOne = async (ctx) => {
 	console.log(`请求->用户->查询一条数据: users.findOne; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let { userId } = ctx.session.user || {};
-	let { usersTable, avatarsTable } = await instanceTable();
+	let { usersTable, avatarsTable } = await instanceTable(USERS_TABLE, AVATARS_TABLE);
 	let where = `id=${userId}`;
 	let selects = ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']; // 查询全部
 	let userinfo = await usersTable.findOne(where, selects);
@@ -36,7 +38,7 @@ const updateOne = async (ctx) => {
 		male: [{ required: false, message: "" }, { pattern: /[012]/, message: "性别参数错误" }],
 	})
 	let { userId } = ctx.session.user || {};
-	let { usersTable } = await instanceTable();
+	let { usersTable } = await instanceTable(USERS_TABLE);
 	let where = `id=${userId}`;
 	let info = await usersTable.findOne(where);
 	if (!info) {
@@ -77,7 +79,7 @@ const uploadProfilePicture = async (ctx) => {
 	}
 
 	// 将用户id,文件名存入数据库
-	let { usersTable, avatarsTable } = await instanceTable();
+	let { usersTable, avatarsTable } = await instanceTable(USERS_TABLE, AVATARS_TABLE);
 	let values = { fileName };
 	let keys = Object.keys(values); // 数组
 	let avatarId = await avatarsTable.addOne(keys, values);

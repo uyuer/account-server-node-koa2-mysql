@@ -1,4 +1,7 @@
 const { instanceTable } = require('../../lib/method');
+const config = require("../../config")
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
+
 
 const pathName = '账户';
 const pathRoute = 'accounts.details';
@@ -14,7 +17,7 @@ const addOne = async (ctx) => {
 		label: rules.label,
 	})
 	let { userId } = ctx.session.user || {};
-	let { accountsLabelsTable } = await instanceTable();
+	let { accountsLabelsTable } = await instanceTable(ACCOUNTS_LABELS);
 	let { label } = params;
 	let labelBeUsed = await accountsLabelsTable.findOne(`label='${label}' and creatorId=${userId}`)
 	if (labelBeUsed) {
@@ -33,7 +36,7 @@ const updateOne = async (ctx) => {
 		label: [{ required: true, message: "标签不可为空" }],
 	})
 	let { userId } = ctx.session.user || {};
-	let { accountsLabelsTable } = await instanceTable();
+	let { accountsLabelsTable } = await instanceTable(ACCOUNTS_LABELS);
 	let { id, label } = params;
 	let values = { ...params, creatorId: userId };
 	let where = `id=${id} and creatorId=${userId}`;
@@ -50,7 +53,7 @@ const updateOne = async (ctx) => {
 const findAll = async (ctx) => {
 	console.log(`请求->${pathName}->查询全部数据: ${pathRoute}.findAll; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 	let { userId } = ctx.session.user || {};
-	let { accountsLabelsTable } = await instanceTable();
+	let { accountsLabelsTable } = await instanceTable(ACCOUNTS_LABELS);
 	let result = await accountsLabelsTable.findAll(`isSystemCreate=1 or creatorId=${userId}`, ['id', 'label', 'isSystemCreate', 'createTime', 'updateTime'])
 	ctx.bodys = result;
 };

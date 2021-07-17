@@ -4,6 +4,7 @@ const dayjs = require('dayjs');
 const { sendEmailCode } = require('../lib/email')
 const { instanceTable } = require('../lib/method');
 const config = require('../config');
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
 
 const pathName = '用户';
 const pathRoute = 'ordinary';
@@ -27,7 +28,7 @@ exports.register = async (ctx) => {
 		email: rules.email,
 		code: rules.code
 	})
-	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
+	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable(USERS_TABLE, AVATARS_TABLE, REGISTEREMAIL_TABLE);
 
 	let { username, password, repassword, male, email, code } = params;
 	// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
@@ -82,7 +83,7 @@ exports.sendcode = async (ctx) => {
 	let params = ctx.verifyParams({
 		email: rules.email,
 	})
-	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
+	let { usersTable, registerEmailTable } = await instanceTable(USERS_TABLE, REGISTEREMAIL_TABLE);
 	const { email } = params;
 	const code = Math.random().toString().slice(2, 6); // 随机生成的验证码
 	// 检查邮箱是否被使用
@@ -126,7 +127,7 @@ exports.login = async (ctx) => {
 		password: rules.password,
 	}
 	let params = ctx.verifyParams(rule);
-	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable();
+	let { usersTable } = await instanceTable(USERS_TABLE);
 	let { username, password } = params;
 	let user = await usersTable.findOne(`${isEmail ? 'email' : 'username'}='${username}' and password='${password}'`, ['id', 'email', 'username', 'createTime', 'updateTime']);
 	if (!user) {

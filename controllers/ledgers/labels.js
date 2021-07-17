@@ -1,4 +1,7 @@
 const { instanceTable } = require('./../../lib/method');
+const config = require("../../config")
+const { USERS_TABLE, REGISTEREMAIL_TABLE, AVATARS_TABLE, ACCOUNTS_DETAILS_TABLE, ACCOUNTS_LABELS, LEDGERS_BOOKS_TABLE, LEDGERS_DETAILS_TABLE, LEDGERS_LABELS_TABLE } = config.database;
+
 const pathName = '账单详情';
 const pathRoute = 'ledgers.labels';
 const rules = {
@@ -14,7 +17,7 @@ module.exports = {
 			label: rules.label,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersLabelsTable } = await instanceTable();
+		let { ledgersLabelsTable } = await instanceTable(LEDGERS_LABELS_TABLE);
 		let { label } = params;
 		// 检查标签是否被使用, 不能和系统标签同名,不能重复创建标签
 		let labelBeUsed = await ledgersLabelsTable.findOne(`label='${label}'`)
@@ -34,7 +37,7 @@ module.exports = {
 	findAll: async (ctx) => {
 		console.log(`请求->${pathName}->查询全部数据: ${pathRoute}.findAll; method: ${ctx.request.method}; url: ${ctx.request.url} `)
 		let { userId } = ctx.session.user || {};
-		let { ledgersLabelsTable } = await instanceTable();
+		let { ledgersLabelsTable } = await instanceTable(LEDGERS_LABELS_TABLE);
 		let result = await ledgersLabelsTable.findAll(`isSystemCreate=1 or creatorId=${userId}`, ['id', 'label', 'isSystemCreate', 'createTime', 'updateTime'])
 		ctx.bodys = result;
 	},
@@ -46,7 +49,7 @@ module.exports = {
 			label: rules.label,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersLabelsTable } = await instanceTable();
+		let { ledgersLabelsTable } = await instanceTable(LEDGERS_LABELS_TABLE);
 		let { id } = params;
 		let values = { ...params, creatorId: userId };
 		let where = `id=${id} and creatorId=${userId}`;
@@ -64,7 +67,7 @@ module.exports = {
 			id: rules.id,
 		})
 		let { userId } = ctx.session.user || {};
-		let { ledgersLabelsTable } = await instanceTable();
+		let { ledgersLabelsTable } = await instanceTable(LEDGERS_LABELS_TABLE);
 		let values = { ...params, userId };
 		let { id } = values;
 		let where = `id=${id} and creatorId=${userId}`;
