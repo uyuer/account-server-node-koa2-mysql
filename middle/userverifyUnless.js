@@ -19,7 +19,9 @@ const userVerifyUnless = (params) => {
         if (result) {
             let { userId } = ctx.session.user || {};
             console.log('需要验证用户状态', userId, ctx.request.path);
-            let { usersTable } = await instanceTable(USERS_TABLE);
+            let temp = await instanceTable(USERS_TABLE);
+            let { usersTable } = temp
+            console.log('1111111', temp, '1111111')
             let user = await usersTable.findOne(`id=${userId}`, ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']);
             // 检查用户是否存在
             if (!user) {

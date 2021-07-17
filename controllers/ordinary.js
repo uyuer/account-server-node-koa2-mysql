@@ -28,7 +28,7 @@ exports.register = async (ctx) => {
 		email: rules.email,
 		code: rules.code
 	})
-	let { usersTable, avatarsTable, registerEmailTable } = await instanceTable(USERS_TABLE, AVATARS_TABLE, REGISTEREMAIL_TABLE);
+	let { usersTable, avatarsTable, registeremailTable } = await instanceTable(USERS_TABLE, AVATARS_TABLE, REGISTEREMAIL_TABLE);
 
 	let { username, password, repassword, male, email, code } = params;
 	// 用户名,密码,邮箱(用于找回密码,首先需要激活邮箱,激活邮箱则可以使用邮箱登录)不可为空
@@ -48,7 +48,7 @@ exports.register = async (ctx) => {
 	}
 	// 搁置:另一种流程思路,只需要这个邮箱对应的最新的验证码
 	// 检查邮箱验证码是否存在
-	let registerEmail = await registerEmailTable.findAll(`email='${email}' and code=${code}`, ['id', 'expires', 'expiresTime'], 'createTime desc');
+	let registerEmail = await registeremailTable.findAll(`email='${email}' and code=${code}`, ['id', 'expires', 'expiresTime'], 'createTime desc');
 	if (!registerEmail || !registerEmail.length) {
 		return ctx.throw(400, '验证码错误');
 	}
@@ -72,7 +72,7 @@ exports.register = async (ctx) => {
 	let result = await usersTable.addOne(keys, values);
 	if (result) {
 		let ids = registerEmail.map(i => i.id).toString();
-		await registerEmailTable.deleteMultiple(`id IN (${ids})`)
+		await registeremailTable.deleteMultiple(`id IN (${ids})`)
 	}
 	ctx.bodys = result;
 };
@@ -83,7 +83,7 @@ exports.sendcode = async (ctx) => {
 	let params = ctx.verifyParams({
 		email: rules.email,
 	})
-	let { usersTable, registerEmailTable } = await instanceTable(USERS_TABLE, REGISTEREMAIL_TABLE);
+	let { usersTable, registeremailTable } = await instanceTable(USERS_TABLE, REGISTEREMAIL_TABLE);
 	const { email } = params;
 	const code = Math.random().toString().slice(2, 6); // 随机生成的验证码
 	// 检查邮箱是否被使用
@@ -111,7 +111,7 @@ exports.sendcode = async (ctx) => {
 	let expires = currentTime.add(30, 'minute');
 	let keys = ['email', 'code', 'expires', 'expiresTime']
 	let values = { email, code, expires: expires.valueOf(), expiresTime: expires.format() };
-	let result = await registerEmailTable.addOne(keys, values)
+	let result = await registeremailTable.addOne(keys, values)
 	ctx.bodys = result;
 };
 // 用户登录
