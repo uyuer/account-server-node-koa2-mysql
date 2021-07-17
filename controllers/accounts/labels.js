@@ -40,7 +40,6 @@ const updateOne = async (ctx) => {
 	let { id, label } = params;
 	let values = { ...params, creatorId: userId };
 	let where = `id=${id} and creatorId=${userId}`;
-	console.log(where)
 	let info = await accountsLabelsTable.findOne(where);
 	if (!info) {
 		return ctx.throw(400, '标签不存在');

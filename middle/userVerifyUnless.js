@@ -18,11 +18,8 @@ const userVerifyUnless = (params) => {
         // 如果不是被排除路径, 则需要验证用户状态, 当用户状态为冻结|
         if (result) {
             let { userId } = ctx.session.user || {};
-            console.log(config.database, '123')
-            console.log('需要验证用户状态', userId, ctx.request.path, `--${USERS_TABLE}--`, '这里');
-            let temp = await instanceTable(USERS_TABLE);
-            let { usersTable } = temp
-            console.log('1111111', temp, '1111111')
+            console.log('需要验证用户状态', userId, ctx.request.path);
+            let { usersTable } = await instanceTable(USERS_TABLE);
             let user = await usersTable.findOne(`id=${userId}`, ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']);
             // 检查用户是否存在
             if (!user) {

@@ -181,7 +181,6 @@ module.exports = {
 		let { ledgersLabelsTable, ledgersDetailsTable } = await instanceTable(LEDGERS_LABELS_TABLE, LEDGERS_DETAILS_TABLE);
 		let { bookId } = params;
 		let labelsResult = await ledgersLabelsTable.findAll(`isSystemCreate=1 or creatorId=${userId}`, ['id', 'label', 'isSystemCreate', 'createTime', 'updateTime']);
-		console.log(labelsResult)
 		let labels = labelsResult.reduce((total, currentValue) => {
 			total[currentValue.label] = currentValue.id
 			return total;
@@ -203,7 +202,6 @@ module.exports = {
 				let obj = Object.keys(p).reduce((total, currentValue, index) => {
 					let key = currentValue;
 					let value = arr[index];
-					console.log(value)
 					switch (key) {
 						case 'date':
 							let str = value.replace(/[年月日]/g, '-');
