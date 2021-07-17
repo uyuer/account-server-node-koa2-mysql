@@ -20,7 +20,7 @@ const userVerifyUnless = (params) => {
             let { userId } = ctx.session.user || {};
             console.log(config.database, '123')
             console.log('需要验证用户状态', userId, ctx.request.path, `--${USERS_TABLE}--`, '这里');
-            let temp = await instanceTable('users');
+            let temp = await instanceTable(USERS_TABLE);
             let { usersTable } = temp
             console.log('1111111', temp, '1111111')
             let user = await usersTable.findOne(`id=${userId}`, ['id', 'email', 'username', 'male', 'avatarId', 'active', 'status', 'role', 'createTime', 'updateTime']);
